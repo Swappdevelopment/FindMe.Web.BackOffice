@@ -20,15 +20,23 @@ namespace FindMe.Web.App
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+            services.AddSingleton(Configuration);
+
             services.AddMvc();
+
+            services.AddDbContext<AppDbContext>();
+            services.AddTransient<AppDbInteractor>();
+
+            services.AddTransient<AppMigrationSeedManager>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            AppMigrationSeedManager seeder)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -46,13 +54,21 @@ namespace FindMe.Web.App
             app.UseStaticFiles();
 
             app.UseMvc(
-                //routes =>
-                //{
-                //    routes.MapRoute(
-                //        name: "default",
-                //        template: "{controller=Home}/{action=Index}/{id?}");
-                //}
+                routes =>
+                {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=App}/{action=Index}/{id?}");
+                        //defaults: "App/Index");
+
+                }
             );
+
+
+            if (this.Configuration.IsMigration())
+            {
+                seeder.MigrateAndSeed();
+            }
         }
     }
 }

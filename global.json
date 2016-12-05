@@ -1,0 +1,3 @@
+{
+  "projects": [ "../Api.BackEnd", "../FindMe.Api.BackEnd", "../../Swapp.Frameworks.Core" ]
+}

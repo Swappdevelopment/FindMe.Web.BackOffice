@@ -1,0 +1,23 @@
+﻿
+#signin {
+    padding-top: 25px;
+}
+
+.btn.btn-signin {
+    height: 85px;
+    width: 85px;
+    border: 5px solid #E20E53;
+    border-radius: 50%;
+    background-color: transparent;
+    transform: scale(1);
+    transition: transform ease-in-out 100ms;
+}
+
+    .btn.btn-signin:focus {
+        outline: none;
+    }
+
+    .btn.btn-signin:hover {
+        transform: scale(0.98);
+        transition: transform ease-in-out 100ms;
+    }

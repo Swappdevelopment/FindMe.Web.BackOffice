@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FindMe.Web.Bo", "FindMe.Web.Bo\FindMe.Web.Bo.xproj", "{57EABEC7-BE81-411D-8561-15E483BA6CC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4020D72E-3979-4DF9-A911-AE269FDDAFFD}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swapp.Data", "..\..\Swapp.Frameworks.Core\Swapp.Data\Swapp.Data.xproj", "{9F11AA56-95CB-46E4-BF36-95E3086ADC59}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swapp.Data.Db", "..\..\Swapp.Frameworks.Core\Swapp.Data.Db\Swapp.Data.Db.xproj", "{AECC02FE-073D-4414-A450-FF19EDF546E6}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FindMe.Data", "..\FindMe.Api.BackEnd\FindMe.Data\FindMe.Data.xproj", "{1FF3A50F-7104-4074-969B-C2720F981C0E}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FindMe.Data.Db", "..\FindMe.Api.BackEnd\FindMe.Data.Db\FindMe.Data.Db.xproj", "{DDED64C2-A35C-4E45-AE47-D680F126DAC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57EABEC7-BE81-411D-8561-15E483BA6CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57EABEC7-BE81-411D-8561-15E483BA6CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57EABEC7-BE81-411D-8561-15E483BA6CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57EABEC7-BE81-411D-8561-15E483BA6CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F11AA56-95CB-46E4-BF36-95E3086ADC59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F11AA56-95CB-46E4-BF36-95E3086ADC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F11AA56-95CB-46E4-BF36-95E3086ADC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F11AA56-95CB-46E4-BF36-95E3086ADC59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AECC02FE-073D-4414-A450-FF19EDF546E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AECC02FE-073D-4414-A450-FF19EDF546E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AECC02FE-073D-4414-A450-FF19EDF546E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AECC02FE-073D-4414-A450-FF19EDF546E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FF3A50F-7104-4074-969B-C2720F981C0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FF3A50F-7104-4074-969B-C2720F981C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FF3A50F-7104-4074-969B-C2720F981C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FF3A50F-7104-4074-969B-C2720F981C0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDED64C2-A35C-4E45-AE47-D680F126DAC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDED64C2-A35C-4E45-AE47-D680F126DAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDED64C2-A35C-4E45-AE47-D680F126DAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDED64C2-A35C-4E45-AE47-D680F126DAC8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
