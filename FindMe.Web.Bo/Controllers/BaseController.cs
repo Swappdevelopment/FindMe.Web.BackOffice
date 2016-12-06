@@ -1,5 +1,4 @@
-﻿using FindMe.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
@@ -11,18 +10,20 @@ namespace FindMe.Web.App
     public class BaseController : Controller
     {
         protected IConfigurationRoot _config;
-        protected AppDbInteractor _dbi;
+        protected WebDbReader _reader;
 
-        public BaseController(IConfigurationRoot config, AppDbInteractor dbi)
+        public BaseController(IConfigurationRoot config, WebDbReader reader)
             : base()
         {
             _config = config;
-            _dbi = dbi;
+            _reader = reader;
 
-            if (_dbi != null)
+            if (_reader != null)
             {
                 SetDbiClientIpAddressASync += BaseController_SetDbiClientIpAddressASync;
                 SetDbiClientIpAddressASync(null, null);
+
+                reader.ChangeAccessToken += Reader_ChangeAccessToken;
             }
         }
 
@@ -31,10 +32,16 @@ namespace FindMe.Web.App
         {
             SetDbiClientIpAddressASync -= BaseController_SetDbiClientIpAddressASync;
 
-            if (_dbi != null)
+            if (_reader != null)
             {
-                _dbi.SetClientIpAddress(await GetClientIpAddressV4ASync());
+                _reader.SetClientIpAddress(await GetClientIpAddressV4ASync());
             }
+        }
+
+
+        private void Reader_ChangeAccessToken(object sender, Swapp.Data.ValuePairEventArgs<string, bool> e)
+        {
+
         }
 
 
@@ -74,6 +81,20 @@ namespace FindMe.Web.App
             }
 
             return result;
+        }
+
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (_reader != null)
+            {
+                _reader.Dispose();
+                _reader.ChangeAccessToken -= Reader_ChangeAccessToken;
+
+                _reader = null;
+            }
         }
     }
 }

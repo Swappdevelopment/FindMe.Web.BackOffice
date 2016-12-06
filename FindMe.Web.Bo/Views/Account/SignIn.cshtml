@@ -41,7 +41,15 @@
 
                     <div class="form-group">
                         <div class="row">
-                            <label class="findme-color-fc-dark col-md-5" for="remember"><input type="checkbox" id="remember" name="remember" ng-model="vm.obj.remember" /> Remember Me?</label>
+
+                            <span class="check-box col-md-5 cursor-pointer">
+                                <input type="checkbox" value="None" id="remember" name="remember" ng-model="vm.obj.remember" />
+                                <label class="lbl-chkb" for="remember"></label>
+
+                                <label id="lblRemember" class="findme-color-fc-dark" for="remember">
+                                    &nbsp;Remember Me?
+                                </label>
+                            </span>
 
                             <a class="col-md-7" asp-controller="Account" asp-action="ForgotPassword">Forgot your Password?</a>
                         </div>
@@ -51,12 +59,6 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-signin"><span class="fa fa-chevron-right fa-3x findme-color-fc-pink"></span></button>
                     </div>
-                </div>
-
-                <div class="col-md-6">
-                    <h3 class="findme-color-fc-pink">Don't have an Account?</h3>
-
-                    <a asp-controller="Account" asp-action="SingUp" class="btn btn-findme btn-lg">Sign Up!</a>
                 </div>
 
             </div>

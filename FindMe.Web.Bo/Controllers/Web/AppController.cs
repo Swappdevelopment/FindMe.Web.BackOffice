@@ -1,13 +1,12 @@
-﻿using FindMe.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace FindMe.Web.App
 {
     public class AppController : BaseController
     {
-        public AppController(IConfigurationRoot config, AppDbInteractor dbi)
-            : base(config, dbi)
+        public AppController(IConfigurationRoot config)
+            : base(config, null)
         {
         }
 

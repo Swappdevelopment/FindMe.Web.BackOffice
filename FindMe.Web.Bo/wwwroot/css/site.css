@@ -1,9 +1,9 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 60px;
     padding-bottom: 20px;
 }
 
-.show-on-load{
+.show-on-load {
     opacity: 0;
 }
 
@@ -18,36 +18,6 @@
 #logo {
     display: inline;
     margin-top: -10px;
-}
-
-/* FindMe's Main Backgroundcolor */
-.findme-color-bc-pink {
-    background-color: #E20E53 !important;
-}
-
-/* FindMe's Main Darker Backgroundcolor */
-.findme-color-bc-pinkdark {
-    background-color: #C00C48 !important;
-}
-
-/* FindMe's Dark Backgroundcolor */
-.findme-color-bc-dark {
-    background-color: #424242 !important;
-}
-
-/* FindMe's Main forecolor */
-.findme-color-fc-white {
-    color: #EDF1F8 !important;
-}
-
-/* FindMe's Main forecolor */
-.findme-color-fc-pink {
-    color: #E20E53 !important;
-}
-
-/* FindMe's Dark Backgroundcolor */
-.findme-color-fc-dark {
-    color: #424242 !important;
 }
 
 .body-content {
@@ -67,6 +37,61 @@
     .btn.btn-findme:active {
         background-color: #C00C48 !important;
     }
+
+.check-box {
+    display: inline;
+    /*width: 25px;*/
+    position: relative;
+    /*margin: 20px auto;*/
+}
+
+    .check-box label.lbl-chkb {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #EDF1F8;
+        border: 1.5px solid #E20E53;
+        border-radius: 4px;
+        box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+        .check-box label.lbl-chkb::after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 5px;
+            left: 4px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            opacity: 0;
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+    /*.check-box label.lbl-chkb:hover::after {
+            opacity: 0.5;
+        }*/
+
+    .check-box:hover > label.lbl-chkb::after {
+        opacity: 0.5;
+    }
+
+    .check-box input[type=checkbox] {
+        display: inline;
+        opacity: 0;
+    }
+
+        .check-box input[type=checkbox]:checked + label.lbl-chkb::after {
+            opacity: 1;
+        }
+
+
 
 input,
 select,

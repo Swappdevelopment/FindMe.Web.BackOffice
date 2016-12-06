@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161206071401_Mig_006")]
+    partial class Mig_006
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -117,8 +118,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("Name");
 
                     b.HasIndex("UID")
                         .IsUnique();
@@ -208,6 +208,7 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("LockoutEnabled");
 
                     b.Property<DateTime?>("LockoutEndDateUtc")
+                        .IsRequired()
                         .HasColumnName("LockoutEndDateUtc");
 
                     b.Property<string>("ModifiedBy");
@@ -217,7 +218,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnName("PasswordHash")
-                        .HasMaxLength(512);
+                        .HasMaxLength(64);
 
                     b.Property<short>("Status");
 

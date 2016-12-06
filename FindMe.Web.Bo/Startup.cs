@@ -27,7 +27,7 @@ namespace FindMe.Web.App
             services.AddMvc();
 
             services.AddDbContext<AppDbContext>();
-            services.AddTransient<AppDbInteractor>();
+            services.AddTransient<WebDbReader>();
 
             services.AddTransient<AppMigrationSeedManager>();
         }

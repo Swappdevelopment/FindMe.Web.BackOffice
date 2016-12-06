@@ -31,7 +31,15 @@
 
             vm.isBusy = true;
 
-            $http.post('/ApiAccount/SignIn', vm.obj)
+            var postObj = {
+                userName: vm.obj.userName,
+                password: vm.obj.password,
+                remember: vm.obj.remember
+            };
+
+            vm.obj.password = '';
+
+            $http.post('/ApiAccount/SignIn', postObj)
                  .then(
                     function (resp) {
                         var r = resp;

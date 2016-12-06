@@ -1,0 +1,30 @@
+﻿
+/* FindMe's Main Backgroundcolor */
+.findme-color-bc-pink {
+    background-color: #E20E53 !important;
+}
+
+/* FindMe's Main Darker Backgroundcolor */
+.findme-color-bc-pinkdark {
+    background-color: #C00C48 !important;
+}
+
+/* FindMe's Dark Backgroundcolor */
+.findme-color-bc-dark {
+    background-color: #424242 !important;
+}
+
+/* FindMe's Main forecolor */
+.findme-color-fc-white {
+    color: #EDF1F8 !important;
+}
+
+/* FindMe's Main forecolor */
+.findme-color-fc-pink {
+    color: #E20E53 !important;
+}
+
+/* FindMe's Dark Backgroundcolor */
+.findme-color-fc-dark {
+    color: #424242 !important;
+}
