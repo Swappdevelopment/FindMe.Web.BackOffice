@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
-    public class WebDbReader : IDisposable
+    public class WebDbRepository : IDisposable
     {
         public event EventHandler<ValuePairEventArgs<string, bool>> ChangeAccessToken;
+        public event EventHandler RequestPropertiesInit;
 
 
         private PrjAPICmdReader _reader;
@@ -17,7 +18,7 @@ namespace FindMe.Web.App
         private string _refreshTokenValue;
         private string _accessTokenValue;
 
-        public WebDbReader(AppDbContext context)
+        public WebDbRepository(AppDbContext context)
         {
             if (context == null) throw new NullReferenceException("context");
 
@@ -26,7 +27,7 @@ namespace FindMe.Web.App
         }
 
 
-        public WebDbReader SetTokenValues(string refreshTokenValue, string accessTokenValue)
+        public WebDbRepository SetTokenValues(string refreshTokenValue, string accessTokenValue)
         {
             _refreshTokenValue = refreshTokenValue;
             _accessTokenValue = accessTokenValue;
@@ -68,6 +69,8 @@ namespace FindMe.Web.App
 
             try
             {
+                RequestPropertiesInit?.Invoke(this, EventArgs.Empty);
+
                 webParameters.AccessValue = _accessTokenValue;
 
                 resp = await _reader.Execute(webParameters);

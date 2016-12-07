@@ -1,0 +1,7 @@
+﻿#sideBar {
+    position: fixed;
+    left: 0;
+    background-color: brown;
+    height: 100%;
+    width: 220px;
+}

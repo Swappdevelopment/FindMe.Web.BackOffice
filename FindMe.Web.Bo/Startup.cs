@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@ namespace FindMe.Web.App
             services.AddMvc();
 
             services.AddDbContext<AppDbContext>();
-            services.AddTransient<WebDbReader>();
+            services.AddSingleton<WebDbRepository>();
 
             services.AddTransient<AppMigrationSeedManager>();
         }
@@ -36,19 +37,26 @@ namespace FindMe.Web.App
             IApplicationBuilder app,
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
+            WebDbRepository repo,
             AppMigrationSeedManager seeder)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
+
+                loggerFactory.AddDebug(LogLevel.Information);
+                loggerFactory.AddDatabase(LogLevel.Error);
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
+                loggerFactory.AddDebug(LogLevel.Error);
+                loggerFactory.AddDatabase(LogLevel.Critical);
             }
 
             app.UseStaticFiles();
@@ -56,10 +64,10 @@ namespace FindMe.Web.App
             app.UseMvc(
                 routes =>
                 {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=App}/{action=Index}/{id?}");
-                        //defaults: "App/Index");
+                    routes.MapRoute(
+                        name: "default",
+                        template: "{controller=App}/{action=Index}/{id?}");
+                    //defaults: "App/Index");
 
                 }
             );

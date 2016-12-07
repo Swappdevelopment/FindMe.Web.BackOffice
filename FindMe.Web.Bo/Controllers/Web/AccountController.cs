@@ -1,20 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
     public class AccountController : BaseController
     {
-        public AccountController(IConfigurationRoot config)
-            : base(config, null)
+        public AccountController(IConfigurationRoot config, WebDbRepository repo)
+            : base(config, repo, null)
         {
         }
 
 
-
-        public IActionResult SignIn()
+        public IActionResult SignIn(string redirectUrl = "")
         {
+            ViewBag.RedirectUrl = string.IsNullOrEmpty(redirectUrl) ? this.Url.Action("Index", "App") : redirectUrl;
+
             return View();
+        }
+
+
+        public async Task<IActionResult> SignOut()
+        {
+            await _repo.Execute("SignOut");
+
+            this.RemoveSignedCookies();
+
+            return RedirectToAction("SignIn", "Account");
         }
 
 

@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161207083111_Mig_014")]
+    partial class Mig_014
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -245,16 +246,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnName("EmailConfirmed");
 
-                    b.Property<string>("FName")
-                        .HasColumnName("FName")
-                        .HasMaxLength(128);
-
                     b.Property<bool>("IsValidated")
                         .HasColumnName("IsValidated");
-
-                    b.Property<string>("LName")
-                        .HasColumnName("LName")
-                        .HasMaxLength(128);
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnName("LockoutEnabled");

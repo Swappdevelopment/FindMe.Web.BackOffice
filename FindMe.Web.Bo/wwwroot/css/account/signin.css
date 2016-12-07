@@ -4,10 +4,10 @@
 }
 
 .btn.btn-signin {
-    height: 85px;
-    width: 85px;
+    height: 65px;
+    width: 250px;
     border: 5px solid #E20E53;
-    border-radius: 50%;
+    border-radius: 20px;
     background-color: transparent;
     transform: scale(1);
     transition: transform ease-in-out 100ms;

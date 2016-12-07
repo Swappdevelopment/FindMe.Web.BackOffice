@@ -1,63 +1,73 @@
 ﻿
 @{
     ViewBag.Title = "Sign In";
+
+    var rscMngr = ResourceMngr.Create(Html);
 }
 
 
 @section css {
-    <link rel="stylesheet" href="~/css/signin.css" />
+    <link rel="stylesheet" href="~/css/account/signin.css?v=3" />
 }
 
 @section scripts {
 
-    <script src="~/js/app-signin.js"></script>
-    <script src="~/js/app-signin-ctrlr.js"></script>
+    <script src="~/js/account/app-signin.js"></script>
+    <script src="~/js/account/app-signin-ctrlr.js"></script>
 
 }
 
 <div id="signin" ng-app="app-signin">
-    <h2 class="findme-color-fc-pink">Sign In</h2>
+    <h2 class="findme-color-fc-pink">@rscMngr.GetLabel("Lbl_SignIn")</h2>
 
     <div ng-controller="app-signin-ctrlr as vm">
 
-        <form novalidate name="signinform" ng-submit="vm.signin()">
+        <form novalidate name="signinform" ng-submit="vm.signin('@ViewBag.RedirectUrl')">
 
             <div class="row">
 
                 <div class="col-md-6">
 
-                    <div class="form-group">
-                        <label class="findme-color-fc-dark" for="username">Email/User name</label>
-                        <input type="text" class="form-control" id="userName" name="userName" ng-model="vm.obj.userName" required ng-minlength="4" />
-                        <span class="text-warning show-on-load" ng-show="signinform.userName.$error.required">A valid Email or User name is required</span>
-                        <span class="text-warning show-on-load" ng-show="signinform.userName.$error.minlength">A valid Email or User name is required</span>
+                    <div class="alert alert-warning show-on-load" ng-show="vm.errormsg">
+                        <h4 ng-show="vm.errorstatus">{{ vm.errorstatus }}</h4>
+                        <p>{{ vm.errormsg }}</p>
                     </div>
 
                     <div class="form-group">
-                        <label class="findme-color-fc-dark" for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" ng-model="vm.obj.password" required />
-                        <span class="text-warning show-on-load" ng-show="signinform.password.$error.required">A password is required</span>
+                        <label class="findme-color-fc-dark" for="username">@rscMngr.GetLabel("Lbl_EmailUsrnm")</label>
+                        <input type="text" class="form-control" id="userName" name="userName" ng-model="vm.obj.userName" required ng-minlength="4" ng-disabled="vm.isBusy" />
+                        <span class="text-warning show-on-load" ng-show="signinform.userName.$error.required">@rscMngr.GetMessage("ErMsg_VldEmailOrUsrnmReq")</span>
+                        <span class="text-warning show-on-load" ng-show="signinform.userName.$error.minlength">@rscMngr.GetMessage("ErMsg_VldEmailOrUsrnmReq")</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="findme-color-fc-dark" for="password">@rscMngr.GetLabel("Lbl_Psswrd")</label>
+                        <input type="password" class="form-control" id="password" name="password" ng-model="vm.obj.password" required ng-disabled="vm.isBusy" />
+                        @*<span class="text-warning show-on-load" ng-show="signinform.password.$error.required">@rscMngr.GetMessage("ErMsg_PsswrdReq")</span>*@
                     </div>
 
                     <div class="form-group">
                         <div class="row">
 
-                            <span class="check-box col-md-5 cursor-pointer">
+                            <span class="check-box col-md-5" ng-disabled="vm.isBusy">
                                 <input type="checkbox" value="None" id="remember" name="remember" ng-model="vm.obj.remember" />
                                 <label class="lbl-chkb" for="remember"></label>
 
                                 <label id="lblRemember" class="findme-color-fc-dark" for="remember">
-                                    &nbsp;Remember Me?
+                                    &nbsp;@rscMngr.GetLabel("Lbl_RmbrMe")
                                 </label>
                             </span>
 
-                            <a class="col-md-7" asp-controller="Account" asp-action="ForgotPassword">Forgot your Password?</a>
+                            <a class="col-md-7" asp-controller="Account" asp-action="ForgotPassword">@rscMngr.GetLabel("Lbl_FrgtPsswrd")</a>
                         </div>
                     </div>
 
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-signin"><span class="fa fa-chevron-right fa-3x findme-color-fc-pink"></span></button>
+                        <button type="submit" class="btn btn-signin" ng-disabled="vm.isBusy">
+                            <span class="fa fa-spinner fa-3x fa-spin findme-color-fc-pink hidden" ></span>
+                            <span class="fa fa-chevron-right fa-3x findme-color-fc-pink"></span>
+                        </button>
                     </div>
                 </div>
 

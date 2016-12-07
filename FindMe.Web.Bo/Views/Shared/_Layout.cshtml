@@ -1,10 +1,18 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var rscMngr = ResourceMngr.Create(Html);
+
+    string fullName;
+
+    bool hasAccess = Html.UserHasSignedInCookie(out fullName);
+}
+
+<!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - FindMe B.O</title>
+    <title>@ViewBag.Title - @rscMngr.GetLabel("Lbl_AppName") B.O</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -43,16 +51,24 @@
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="cursor-pointer">
-                        <a class="findme-color-fc-white" asp-controller="Account" asp-action="SignIn">Sign In</a>
-                    </li>
-                    <li class="cursor-pointer">
-                        <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">Hello, <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a></li>
-                            <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign Out</a></li>
-                        </ul>
-                    </li>
+
+                    @if (hasAccess)
+                    {
+                        <li class="cursor-pointer">
+                            <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@rscMngr.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", rscMngr.GetLabel("Lbl_NoNm"))<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a asp-area="" asp-controller="Account" asp-action="Profile">@rscMngr.GetLabel("Lbl_Profile")</a></li>
+                                @*<li><a asp-area="" asp-controller="Account" asp-action="SignOut">@rscMngr.GetLabel("Lbl_SignOut")</a></li>*@
+                                <li><a id="signOut">@rscMngr.GetLabel("Lbl_SignOut")</a></li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="cursor-pointer">
+                            <a class="findme-color-fc-white" asp-controller="Account" asp-action="SignIn">Sign In</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
@@ -64,7 +80,7 @@
     </div>
 
     <div class="footer findme-color-bc-dark">
-        <h4 class="findme-color-fc-white">&copy; @DateTime.Today.Year.ToString() - FindMe Back Office</h4>
+        <h4 class="findme-color-fc-white">&copy; @DateTime.Today.Year.ToString() - @rscMngr.GetLabel("Lbl_AppName") Back Office</h4>
     </div>
 
     <environment names="Development">
@@ -91,6 +107,14 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
+
+    <script>
+
+        globalOptns = {
+            signOutUrl: '@Url.Action("SignOut", "Account")'
+        };
+
+    </script>
 
     @RenderSection("scripts", required: false)
 </body>
