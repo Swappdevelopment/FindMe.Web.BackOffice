@@ -1,7 +1,176 @@
-﻿#sideBar {
+﻿#sideBar .sb-icons {
     position: fixed;
+    top: 64px;
     left: 0;
-    background-color: brown;
     height: 100%;
-    width: 220px;
+    width: 40px;
+    transition: left ease-in 300ms;
 }
+
+#sideBar .sb-lbls {
+    position: fixed;
+    top: 64px;
+    left: 40px;
+    height: 100%;
+    width: 160px;
+    transition: left ease-in 300ms;
+}
+
+#sideBar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+    #sideBar ul li {
+        cursor: pointer;
+        height: 45px;
+        width: 100%;
+        transition: background-color ease-in-out 250ms;
+    }
+
+        #sideBar ul li.active {
+            background-color: black;
+            transition: background-color ease-in-out 250ms;
+        }
+
+        #sideBar ul li a.active {
+            color: #FECC00;
+            transition: color ease-in-out 250ms;
+        }
+
+        #sideBar ul li:hover:not(.active), #sideBar ul li.over:not(.active) { /*, #sideBar ul li a:hover > #sideBar ul li {*/
+            background-color: #424242;
+        }
+
+        #sideBar ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color ease-in-out 250ms;
+        }
+
+            #sideBar ul li a.over {
+                color: #FECC00;
+            }
+
+#sideBar .sb-lbls ul li a {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    padding: 10px 0 0 8px;
+}
+
+#sideBar .sb-icons ul li a div {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    padding-top: 10px;
+}
+
+
+#wrapper {
+    width: 100%;
+    padding-left: 200px;
+    transition: padding-left ease-in 300ms;
+}
+
+    #wrapper #mainVw {
+        padding-top: 60px;
+    }
+
+    #wrapper.bs-small-res {
+        padding-left: 40px;
+        transition: padding-left ease-in 300ms;
+    }
+
+#sideBar .sb-lbls.bs-small-res {
+    left: -160px;
+    transition: left ease-in 300ms;
+}
+
+#wrapper.bs-small-res.hide-lbls {
+    padding-left: 0;
+    transition: padding-left ease-in 300ms;
+}
+
+#sideBar .sb-icons.bs-small-res.hide-lbls {
+    left: -40px;
+    transition: left ease-in 300ms;
+}
+
+#wrapper.hide-lbls:not(.bs-small-res) {
+    padding-left: 40px;
+    transition: padding-left ease-in 300ms;
+}
+
+#sideBar .sb-lbls.hide-lbls:not(.bs-small-res) {
+    left: -160px;
+    transition: left ease-in 300ms;
+}
+
+
+
+#searchBar {
+    height: 65px;
+}
+
+    #searchBar .btn.btn-burger {
+        display: inline;
+        outline: 0;
+        margin: 10px 0 0 8px;
+        padding: 8px 10px 5px 10px;
+        border-radius: 15px;
+    }
+
+    #searchBar span.input-bg {
+        display: inline-block;
+        padding: 2px 10px;
+        background-color: white;
+        height: 38px;
+        max-width: 400px;
+        width: 50%;
+        margin: 0 0 0 8px;
+        transform: translateY(4px);
+        border-radius: 3px;
+        transition: all ease-out 250ms;
+    }
+
+        #searchBar span.input-bg.focus {
+            -webkit-box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            -moz-box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            transition: all ease-out 250ms;
+        }
+
+        #searchBar span.input-bg input {
+            display: inline;
+            border-width: 0;
+            max-width: 100%;
+            width: 100%;
+            outline: 0;
+            transform: translateY(4px);
+        }
+
+    #searchBar button.btn.btn-search {
+        position: absolute;
+        height: 50px;
+        width: 50px;
+        transform: translate(-11px, 6px);
+        outline: 0;
+        border-width: 0;
+        border-radius: 50%;
+    }
+
+        #searchBar button.btn.btn-search span {
+            margin-left: -2px;
+        }
+
+
+    #searchBar .search-ctrl {
+        opacity: 1;
+        transition: opacity ease-in-out 300ms;
+    }
+
+    #searchBar .search-ctrl.clsp {
+        opacity: 0;
+        transition: opacity ease-in-out 300ms;
+    }

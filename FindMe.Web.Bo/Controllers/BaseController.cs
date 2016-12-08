@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,19 +25,22 @@ namespace FindMe.Web.App
 
         protected IConfigurationRoot _config;
         protected WebDbRepository _repo;
+        private IHostingEnvironment _env;
         protected ILogger _logger;
 
         protected string _checkedAccessToken;
 
-
         public BaseController(
             IConfigurationRoot config
             , WebDbRepository repo
+            , IHostingEnvironment env
             , ILogger logger)
             : base()
         {
             _config = config;
             _repo = repo;
+            _env = env;
+
             _logger = logger;
 
             if (_repo != null)
@@ -148,7 +152,10 @@ namespace FindMe.Web.App
 
 
 
-
+        protected string WebRootPath()
+        {
+            return ViewBag.WebRootPath = _env == null ? null : _env.WebRootPath;
+        }
 
 
         protected void AddCookie(string key, string value, DateTime? expireryDate = null)
@@ -272,7 +279,7 @@ namespace FindMe.Web.App
 
 
 
-        protected IActionResult CheckForRedirection(AccessLevel level)
+        protected IActionResult CheckForAccess(AccessLevel level, Func<IActionResult> funcHasAccess)
         {
             switch (level)
             {
@@ -287,7 +294,7 @@ namespace FindMe.Web.App
             }
 
 
-            return null;
+            return funcHasAccess == null ? null : funcHasAccess();
         }
     }
 }

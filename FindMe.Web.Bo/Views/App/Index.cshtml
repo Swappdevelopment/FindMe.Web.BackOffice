@@ -1,23 +1,92 @@
 ﻿@{
     ViewBag.Title = "App";
+
+
+    var rscMngr = ResourceMngr.Create(Html);
 }
 
 
 @section css {
-    <link rel="stylesheet" href="~/css/app/index.css" />
+    <environment names="Development">
+        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/index.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/main.css", (string)ViewBag.WebRootPath)" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/app/index.min.css" />
+        <link rel="stylesheet" href="~/css/app/main.min.css" />
+    </environment>
 }
+
 
 @section scripts {
 
-    <script src="~/js/app/index.js"></script>
+    <environment names="Development">
+        <script src="~/lib/angular/angular.js"></script>
+        <script src="~/lib/angular/angular-route.js"></script>
+        <script src="@Url.GetResPath("~/js/app/index.js", (string)ViewBag.WebRootPath)"></script>
+        <script src="@Url.GetResPath("~/js/app/app-main.js", (string)ViewBag.WebRootPath)"></script>
+        <script src="@Url.GetResPath("~/js/app/mainCtrlr.js", (string)ViewBag.WebRootPath)"></script>
+        <script src="@Url.GetResPath("~/js/app/account/profileCtrlr.js", (string)ViewBag.WebRootPath)"></script>
+    </environment>
 
+    <environment names="Staging,Production">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular.min.js"
+                asp-fallback-src="~/lib/angular/angular.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular-route.min.js"
+                asp-fallback-src="~/lib/angular/angular-route.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+
+        <script src="~/js/app/index.js" asp-append-version="true"></script>
+        <script src="~/js/app/app-main.min.js" asp-append-version="true"></script>
+        <script src="~/js/app/mainCtrlr.min.js" asp-append-version="true"></script>
+        <script src="~/js/app/account/profileCtrlr.min.js" asp-append-version="true"></script>
+    </environment>
 }
 
 
-<div>
+<div ng-app="app-main">
 
     <div id="sideBar">
+        <div class="sb sb-lbls findme-color-bc-darker">
+            <ul>
+                <li><a href="#/Users"><span>@rscMngr.GetLabel("Lbl_Usrs")</span></a></li>
+                <li><a><span>@rscMngr.GetLabel("Lbl_Clnts")</span></a></li>
+                <li><a><span>@rscMngr.GetLabel("Lbl_Addresses")</span></a></li>
+            </ul>
+        </div>
 
+        <div class="sb sb-icons findme-color-bc-darker">
+            <ul>
+                <li><a href="#/Users"><div><span class="fa fa-users fa-2x"></span></div></a></li>
+                <li><a><div><span class="fa fa-vcard-o fa-2x"></span></div></a></li>
+                <li><a><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div id="wrapper">
+
+        <div id="searchBar" class="findme-color-bc-lgray">
+            <div>
+                <button type="button" class="btn btn-burger findme-color-fc-white findme-color-bc-yellow">
+                    <span class="fa fa-bars fa-2x"></span>
+                </button>
+
+                <span class="search-ctrl">
+                    <span class="input-bg"><input type="search" /></span>
+
+                    <button type="button" class="btn btn-search findme-color-bc-pink findme-color-fc-white">
+                        <span class="fa fa-search fa-2x"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+
+        <div ng-view></div>
     </div>
 
 </div>

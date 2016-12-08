@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -6,17 +7,33 @@ namespace FindMe.Web.App
 {
     public class AccountController : BaseController
     {
-        public AccountController(IConfigurationRoot config, WebDbRepository repo)
-            : base(config, repo, null)
+        public AccountController(
+            IConfigurationRoot config,
+            WebDbRepository repo,
+            IHostingEnvironment env)
+            : base(config, repo, env, null)
         {
         }
 
 
         public IActionResult SignIn(string redirectUrl = "")
         {
+            WebRootPath();
             ViewBag.RedirectUrl = string.IsNullOrEmpty(redirectUrl) ? this.Url.Action("Index", "App") : redirectUrl;
 
             return View();
+        }
+
+
+        public IActionResult Profile()
+        {
+            return CheckForAccess(
+                AccessLevel.CookieSignedIn,
+                () =>
+                {
+                    WebRootPath();
+                    return View();
+                });
         }
 
 

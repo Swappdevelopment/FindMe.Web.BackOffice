@@ -1,27 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
     public class AppController : BaseController
     {
-        public AppController(IConfigurationRoot config)
-            : base(config, null, null)
+        public AppController(
+            IConfigurationRoot config,
+            IHostingEnvironment env)
+            : base(config, null, env, null)
         {
         }
 
 
         public IActionResult Index()
         {
-            var result = CheckForRedirection(AccessLevel.CookieSignedIn);
+            return CheckForAccess(
+                AccessLevel.CookieSignedIn,
+                () =>
+                {
+                    WebRootPath();
 
-            if(result == null)
-            {
-                result = View();
-            }
-
-            return result;
+                    return View();
+                });
         }
 
         public PartialViewResult About()

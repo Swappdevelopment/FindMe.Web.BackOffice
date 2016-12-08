@@ -11,6 +11,7 @@
     background-color: transparent;
     transform: scale(1);
     transition: transform ease-in-out 100ms;
+    margin-top: 20px;
 }
 
     .btn.btn-signin:focus {
@@ -20,4 +21,8 @@
     .btn.btn-signin:hover {
         transform: scale(0.98);
         transition: transform ease-in-out 100ms;
+    }
+
+    .check-box.remember {
+        margin-left: 15px;
     }

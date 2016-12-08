@@ -11,8 +11,11 @@ namespace FindMe.Web.App
 {
     public class ApiAccountController : BaseController
     {
-        public ApiAccountController(IConfigurationRoot config, WebDbRepository repo, ILogger<ApiAccountController> logger)
-            : base(config, repo, logger)
+        public ApiAccountController(
+            IConfigurationRoot config,
+            WebDbRepository repo,
+            ILogger<ApiAccountController> logger)
+            : base(config, repo, null, logger)
         {
         }
 

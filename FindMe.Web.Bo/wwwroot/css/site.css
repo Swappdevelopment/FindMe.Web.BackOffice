@@ -1,32 +1,42 @@
 ﻿body {
-    padding-top: 60px;
+    font-size: 14px !important;
+    padding-top: 50px;
     padding-bottom: 20px;
+}
+
+#renderBody {
+    padding: 14px 0 0 0;
 }
 
 .show-on-load {
     opacity: 0;
 }
 
-#topbar {
-    height: 60px;
-}
-
-    #topbar ul.navbar-right {
-        margin-top: 5px;
-    }
-
 #logo {
     display: inline;
     margin-top: -10px;
 }
 
-.body-content {
+/*.body-content {
     padding-left: 15px;
     padding-right: 15px;
+}*/
+
+#topbar {
+    border-width: 0;
 }
+
+    #topbar .navbar-brand i {
+        font-size: 18px;
+    }
 
 .dropdown-toggle:active, .open .dropdown-toggle {
     background-color: #C00C48 !important;
+}
+
+.navbar-nav > li > .dropdown-menu {
+    background-color: white;
+    color: #424242;
 }
 
 .btn.btn-findme {
@@ -40,9 +50,7 @@
 
 .check-box {
     display: inline;
-    /*width: 25px;*/
     position: relative;
-    /*margin: 20px auto;*/
 }
 
     .check-box label.lbl-chkb {
@@ -82,14 +90,14 @@
             opacity: 0.5;
         }*/
 
-    .check-box:hover:not([disabled]) > label.lbl-chkb {/*::after {*/
+    .check-box:hover:not([disabled]) > label.lbl-chkb { /*::after {*/
         /*opacity: 0.5;*/
         box-shadow: inset 1px 1px 1px #f6b3c9, 1px 1px 5px rgba(226, 14, 83, 0.55);
     }
 
     .check-box input[type=checkbox] {
-        display: inline;
-        opacity: 0;
+        margin: 0 !important;
+        opacity: 0 !important;
     }
 
         .check-box input[type=checkbox]:checked + label.lbl-chkb::after {
@@ -115,9 +123,14 @@ textarea {
     height: 35px;
 }
 
-    .footer h4 {
+    .footer span {
         margin-top: 8px;
         margin-right: 25px;
         position: fixed;
         right: 0;
     }
+
+
+.navbar-toggle.btn-user {
+    padding: 0;
+}

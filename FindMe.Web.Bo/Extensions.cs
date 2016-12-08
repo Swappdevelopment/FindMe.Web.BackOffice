@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swapp.Data;
 using System;
+using System.IO;
 
 namespace FindMe.Web.App
 {
@@ -97,6 +99,37 @@ namespace FindMe.Web.App
             fullName = htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.USER_FULL_NAME}"];
 
             return !string.IsNullOrEmpty(htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.ACCESS_TOKEN_KEY}"]);
+        }
+
+
+        public static string GetResPath(this IUrlHelper url, string path, string rootPath)
+        {
+            if (string.IsNullOrEmpty(rootPath)) return path;
+
+
+            if (path.StartsWith("~"))
+            {
+                if (url == null) return path;
+
+                path = url.Content(path);
+            }
+
+            path = path.StartsWith("/") ? path : $"/{path}";
+
+            string filePath = path.Replace("/", "\\");
+
+            filePath = (rootPath.EndsWith("\\") ? rootPath.Substring(0, rootPath.Length - 1) : rootPath) + filePath;
+
+            string version = "";
+
+            if (File.Exists(filePath))
+            {
+                var fi = new FileInfo(filePath);
+
+                version = $"?v={fi.LastWriteTimeUtc.ToFileTime()}";
+            }
+
+            return path + version;
         }
     }
 }
