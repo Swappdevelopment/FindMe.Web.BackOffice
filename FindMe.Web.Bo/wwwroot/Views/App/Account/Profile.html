@@ -1,3 +1,47 @@
-﻿<div>
-    <h4>Profile</h4>
+﻿
+
+<div class="row container-fluid">
+
+    <form name="userProfileForm" ng-submit="vm.SaveProfile()" novalidate>
+
+        <div class="col-md-6 col-sm-12">
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="email">{{vm.appProps.lbl_Email}}</label>
+                <input type="email" class="form-control" name="email" ng-model="vm.email" />
+                <span class="text-warning" ng-show="userProfileForm.email.$touched && userProfileForm.email.$invalid">{{vm.appProps.erMsg_InvldEmail}}</span>
+            </div>
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="userName">{{vm.appProps.lbl_Usrnm}}</label>
+                <input type="text" class="form-control" name="userName" ng-model="vm.userName" />
+            </div>
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="fName">{{vm.appProps.lbl_FName}}</label>
+                <input type="text" class="form-control" name="fName" ng-model="vm.fName" />
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="lName">{{vm.appProps.lbl_LName}}</label>
+                <input type="text" class="form-control" name="lName" ng-model="vm.lName" />
+            </div>
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="contactNumber">{{vm.appProps.lbl_CntctNm}}</label>
+                <input type="text" class="form-control" name="contactNumber" ng-model="vm.contactNumber" />
+            </div>
+
+            <div class="form-group">
+                <label class="findme-color-fc-dark" for="lockoutEnabled">{{vm.appProps.lbl_LckOut}}</label>
+                <input type="text" class="form-control" name="lockoutEnabled" ng-model="vm.lockoutEnabled" />
+            </div>
+
+        </div>
+    </form>
+
 </div>

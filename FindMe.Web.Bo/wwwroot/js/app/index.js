@@ -9,11 +9,11 @@
         switch (state) {
             case 'xs':
             case 'sm':
-                $('#wrapper, #sideBar .sb').addClass('bs-small-res');
+                $('#wrapper, #sideBar .sb, #wrapper .main-ctrlr').addClass('bs-small-res');
                 break;
 
             default:
-                $('#wrapper, #sideBar .sb').removeClass('bs-small-res');
+                $('#wrapper, #sideBar .sb, #wrapper .main-ctrlr').removeClass('bs-small-res');
                 break;
         }
     };
@@ -114,17 +114,3 @@
 
 })();
 
-
-function showMainSearchCtrl() {
-
-    //$('#searchBar .search-ctrl').removeClass('hidden');
-    $('#searchBar .search-ctrl').removeClass('clsp');
-}
-function hideMainSearchCtrl() {
-
-    $('#searchBar .search-ctrl').addClass('clsp');
-
-    setTimeout(function () {
-        //$('#searchBar .search-ctrl').addClass('hidden');
-    }, 300);
-}

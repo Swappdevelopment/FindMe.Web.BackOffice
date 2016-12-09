@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Swapp.Data;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -54,23 +53,45 @@ namespace FindMe.Web.App
                     case MessageIdentifier.SIGNIN_FAILED:
                         error = new
                         {
-                            msg = "Sign In failed",
+                            msg = this.GetMessage("Msg_SgnInFld"),
                             id = (int)ex.ErrorID
                         };
                         break;
 
                     default:
-                        this.LogError(ex);
-                        return BadRequest("Oops, something went wront. \r\nPlease try again.");
+                        return BadRequestEx(ex);
                 }
             }
             catch (Exception ex)
             {
-                this.LogCritical(ex);
-                return BadRequest("Oops, something went wront. \r\nPlease try again.");
+                return BadRequestEx(ex);
             }
 
             return Ok(new { error = error });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetProfile([FromBody]dynamic profile = null)
+        {
+            object result = null;
+            object error = null;
+
+            try
+            {
+                if (profile != null)
+                {
+
+                }
+
+                result = await _repo.Execute("GetTokenUserProfile");
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+
+            return Ok(new { result = result, error = error, date = DateTime.Now });
         }
 
 

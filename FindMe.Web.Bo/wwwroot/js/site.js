@@ -55,3 +55,38 @@ function trackBootstrapRes(callback) {
         });
     }
 }
+
+
+function toggleGlblWaitVisibility(value) {
+
+    if (typeof value === "undefined") {
+
+        $('#glblWait').toggleClass('hidden');
+    }
+    else {
+
+        if (value) {
+
+            $('#glblWait').removeClass('hidden');
+        }
+        else {
+
+            $('#glblWait').addClass('hidden');
+        }
+    }
+}
+
+
+function checkRedirectForSignIn(data) {
+
+    if (data && data.id) {
+
+        if (data.id == globalOptns.refreshTokenDeadID) {
+            window.location.replace(globalOptns.signInUrl);
+
+            return false;
+        }
+    }
+
+    return true;
+}

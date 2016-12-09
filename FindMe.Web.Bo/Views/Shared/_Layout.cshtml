@@ -1,6 +1,4 @@
 ﻿@{
-    var rscMngr = ResourceMngr.Create(Html);
-
     string fullName;
 
     bool hasAccess = Html.UserHasSignedInCookie(out fullName);
@@ -13,14 +11,16 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - @rscMngr.GetLabel("Lbl_AppName") B.O</title>
+    <title>@ViewBag.Title - @Html.GetLabel("Lbl_AppName") B.O</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/themes/paper/bootstrap.min.css" />
         <link rel="stylesheet" href="~/lib/fontawesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" />
         <link rel="stylesheet" href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="@Url.GetResPath("~/css/wait.css", (string)ViewBag.WebRootPath)" />
     </environment>
 
     <environment names="Staging,Production">
@@ -32,8 +32,10 @@
               asp-fallback-href="~/lib/bootstrap/themes/paper/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
 
-        <link rel="stylesheet" href="~/css/colors.min.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/checkBox.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/colors.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/wait.min.css" asp-append-version="true" />
     </environment>
 
     @RenderSection("css", required: false)
@@ -73,11 +75,11 @@
                     @if (hasAccess)
                     {
                         <li class="cursor-pointer">
-                            <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@rscMngr.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", rscMngr.GetLabel("Lbl_NoNm"))<span class="caret"></span></a>
+                            <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@Html.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", Html.GetLabel("Lbl_NoNm"))<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a id="profile">@rscMngr.GetLabel("Lbl_Profile")</a></li>
+                                <li><a id="profile">@Html.GetLabel("Lbl_Profile")</a></li>
                                 <li class="divider"></li>
-                                <li><a id="signOut">@rscMngr.GetLabel("Lbl_SignOut")</a></li>
+                                <li><a id="signOut">@Html.GetLabel("Lbl_SignOut")</a></li>
                             </ul>
                         </li>
                     }
@@ -98,7 +100,15 @@
     </div>
 
     <div class="footer findme-color-bc-dark">
-        <span class="findme-color-fc-white">&copy; @DateTime.Today.Year.ToString() - @rscMngr.GetLabel("Lbl_AppName") Back Office</span>
+        <span class="findme-color-fc-white">&copy; @DateTime.Today.Year.ToString() - @Html.GetLabel("Lbl_AppName") Back Office</span>
+    </div>
+
+    <div id="glblWait" class="fm-wait hidden">
+        <div class="fm-container">
+            <div class="fm-center">
+                <div class="fa fa-spinner fa-spin fa-4x findme-color-fc-pink"></div>
+            </div>
+        </div>
     </div>
 
     <environment names="Development">
@@ -123,6 +133,8 @@
     <script>
 
         globalOptns = {
+            refreshTokenDeadID: @((int)Swapp.Data.MessageIdentifier.REFRESH_CONNECTION_TOKEN_EXPIRED),
+            signInUrl: '@Url.Action("SignIn", "Account")',
             signOutUrl: '@Url.Action("SignOut", "Account")'
         };
 

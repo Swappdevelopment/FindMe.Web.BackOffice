@@ -1,0 +1,35 @@
+﻿
+.fm-wait {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(248, 248, 248, 0.60);
+    z-index: 9999;
+}
+
+    .fm-wait .fm-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .fm-wait .fm-container .fm-center {
+            margin: 0;
+            width: 12%;
+            height: 12%;
+            min-width: 80px;
+            min-height: 80px;
+            background-color: rgb(248, 248, 248);
+            border-radius: 10px;
+            -webkit-box-shadow: 2px 2px 6px 4px rgba(0, 0, 0,0.41);
+            -moz-box-shadow: 2px 2px 6px 4px rgba(0, 0, 0,0.41);
+            box-shadow: 2px 2px 6px 4px rgba(0, 0, 0,0.41);
+            display: flex;
+            flex-flow: wrap;
+            align-items: center;
+            justify-content: center;
+        }

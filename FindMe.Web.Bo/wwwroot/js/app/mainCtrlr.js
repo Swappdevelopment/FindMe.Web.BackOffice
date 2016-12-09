@@ -4,23 +4,65 @@
     'use strict';
 
 
-    angular.module('app-main')
-           .controller('mainCtrlr', ['$http', mainCtrlrFunc]);
+    angular.module('app-mainmenu')
+           .controller('mainCtrlr', ['$route', '$scope', '$http', 'headerConfigService', mainCtrlrFunc]);
 
 
-    function mainCtrlrFunc($http) {
+    function mainCtrlrFunc($route, $scope, $http, headerConfigService) {
 
         var vm = this;
 
-        vm.title = "TESTING";
+        vm.headerConfig = headerConfigService;
+
+
+        var viewContentLoaded = function () {
+
+            if (headerConfigService) {
+
+                if (headerConfigService.showSearchCtrl) {
+                    showMainSearchCtrl();
+                }
+                else {
+                    hideMainSearchCtrl();
+                }
+            }
+
+            //var route = String($route.current.templateUrl).toLowerCase().replace('.html', '');
+
+            //route = route.split('/');
+            //route = String(route[route.length - 1]);
+
+            //switch (route) {
+            //    case '':
+            //    case 'home':
+            //    case 'profile':
+            //        hideMainSearchCtrl();
+            //        break;
+
+            //    default:
+            //        showMainSearchCtrl();
+            //        break;
+            //}
+        }
+
+        $scope.$on('$viewContentLoaded', viewContentLoaded);
     }
 
 
-    $('#profile').on('click', function () {
+    var showMainSearchCtrl = function () {
 
-        var url = window.location.origin + '/#/profile';
+        //$('#searchBar .search-ctrl').removeClass('hidden');
+        $('#searchBar .search-ctrl').removeClass('clsp');
+    };
 
-        window.location.replace(url);
-    });
+
+    var hideMainSearchCtrl = function () {
+
+        $('#searchBar .search-ctrl').addClass('clsp');
+
+        setTimeout(function () {
+            $('#searchBar .search-ctrl').addClass('hidden');
+        }, 300);
+    };
 
 })();

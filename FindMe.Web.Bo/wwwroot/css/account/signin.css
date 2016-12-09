@@ -22,7 +22,3 @@
         transform: scale(0.98);
         transition: transform ease-in-out 100ms;
     }
-
-    .check-box.remember {
-        margin-left: 15px;
-    }

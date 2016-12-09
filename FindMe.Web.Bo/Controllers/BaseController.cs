@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Swapp.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,6 +131,31 @@ namespace FindMe.Web.App
             {
                 _repo.ChangeAccessToken -= Reader_ChangeAccessToken;
             }
+        }
+
+        protected BadRequestObjectResult BadRequestEx(Exception ex)
+        {
+            if (ex == null) return BadRequest(null);
+
+
+            int id = -1;
+
+            if (ex is ExceptionID)
+            {
+                id = (int)((ExceptionID)ex).ErrorID;
+                this.LogError(ex);
+            }
+            else
+            {
+                this.LogCritical(ex);
+            }
+
+            return BadRequest(
+                        new
+                        {
+                            msg = this.GetMessage("ErMsg_SmthngWntWrng"),
+                            id = id
+                        });
         }
 
 

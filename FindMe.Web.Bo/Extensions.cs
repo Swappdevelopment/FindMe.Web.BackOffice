@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -99,6 +100,64 @@ namespace FindMe.Web.App
             fullName = htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.USER_FULL_NAME}"];
 
             return !string.IsNullOrEmpty(htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.ACCESS_TOKEN_KEY}"]);
+        }
+
+
+        public static string GetLabel(this IHtmlHelper htmlHelper, string key)
+        {
+            return ResourceMngr.GetLabel(key, htmlHelper);
+        }
+        public static string GetMessage(this IHtmlHelper htmlHelper, string key)
+        {
+            return ResourceMngr.GetMessage(key, htmlHelper);
+        }
+
+        public static string GetLabel(this Controller controller, string key)
+        {
+            return ResourceMngr.GetLabel(key, controller);
+        }
+        public static string GetMessage(this Controller controller, string key)
+        {
+            return ResourceMngr.GetMessage(key, controller);
+        }
+
+
+        public static IHtmlContent ToJSonHtmlString(this IHtmlHelper htmlHelper, object value)
+        {
+            if (htmlHelper == null)
+                throw new NullReferenceException();
+
+
+            if (value == null)
+                return new HtmlString("");
+
+            if (!(value is string))
+            {
+                value = Helper.JSonSerializeObject(value);
+            }
+
+            string result = (string)value;
+
+            if (result.Length > 1)
+            {
+                if(result.StartsWith("\""))
+                {
+                    result = result.Substring(1, result.Length - 1);
+                }
+
+                if (result.Length > 1)
+                {
+                    if (result.EndsWith("\""))
+                    {
+                        result = result.Substring(0, result.Length - 1);
+                    }
+                }
+
+                //result = result.Replace("\"", "'");
+            }
+
+
+            return htmlHelper.Raw(result);
         }
 
 

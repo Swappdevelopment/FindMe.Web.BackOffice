@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
+using Swapp.Data;
 
 namespace FindMe.Web.App
 {
@@ -25,7 +26,12 @@ namespace FindMe.Web.App
         {
             services.AddSingleton(Configuration);
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Converters.Add(new SwpDateTimeConverter());
+                });
 
             services.AddDbContext<AppDbContext>();
             services.AddSingleton<WebDbRepository>();

@@ -82,6 +82,7 @@
         transition: padding-left ease-in 300ms;
     }
 
+
 #sideBar .sb-lbls.bs-small-res {
     left: -160px;
     transition: left ease-in 300ms;
@@ -170,7 +171,31 @@
         transition: opacity ease-in-out 300ms;
     }
 
-    #searchBar .search-ctrl.clsp {
-        opacity: 0;
-        transition: opacity ease-in-out 300ms;
+        #searchBar .search-ctrl.clsp {
+            opacity: 0;
+            transition: opacity ease-in-out 300ms;
+        }
+
+
+    #searchBar .tb {
+        padding-top: 12px;
+        margin-bottom: 15px;
+    }
+
+        #searchBar .tb .btn.btn-tb {
+            margin-right: 8px;
+            background-color: #E20E53;
+            color: #FECC00;
+        }
+
+#wrapper .main-ctrlr {
+    padding: 15px 10px 5px 20px;
+}
+
+    #wrapper .main-ctrlr.bs-small-res {
+        padding-top: 35px;
+    }
+
+    #wrapper .main-ctrlr .title-bar {
+        padding-bottom: 15px;
     }
