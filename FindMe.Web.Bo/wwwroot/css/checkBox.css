@@ -37,7 +37,8 @@
         transform: rotate(-45deg);
     }
 
-    .check-box:hover:not([disabled]) > label.lbl-chkb { 
+    .check-box:hover:not([disabled]) > label.lbl-chkb,
+    .check-box input[type=checkbox]:focus:not([disabled]) + label.lbl-chkb {
         box-shadow: inset 1px 1px 1px #f6b3c9, 1px 1px 5px rgba(226, 14, 83, 0.55);
     }
 

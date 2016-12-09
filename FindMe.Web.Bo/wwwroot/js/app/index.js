@@ -36,6 +36,11 @@
     var iCount = $liIcons.length;
     var lCount = $liLbls.length;
 
+    var removeActive = function () {
+        $(this).removeClass('active');
+        $(this).find('a').removeClass('active');
+    };
+
     if (iCount == lCount) {
 
         var handle = function ($liTarget, $liTargets, $liItems, type) {
@@ -111,6 +116,20 @@
     };
 
     $('#searchBar span.input-bg input').on('focusin focusout', searchFocusChanged);
+
+
+
+    var btnProfileClick = function () {
+
+        $liIcons.each(removeActive);
+        $liLbls.each(removeActive);
+
+        var url = window.location.origin + '/#/profile';
+
+        window.location.replace(url);
+    };
+
+    $('#profile').on('click', btnProfileClick);
 
 })();
 

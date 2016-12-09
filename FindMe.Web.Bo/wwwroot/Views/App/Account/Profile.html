@@ -2,46 +2,67 @@
 
 <div class="row container-fluid">
 
-    <form name="userProfileForm" ng-submit="vm.SaveProfile()" novalidate>
+    <div class="alert alert-warning" ng-show="vm.errormsg">
+        <h4 ng-show="vm.errorstatus">{{ vm.errorstatus }}</h4>
+        <p>{{ vm.errormsg }}</p>
+    </div>
+
+    <form novalidate name="userProfileForm" ng-submit="vm.manageProfile(vm.profile)">
+
+        <input type="submit" class="hidden" />
 
         <div class="col-md-6 col-sm-12">
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="email">{{vm.appProps.lbl_Email}}</label>
-                <input type="email" class="form-control" name="email" ng-model="vm.email" />
+                <div ng-show="vm.profile.emailLocked">
+                    <label class="findme-lbl pink">{{vm.profile.email}}</label>
+                </div>
+                <input type="email" class="form-control" name="email" ng-model="vm.profile.email" ng-disabled="vm.profile.emailLocked" />
                 <span class="text-warning" ng-show="userProfileForm.email.$touched && userProfileForm.email.$invalid">{{vm.appProps.erMsg_InvldEmail}}</span>
             </div>
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="userName">{{vm.appProps.lbl_Usrnm}}</label>
-                <input type="text" class="form-control" name="userName" ng-model="vm.userName" />
+                <input type="text" class="form-control" name="userName" ng-model="vm.profile.userName" />
             </div>
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="fName">{{vm.appProps.lbl_FName}}</label>
-                <input type="text" class="form-control" name="fName" ng-model="vm.fName" />
+                <input type="text" class="form-control" name="fName" ng-model="vm.profile.fName" />
             </div>
 
         </div>
+
 
         <div class="col-md-6 col-sm-12">
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="lName">{{vm.appProps.lbl_LName}}</label>
-                <input type="text" class="form-control" name="lName" ng-model="vm.lName" />
+                <input type="text" class="form-control" name="lName" ng-model="vm.profile.lName" />
             </div>
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="contactNumber">{{vm.appProps.lbl_CntctNm}}</label>
-                <input type="text" class="form-control" name="contactNumber" ng-model="vm.contactNumber" />
+                <input type="text" class="form-control" name="contactNumber" ng-model="vm.profile.contactNumber" />
             </div>
 
             <div class="form-group">
-                <label class="findme-color-fc-dark" for="lockoutEnabled">{{vm.appProps.lbl_LckOut}}</label>
-                <input type="text" class="form-control" name="lockoutEnabled" ng-model="vm.lockoutEnabled" />
+                <!--<label class="findme-color-fc-dark" for="lockoutEnabled">{{vm.appProps.lbl_LckOut}}</label>
+                <input type="text" class="form-control" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />-->
+
+                <span class="check-box lockoutEnabled col-lg-4 col-md-12">
+                    <input type="checkbox" value="None" id="lockoutEnabled" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />
+                    <label class="lbl-chkb" for="lockoutEnabled"></label>
+
+                    <label id="lockoutEnabled" class="findme-color-fc-dark" for="lockoutEnabled">
+                        &nbsp;{{vm.appProps.lbl_LckOut}}
+                    </label>
+                </span>
             </div>
 
         </div>
+
     </form>
 
 </div>

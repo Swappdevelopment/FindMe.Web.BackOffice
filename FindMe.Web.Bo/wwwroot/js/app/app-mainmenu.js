@@ -46,7 +46,7 @@
            })
         .service('headerConfigService', function () {
 
-            var optns;
+            var optns = {};
 
             var reset = function () {
                 optns.title = '';
@@ -55,6 +55,11 @@
                 optns.showRefreshBtn = true;
                 optns.showAddBtn = true;
                 optns.showSaveBtn = true;
+                optns.refreshBtnTltp = '';
+                optns.addBtnTltp = '';
+                optns.saveBtnTltp = '';
+
+                optns.tbBtnClickCallback = null;
             };
 
             optns = {
@@ -64,7 +69,11 @@
                 showToolBar: false,
                 showRefreshBtn: true,
                 showAddBtn: true,
-                showSaveBtn: true
+                showSaveBtn: true,
+                refreshBtnTltp: '',
+                addBtnTltp: '',
+                saveBtnTltp: '',
+                tbBtnClickCallback: null
             };
 
             return optns;

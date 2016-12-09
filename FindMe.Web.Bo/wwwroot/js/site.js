@@ -13,6 +13,8 @@ $(document).ready(function () {
 
         window.location.replace(globalOptns.signOutUrl);
     });
+
+    $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 });
 
 

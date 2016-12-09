@@ -1,0 +1,95 @@
+﻿
+#searchBar {
+    height: 65px;
+}
+
+    #searchBar .btn.btn-burger {
+        display: inline;
+        outline: 0;
+        margin: 10px 0 0 8px;
+        padding: 8px 10px 5px 10px;
+        border-radius: 15px;
+    }
+
+    #searchBar span.input-bg {
+        display: inline-block;
+        padding: 2px 10px;
+        background-color: white;
+        height: 38px;
+        max-width: 400px;
+        width: 50%;
+        margin: 0 0 0 8px;
+        transform: translateY(4px);
+        border-radius: 3px;
+        transition: all ease-out 250ms;
+    }
+
+        #searchBar span.input-bg.focus {
+            -webkit-box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            -moz-box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            box-shadow: 0px 0px 10px 1px rgba(28,118,214,0.6);
+            transition: all ease-out 250ms;
+        }
+
+        #searchBar span.input-bg input {
+            display: inline;
+            border-width: 0;
+            max-width: 100%;
+            width: 100%;
+            outline: 0;
+            transform: translateY(4px);
+        }
+
+    #searchBar button.btn.btn-search {
+        position: absolute;
+        height: 50px;
+        width: 50px;
+        transform: translate(-11px, 6px);
+        outline: 0;
+        border-width: 0;
+        border-radius: 50%;
+    }
+
+        #searchBar button.btn.btn-search span {
+            margin-left: -2px;
+        }
+
+
+    #searchBar .search-ctrl,
+    #searchBar .tb,
+    #searchBar .tb .btn-tb.refresh,
+    #searchBar .tb .btn-tb.add,
+    #searchBar .tb .btn-tb.save {
+        opacity: 1;
+        transition: opacity ease-in-out 300ms;
+        -webkit-transition: opacity ease-in-out 300ms;
+    }
+
+        #searchBar .search-ctrl.clsp,
+        #searchBar .tb.clsp,
+        #searchBar .tb .btn-tb.refresh.clsp,
+        #searchBar .tb .btn-tb.add.clsp,
+        #searchBar .tb .btn-tb.save.clsp {
+            opacity: 0;
+            transition: opacity ease-in-out 300ms;
+            -webkit-transition: opacity ease-in-out 300ms;
+        }
+
+
+    #searchBar .tb {
+        padding-top: 12px;
+        margin-bottom: 15px;
+    }
+
+        #searchBar .tb .btn.btn-tb {
+            outline: 0;
+            margin-right: 8px;
+            background-color: #1a1a1a;
+            color: #EDF1F8;
+            transition: color ease-in 200ms;
+        }
+
+            #searchBar .tb .btn.btn-tb:hover {
+                color: #FECC00;
+                transition: color ease-in 200ms;
+            }

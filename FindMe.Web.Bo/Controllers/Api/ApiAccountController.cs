@@ -72,7 +72,7 @@ namespace FindMe.Web.App
 
 
         [HttpPost]
-        public async Task<IActionResult> GetProfile([FromBody]dynamic profile = null)
+        public async Task<IActionResult> ManageProfile([FromBody]dynamic profile = null)
         {
             object result = null;
             object error = null;
@@ -81,7 +81,7 @@ namespace FindMe.Web.App
             {
                 if (profile != null)
                 {
-
+                    await _repo.Execute("UpdateTokenUserProfile", profile);
                 }
 
                 result = await _repo.Execute("GetTokenUserProfile");

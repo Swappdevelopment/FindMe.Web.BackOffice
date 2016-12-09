@@ -1,0 +1,41 @@
+﻿
+#wrapper {
+    width: 100%;
+    padding-left: 200px;
+    transition: padding-left ease-in 300ms;
+}
+
+    #wrapper #mainVw {
+        padding-top: 60px;
+    }
+
+    #wrapper.bs-small-res {
+        padding-left: 40px;
+        transition: padding-left ease-in 300ms;
+    }
+
+
+        #wrapper.bs-small-res.hide-lbls {
+            padding-left: 0;
+            transition: padding-left ease-in 300ms;
+        }
+
+
+    #wrapper.hide-lbls:not(.bs-small-res) {
+        padding-left: 40px;
+        transition: padding-left ease-in 300ms;
+    }
+
+
+
+    #wrapper .main-ctrlr {
+        padding: 15px 10px 5px 20px;
+    }
+
+        #wrapper .main-ctrlr.bs-small-res {
+            padding-top: 35px;
+        }
+
+        #wrapper .main-ctrlr .title-bar {
+            padding-bottom: 15px;
+        }

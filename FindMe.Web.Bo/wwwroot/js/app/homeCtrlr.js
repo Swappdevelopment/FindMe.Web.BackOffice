@@ -15,12 +15,4 @@
         vm.title = "TESTING";
     }
 
-
-    $('#profile').on('click', function () {
-
-        var url = window.location.origin + '/#/profile';
-
-        window.location.replace(url);
-    });
-
 })();

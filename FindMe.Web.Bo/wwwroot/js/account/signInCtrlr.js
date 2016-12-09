@@ -59,8 +59,8 @@
             if (error) {
 
                 vm.errorstatus = error.status + ' - ' + error.statusText;
-                vm.errormsg = error.data;
-                vm.errorid = 0;
+                vm.errormsg = error.data.msg;
+                vm.errorid = error.data.id;
 
                 vm.obj.password = '';
             }
