@@ -13,8 +13,9 @@ namespace FindMe.Web.App
         public ApiAccountController(
             IConfigurationRoot config,
             WebDbRepository repo,
-            ILogger<ApiAccountController> logger)
-            : base(config, repo, null, logger)
+            ILogger<ApiAccountController> logger,
+            IMailService mailService)
+            : base(config, repo, null, logger, mailService)
         {
         }
 
@@ -85,6 +86,23 @@ namespace FindMe.Web.App
                 }
 
                 result = await _repo.Execute("GetTokenUserProfile");
+            }
+            catch (ExceptionID ex)
+            {
+                string msg = null;
+
+                switch (ex.ErrorID)
+                {
+                    case MessageIdentifier.USERNAME_ALREADY_USED:
+                        msg = this.GetMessage("Msg_UsrnmAlrdUsed");
+                        break;
+
+                    case MessageIdentifier.USER_EMAIL_ALREADY_USED:
+                        msg = this.GetMessage("Msg_EmailAlrdUsed");
+                        break;
+                }
+
+                return BadRequestEx(ex, msg);
             }
             catch (Exception ex)
             {

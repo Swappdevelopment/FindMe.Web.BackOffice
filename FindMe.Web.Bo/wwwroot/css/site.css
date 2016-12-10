@@ -84,6 +84,7 @@ textarea {
 .findme-lbl {
     color: #1a1a1a;
     /*border: 1px solid black;*/
+    font-size: 16px;
     border-radius: 5px;
     padding: 2px 8px;
     min-width: 280px;

@@ -16,7 +16,7 @@
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/themes/paper/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/lib/fontawesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
         <link rel="stylesheet" href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" />
         <link rel="stylesheet" href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" />
         <link rel="stylesheet" href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" />
@@ -31,6 +31,8 @@
         <link rel="stylesheet" href="http://bootswatch.com/paper/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/themes/paper/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
 
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/checkBox.min.css" asp-append-version="true" />

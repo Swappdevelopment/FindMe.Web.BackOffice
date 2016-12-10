@@ -18,7 +18,7 @@
                 <div ng-show="vm.profile.emailLocked">
                     <label class="findme-lbl pink">{{vm.profile.email}}</label>
                 </div>
-                <input type="email" class="form-control" name="email" ng-model="vm.profile.email" ng-disabled="vm.profile.emailLocked" />
+                <input type="email" class="form-control" name="email" ng-model="vm.profile.email" ng-hide="vm.profile.emailLocked" />
                 <span class="text-warning" ng-show="userProfileForm.email.$touched && userProfileForm.email.$invalid">{{vm.appProps.erMsg_InvldEmail}}</span>
             </div>
 
@@ -51,14 +51,14 @@
                 <!--<label class="findme-color-fc-dark" for="lockoutEnabled">{{vm.appProps.lbl_LckOut}}</label>
                 <input type="text" class="form-control" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />-->
 
-                <span class="check-box lockoutEnabled col-lg-4 col-md-12">
+                <!--<span class="check-box lockoutEnabled col-lg-4 col-md-12">
                     <input type="checkbox" value="None" id="lockoutEnabled" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />
                     <label class="lbl-chkb" for="lockoutEnabled"></label>
 
                     <label id="lockoutEnabled" class="findme-color-fc-dark" for="lockoutEnabled">
                         &nbsp;{{vm.appProps.lbl_LckOut}}
                     </label>
-                </span>
+                </span>-->
             </div>
 
         </div>

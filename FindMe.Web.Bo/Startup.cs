@@ -10,8 +10,12 @@ namespace FindMe.Web.App
 {
     public class Startup
     {
+        private IHostingEnvironment _env;
+
         public Startup(IHostingEnvironment env)
         {
+            _env = env;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -32,6 +36,15 @@ namespace FindMe.Web.App
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.Converters.Add(new SwpDateTimeConverter());
                 });
+
+            if (_env.IsDevelopment())
+            {
+                services.AddTransient<IMailService, DevMailService>();
+            }
+            else
+            {
+                services.AddTransient<IMailService, MailService>();
+            }
 
             services.AddDbContext<AppDbContext>();
             services.AddSingleton<WebDbRepository>();

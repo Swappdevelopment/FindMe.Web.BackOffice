@@ -35,7 +35,8 @@ namespace FindMe.Web.App
             IConfigurationRoot config
             , WebDbRepository repo
             , IHostingEnvironment env
-            , ILogger logger)
+            , ILogger logger
+            , IMailService mailService)
             : base()
         {
             _config = config;
@@ -133,7 +134,7 @@ namespace FindMe.Web.App
             }
         }
 
-        protected BadRequestObjectResult BadRequestEx(Exception ex)
+        protected BadRequestObjectResult BadRequestEx(Exception ex, string message = null)
         {
             if (ex == null) return BadRequest(null);
 
@@ -150,16 +151,18 @@ namespace FindMe.Web.App
                 this.LogCritical(ex);
             }
 
+            message = string.IsNullOrEmpty(message) ? this.GetMessage("ErMsg_SmthngWntWrng") : message;
+
             return BadRequest(
                         new
                         {
-                            msg = this.GetMessage("ErMsg_SmthngWntWrng"),
+                            msg = message,
                             id = id
                         });
         }
 
 
-        public void LogCritical(Exception ex, bool withStackTrace = true, string description = "")
+        public void LogCritical(Exception ex, bool withStackTrace = false, string description = "")
         {
             if (_logger != null
                 && _repo != null)
@@ -167,7 +170,7 @@ namespace FindMe.Web.App
                 _logger.LogCriticalEx(ex, _repo, withStackTrace, description);
             }
         }
-        public void LogError(Exception ex, bool withStackTrace = true, string description = "")
+        public void LogError(Exception ex, bool withStackTrace = false, string description = "")
         {
             if (_logger != null
                 && _repo != null)

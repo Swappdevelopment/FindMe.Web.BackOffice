@@ -31,6 +31,7 @@
             lName: '',
             email: '',
             emailLocked: false,
+            emailToVal: '',
             userName: '',
             userNameLocked: false,
             contactNumber: '',
@@ -39,7 +40,6 @@
             emailConfirmed: false,
             lockoutEnabled: false,
         };
-
 
 
         var successFunc = function (resp) {
@@ -51,6 +51,7 @@
                 vm.profile.lName = resp.data.result.lName;
                 vm.profile.email = resp.data.result.email;
                 vm.profile.emailLocked = resp.data.result.emailLocked;
+                vm.profile.emailToVal = resp.data.result.emailToVal;
                 vm.profile.userName = resp.data.result.userName;
                 vm.profile.userNameLocked = resp.data.result.userNameLocked;
                 vm.profile.contactNumber = resp.data.result.contactNumber;

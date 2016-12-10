@@ -44,7 +44,7 @@ namespace FindMe.Web.App
             this ILogger logger,
             Exception exception,
             WebDbRepository repo,
-            bool withStackTrace = true,
+            bool withStackTrace = false,
             string description = "")
         {
             logger.LogEx(LogLevel.Critical, exception, repo, withStackTrace, description);
@@ -54,7 +54,7 @@ namespace FindMe.Web.App
             this ILogger logger,
             Exception exception,
             WebDbRepository repo,
-            bool withStackTrace = true,
+            bool withStackTrace = false,
             string description = "")
         {
             logger.LogEx(LogLevel.Error, exception, repo, withStackTrace, description);
@@ -65,7 +65,7 @@ namespace FindMe.Web.App
             LogLevel logLevel,
             Exception exception,
             WebDbRepository repo,
-            bool withStackTrace = true,
+            bool withStackTrace = false,
             string description = "")
         {
             logger.Log(

@@ -9,7 +9,7 @@ namespace FindMe.Web.App
         public AppController(
             IConfigurationRoot config,
             IHostingEnvironment env)
-            : base(config, null, env, null)
+            : base(config, null, env, null, null)
         {
         }
 

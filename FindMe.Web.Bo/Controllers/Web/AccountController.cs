@@ -11,7 +11,7 @@ namespace FindMe.Web.App
             IConfigurationRoot config,
             WebDbRepository repo,
             IHostingEnvironment env)
-            : base(config, repo, env, null)
+            : base(config, repo, env, null, null)
         {
         }
 

@@ -26,10 +26,10 @@
     "Swapp.Data": "1.0.0-*",
     "Swapp.Data.Db": "1.0.0-*",
     "Microsoft.EntityFrameworkCore.Design": "1.1.0",
-    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0",
     "FindMe.Data": "1.0.0-*",
-    "FindMe.Data.Db": "1.0.0-*"
-    //"Microsoft.AspNet.Mvc.Abstractions": "6.0.0-rc1-final"
+    "FindMe.Data.Db": "1.0.0-*",
+    "MailKit": "1.10.1",
+    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.1.0"
   },
 
   "tools": {
