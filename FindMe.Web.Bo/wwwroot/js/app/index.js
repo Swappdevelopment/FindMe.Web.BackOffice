@@ -119,17 +119,17 @@
 
 
 
-    var btnProfileClick = function () {
+    //var btnProfileClick = function () {
 
-        $liIcons.each(removeActive);
-        $liLbls.each(removeActive);
+    //    $liIcons.each(removeActive);
+    //    $liLbls.each(removeActive);
 
-        var url = window.location.origin + '/#/profile';
+    //    var url = window.location.origin + '/#/profile';
 
-        window.location.replace(url);
-    };
+    //    window.location.replace(url);
+    //};
 
-    $('#profile').on('click', btnProfileClick);
+    //$('#profile').on('click', btnProfileClick);
 
 })();
 

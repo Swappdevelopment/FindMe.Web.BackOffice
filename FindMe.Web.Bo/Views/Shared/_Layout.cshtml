@@ -11,25 +11,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <base href="/">
+
     <title>@ViewBag.Title - @Html.GetLabel("Lbl_AppName") B.O</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/lib/bootstrap/themes/paper/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/wait.css", (string)ViewBag.WebRootPath)" />
+        <link href="~/lib/boostrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/lib/bootstrap-themes/bootstrap-paper.min.css" rel="stylesheet" />
+        <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
+        <link href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
+        <link href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
+        <link href="@Url.GetResPath("~/css/wait.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
     </environment>
 
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
 
-        <link rel="stylesheet" href="http://bootswatch.com/paper/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/themes/paper/bootstrap.min.css"
+        <link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap-themes/bootstrap-paper.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
 
         <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
@@ -74,23 +77,23 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
 
-                    @if (hasAccess)
-                    {
+                    @*@if (hasAccess)
+                    {*@
                         <li class="cursor-pointer">
                             <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@Html.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", Html.GetLabel("Lbl_NoNm"))<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a id="profile">@Html.GetLabel("Lbl_Profile")</a></li>
+                                <li><a href="#!/profile">@Html.GetLabel("Lbl_Profile")</a></li>
                                 <li class="divider"></li>
                                 <li><a id="signOut">@Html.GetLabel("Lbl_SignOut")</a></li>
                             </ul>
                         </li>
-                    }
+                    @*}
                     else
                     {
                         <li class="cursor-pointer">
                             <a class="findme-color-fc-white" asp-controller="Account" asp-action="SignIn">Sign In</a>
                         </li>
-                    }
+                    }*@
                 </ul>
             </div>
         </div>
@@ -113,19 +116,20 @@
         </div>
     </div>
 
+    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
     <environment names="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
         <script src="@Url.GetResPath("~/js/site.js", (string)ViewBag.WebRootPath)" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.3.min.js"
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.1.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery">
         </script>
 
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
         </script>
 

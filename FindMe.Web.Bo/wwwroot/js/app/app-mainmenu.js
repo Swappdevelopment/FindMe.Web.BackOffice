@@ -5,7 +5,7 @@
 
     //Creating the module
     angular.module('app-mainmenu', ['ngRoute'])
-           .config(function ($routeProvider) {
+           .config(function ($routeProvider, $locationProvider) {
 
                $routeProvider.when('/', {
                    controller: 'homeCtrlr',
@@ -43,6 +43,8 @@
                });
 
                $routeProvider.otherwise({ redirecTo: '/' });
+
+               //$locationProvider.html5Mode(true);
            })
         .service('headerConfigService', function () {
 

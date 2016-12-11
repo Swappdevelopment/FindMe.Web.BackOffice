@@ -32,6 +32,7 @@
             email: '',
             emailLocked: false,
             emailToVal: '',
+            emailToValToken: '',
             userName: '',
             userNameLocked: false,
             contactNumber: '',
@@ -52,6 +53,7 @@
                 vm.profile.email = resp.data.result.email;
                 vm.profile.emailLocked = resp.data.result.emailLocked;
                 vm.profile.emailToVal = resp.data.result.emailToVal;
+                vm.profile.emailToValToken = resp.data.result.emailToValToken;
                 vm.profile.userName = resp.data.result.userName;
                 vm.profile.userNameLocked = resp.data.result.userNameLocked;
                 vm.profile.contactNumber = resp.data.result.contactNumber;

@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -110,6 +113,59 @@ namespace FindMe.Web.App
             }
 
             return Ok(new { result = result, error = error, date = DateTime.Now });
+        }
+
+
+        private async Task<string> GetCountriesDotIso()
+        {
+            HttpClient hClient = null;
+
+            string sNames, sIso3s, sCapitals, sPhones, sCurrencies;
+
+            JObject names, iso3s, capitals, phones, currencies;
+
+            try
+            {
+                hClient = new HttpClient();
+
+                sNames = await hClient.GetStringAsync("http://country.io/names.json");
+                sIso3s = await hClient.GetStringAsync("http://country.io/iso3.json");
+                sCapitals = await hClient.GetStringAsync("http://country.io/capital.json");
+                sPhones = await hClient.GetStringAsync("http://country.io/phone.json");
+                sCurrencies = await hClient.GetStringAsync("http://country.io/currency.json");
+
+                names = Helper.JSonDeserializeObject<JObject>(sNames);
+                iso3s = Helper.JSonDeserializeObject<JObject>(sIso3s);
+                capitals = Helper.JSonDeserializeObject<JObject>(sCapitals);
+                phones = Helper.JSonDeserializeObject<JObject>(sPhones);
+                currencies = Helper.JSonDeserializeObject<JObject>(sCurrencies);
+
+                var results = (from jp in names.OfType<JProperty>()
+                               select new
+                               {
+                                   code = jp.Name,
+                                   name = names.JGetPropVal<string>(jp.Name),
+                                   iso3 = iso3s.JGetPropVal<string>(jp.Name),
+                                   capital = capitals.JGetPropVal<string>(jp.Name),
+                                   phoneCode = phones.JGetPropVal<string>(jp.Name),
+                                   currency = currencies.JGetPropVal<string>(jp.Name),
+                               });
+
+
+                return Helper.JSonSerializeObject(results);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                if (hClient != null)
+                {
+                    hClient.Dispose();
+                    hClient = null;
+                }
+            }
         }
 
 
