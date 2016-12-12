@@ -1,0 +1,12 @@
+﻿
+@model bool
+
+
+@if (Model)
+{
+    <h1>@Html.GetMessage("Msg_EmailSccssValtd")</h1>
+}
+else
+{
+    <h1>@Html.GetMessage("Msg_InvldResend")</h1>
+}

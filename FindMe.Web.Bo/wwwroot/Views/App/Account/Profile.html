@@ -15,10 +15,25 @@
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="email">{{vm.appProps.lbl_Email}}</label>
+                <label class="findme-color-fc-dark" for="email" ng-show="vm.profile.emailToVal">&nbsp;&nbsp;&nbsp;({{vm.appProps.msg_WtngEmailCnfrmtn}})</label>
                 <div ng-show="vm.profile.emailLocked">
                     <label class="findme-lbl pink">{{vm.profile.email}}</label>
                 </div>
-                <input type="email" class="form-control" name="email" ng-model="vm.profile.email" ng-hide="vm.profile.emailLocked" />
+                <div ng-show="vm.profile.emailToVal">
+                    <label class="findme-lbl bg-warning">{{vm.profile.emailToVal}}</label>
+                    <span>
+                        <button type="button" class="btn btn-danger btn-sm btn-email cancel" ng-disabled="vm.cancelingEmail" ng-hide="vm.resendingEmail" ng-click="vm.cancelEmail()"
+                                title="{{vm.appProps.lbl_CnclCnfrmtn}}">
+                            <span class="fa fa-times" ng-hide="vm.cancelingEmail"></span>
+                            <span class="fa fa-circle-o-notch fa-spin" ng-show="vm.cancelingEmail"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm btn-email resend" ng-disabled="vm.resendingEmail" ng-hide="vm.cancelingEmail" ng-click="vm.resendEmail()">
+                            <span ng-hide="vm.resendingEmail"> <span class="fa fa-mail-forward"></span> <b>{{vm.appProps.lbl_ReSnd}}</b></span>
+                            <span class="fa fa-circle-o-notch fa-spin" ng-show="vm.resendingEmail"></span>
+                        </button>
+                    </span>
+                </div>
+                <input type="email" class="form-control" name="email" ng-model="vm.profile.email" ng-hide="vm.profile.emailLocked || vm.profile.emailToVal" />
                 <span class="text-warning" ng-show="userProfileForm.email.$touched && userProfileForm.email.$invalid">{{vm.appProps.erMsg_InvldEmail}}</span>
             </div>
 
@@ -45,20 +60,6 @@
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="contactNumber">{{vm.appProps.lbl_CntctNm}}</label>
                 <input type="text" class="form-control" name="contactNumber" ng-model="vm.profile.contactNumber" />
-            </div>
-
-            <div class="form-group">
-                <!--<label class="findme-color-fc-dark" for="lockoutEnabled">{{vm.appProps.lbl_LckOut}}</label>
-                <input type="text" class="form-control" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />-->
-
-                <!--<span class="check-box lockoutEnabled col-lg-4 col-md-12">
-                    <input type="checkbox" value="None" id="lockoutEnabled" name="lockoutEnabled" ng-model="vm.profile.lockoutEnabled" />
-                    <label class="lbl-chkb" for="lockoutEnabled"></label>
-
-                    <label id="lockoutEnabled" class="findme-color-fc-dark" for="lockoutEnabled">
-                        &nbsp;{{vm.appProps.lbl_LckOut}}
-                    </label>
-                </span>-->
             </div>
 
         </div>

@@ -141,7 +141,10 @@
         globalOptns = {
             refreshTokenDeadID: @((int)Swapp.Data.MessageIdentifier.REFRESH_CONNECTION_TOKEN_EXPIRED),
             signInUrl: '@Url.Action("SignIn", "Account")',
-            signOutUrl: '@Url.Action("SignOut", "Account")'
+            signOutUrl: '@Url.Action("SignOut", "Account")',
+
+            lbl_HelloNm: '@Html.GetLabel("Lbl_HelloNm")',
+            lbl_NoNm: '@Html.GetLabel("Lbl_NoNm")'
         };
 
     </script>

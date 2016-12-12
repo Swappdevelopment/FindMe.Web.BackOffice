@@ -10,6 +10,9 @@
 
     function profileCtrlrFunc($http, appProps, headerConfigService) {
 
+        $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
+
+
         headerConfigService.reset();
         headerConfigService.title = appProps.lbl_Prfl;
         headerConfigService.showToolBar = true;
@@ -42,6 +45,9 @@
             lockoutEnabled: false,
         };
 
+        vm.cancelingEmail = false;
+        vm.resendingEmail = false;
+
 
         var successFunc = function (resp) {
 
@@ -61,6 +67,13 @@
                 vm.profile.accessFailedCount = resp.data.result.accessFailedCount;
                 vm.profile.emailConfirmed = resp.data.result.emailConfirmed;
                 vm.profile.lockoutEnabled = resp.data.result.lockoutEnabled;
+
+                if (resp.data.fn) {
+
+                    var fn = globalOptns.lbl_HelloNm.replace('{0}', resp.data.fn).replace('{1}', globalOptns.lbl_NoNm);
+
+                    $('#topbar .container .navbar-right a.dropdown-toggle').text(fn);
+                }
             }
         };
 
@@ -92,10 +105,62 @@
 
             toggleGlblWaitVisibility(true);
 
-            $http.post(appProps.urlMngProfile, data)
+            $http.post(appProps.urlMngProfile, { profile: data })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
+
+
+        vm.cancelEmail = function () {
+
+            vm.cancelingEmail = true;
+
+            var scsFunc = function (resp) {
+
+                vm.profile.emailLocked = false;
+                vm.profile.emailToVal = '';
+                vm.profile.emailToValToken = '';
+            };
+
+            var finFunc = function (resp) {
+
+                vm.cancelingEmail = false;
+            };
+
+            $http.post(appProps.urlMngProfile, {
+                profile: null,
+                action: 'cancelemailconfirmation',
+                skipGet: true
+            })
+            .then(scsFunc, errorFunc)
+            .finally(finFunc);
+        };
+
+        vm.resendEmail = function () {
+
+            vm.resendingEmail = true;
+
+            var scsFunc = function (resp) {
+            };
+
+            var finFunc = function (resp) {
+
+                vm.resendingEmail = false;
+            };
+
+            $http.post(appProps.urlMngProfile, {
+                profile: {
+                    emailToVal: vm.profile.emailToVal,
+                    emailToValToken: vm.profile.emailToValToken,
+                },
+                action: 'resendemailconfirmation',
+                skipGet: true
+            })
+            .then(scsFunc, errorFunc)
+            .finally(finFunc);
+
+        };
+
 
         var buttonClick = function (tag) {
             switch (tag) {
@@ -109,6 +174,7 @@
                     break;
             }
         };
+
 
         headerConfigService.tbBtnClickCallback = buttonClick;
 

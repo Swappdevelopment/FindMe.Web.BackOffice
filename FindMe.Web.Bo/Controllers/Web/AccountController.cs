@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -44,6 +45,24 @@ namespace FindMe.Web.App
             this.RemoveSignedCookies();
 
             return RedirectToAction("SignIn", "Account");
+        }
+
+
+        public async Task<IActionResult> ValidateEmail(string id = null)
+        {
+            bool success = true;
+
+            try
+            {
+                await _repo.Execute("ValidateEmailTokenExists", id);
+            }
+            catch (Exception ex)
+            {
+                this.LogCritical(ex);
+                success = false;
+            }
+
+            return View(success);
         }
 
 

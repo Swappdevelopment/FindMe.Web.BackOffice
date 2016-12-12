@@ -76,19 +76,67 @@ namespace FindMe.Web.App
 
 
         [HttpPost]
-        public async Task<IActionResult> ManageProfile([FromBody]dynamic profile = null)
+        public async Task<IActionResult> ManageProfile([FromBody]dynamic param = null)
         {
             object result = null;
             object error = null;
 
+            string fullName = null;
+
+            string action = null;
+
+            bool? skipGet = false;
+
+            dynamic profile = null;
+
             try
             {
-                if (profile != null)
+                profile = param.profile;
+                action = param.action;
+                skipGet = param.skipGet;
+
+                switch (action == null ? "" : action.ToLower())
                 {
-                    await _repo.Execute("UpdateTokenUserProfile", profile);
+                    case "cancelemailconfirmation":
+                        await _repo.Execute("CancelUserEmailConfirmation");
+                        break;
+
+                    case "resendemailconfirmation":
+
+                        string link = Url.Action("ValidateEmail", "Account") + profile.emailToValToken.ToString();
+
+
+                        string message = "This Email as sent to verify that the Email you are associating with your Find Me Back Office Application is valid." +
+                                         "\r\nClick on the following link, or copy and paste in to your favorite browser's address bar, to complete the verification process.\r\n\r\n" +
+                                         link;
+
+
+                        await _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("Lbl_FndMeBoValEmail"), message);
+                        break;
+
+                    default:
+                        action = null;
+                        if (profile != null)
+                        {
+                            fullName = await _repo.Execute<string>("UpdateTokenUserProfile", profile);
+                        }
+                        break;
                 }
 
-                result = await _repo.Execute("GetTokenUserProfile");
+                if (skipGet != true)
+                {
+                    result = await _repo.Execute("GetTokenUserProfile");
+                }
+
+                if (profile != null
+                    && string.IsNullOrEmpty(action))
+                {
+                    string str = this.GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_EXP_DATE_KEY}");
+
+                    DateTime? expDate = string.IsNullOrEmpty(str) ? null : new DateTime?(str.FromISOFormat());
+
+                    this.AddCookie($"{TOKENS_KEY}:{USER_FULL_NAME}", fullName, expDate);
+                }
             }
             catch (ExceptionID ex)
             {
@@ -112,7 +160,7 @@ namespace FindMe.Web.App
                 return BadRequestEx(ex);
             }
 
-            return Ok(new { result = result, error = error, date = DateTime.Now });
+            return Ok(new { result = result, error = error, date = DateTime.Now, fn = fullName });
         }
 
 

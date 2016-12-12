@@ -26,8 +26,9 @@ namespace FindMe.Web.App
 
         protected IConfigurationRoot _config;
         protected WebDbRepository _repo;
-        private IHostingEnvironment _env;
+        protected IHostingEnvironment _env;
         protected ILogger _logger;
+        protected IMailService _mailService;
 
         protected string _checkedAccessToken;
 
@@ -42,6 +43,7 @@ namespace FindMe.Web.App
             _config = config;
             _repo = repo;
             _env = env;
+            _mailService = mailService;
 
             _logger = logger;
 
@@ -281,6 +283,8 @@ namespace FindMe.Web.App
             bool remember,
             string fullName)
         {
+            DateTime? now = remember ? new DateTime?(DateTime.Now.AddDays(30)) : null;
+
             AddCookies(
                 new KeyValuePair<string, string>[]
                 {
@@ -288,9 +292,10 @@ namespace FindMe.Web.App
                     new KeyValuePair<string, string>($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}", accessTokenValue),
                     new KeyValuePair<string, string>($"{TOKENS_KEY}:{INVLD_PASSWORD_FORMAT_TOKEN_KEY}", invalidPassword.ToString()),
                     new KeyValuePair<string, string>($"{TOKENS_KEY}:{REMEMBER_USER}", remember.ToString()),
+                    new KeyValuePair<string, string>($"{TOKENS_KEY}:{REFRESH_TOKEN_EXP_DATE_KEY}", now == null ? "" : now.Value.ToISOFormat()),
                     new KeyValuePair<string, string>($"{TOKENS_KEY}:{USER_FULL_NAME}", fullName)
                 },
-                remember ? new DateTime?(DateTime.Now.AddDays(30)) : null);
+                now);
         }
 
         protected void RemoveSignedCookies()
