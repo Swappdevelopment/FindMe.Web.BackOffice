@@ -104,6 +104,14 @@ namespace FindMe.Web.App
                         && mResp.Result.Length > 0
                         && mResp.Result[0].MethodName == "RegenAccessTokenValue")
                     {
+                        if (mResp.Result[0] == null)
+                            throw new NullReferenceException("RegenAccessTokenValue");
+
+
+                        if (mResp.Result[0].Error != null)
+                            throw mResp.Result[0].Error.ToException();
+
+
                         var regenResp = mResp.Result[0];
 
                         if (regenResp.Result is AccessToken)

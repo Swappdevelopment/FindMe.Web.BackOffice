@@ -95,3 +95,8 @@ textarea {
         background-color: #E20E53;
         color: #EDF1F8;
     }
+
+
+.btn {
+    text-transform: none !important;
+}

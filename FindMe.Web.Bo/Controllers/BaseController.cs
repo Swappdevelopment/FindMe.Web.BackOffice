@@ -313,8 +313,15 @@ namespace FindMe.Web.App
 
 
 
-        protected IActionResult CheckForAccess(AccessLevel level, Func<IActionResult> funcHasAccess)
+        protected async Task<IActionResult> CheckForAccess(AccessLevel level, Func<IActionResult> funcHasAccess)
         {
+            string redirectUrl = this.Request.Host.ToUriComponent();
+            redirectUrl = this.Request.Host.ToString();
+            redirectUrl = this.Request.Path.ToUriComponent();
+            redirectUrl = this.Request.Path.ToString();
+
+            bool failed = false;
+
             switch (level)
             {
                 case AccessLevel.CookieSignedIn:
@@ -322,9 +329,36 @@ namespace FindMe.Web.App
 
                     if (string.IsNullOrEmpty(_checkedAccessToken))
                     {
-                        return RedirectToAction("SignIn", "Account");
+                        failed = true;
                     }
                     break;
+
+                case AccessLevel.DbSignedIn:
+
+                    try
+                    {
+                        await _repo.Execute(new WebParameter[0]);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is ExceptionID)
+                        {
+                            this.LogError(ex);
+                        }
+                        else
+                        {
+                            this.LogCritical(ex);
+                        }
+
+                        failed = true;
+                    }
+
+                    break;
+            }
+
+            if (failed)
+            {
+                return RedirectToAction("SignIn", "Account", new { redirectUrl = redirectUrl });
             }
 
 

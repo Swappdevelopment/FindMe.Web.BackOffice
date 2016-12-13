@@ -17,6 +17,7 @@ namespace FindMe.Web.App
         }
 
 
+
         public IActionResult SignIn(string redirectUrl = "")
         {
             WebRootPath();
@@ -26,9 +27,9 @@ namespace FindMe.Web.App
         }
 
 
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            return CheckForAccess(
+            return await CheckForAccess(
                 AccessLevel.CookieSignedIn,
                 () =>
                 {
@@ -54,6 +55,7 @@ namespace FindMe.Web.App
 
             try
             {
+                WebRootPath();
                 await _repo.Execute("ValidateEmailTokenExists", id);
             }
             catch (Exception ex)
@@ -64,7 +66,6 @@ namespace FindMe.Web.App
 
             return View(success);
         }
-
 
 
         public IActionResult SignUp()

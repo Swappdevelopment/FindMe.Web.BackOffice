@@ -35,7 +35,7 @@
         }
 
         #sideBar ul li a.active {
-            color: #FECC00;
+            color: #FFCC00;
             transition: color ease-in-out 250ms;
         }
 
@@ -50,7 +50,7 @@
         }
 
             #sideBar ul li a.over {
-                color: #FECC00;
+                color: #FFCC00;
             }
 
 #sideBar .sb-lbls ul li a {

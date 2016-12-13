@@ -2,11 +2,23 @@
 @model bool
 
 
-@if (Model)
-{
-    <h1>@Html.GetMessage("Msg_EmailSccssValtd")</h1>
-}
-else
-{
-    <h1>@Html.GetMessage("Msg_InvldResend")</h1>
-}
+<div class="container">
+
+    <h2>
+        @if (Model)
+        {
+            @Html.GetMessage("Msg_EmailSccssValtd")
+        }
+        else
+        {
+            @Html.GetMessage("Msg_InvldResend")
+        }
+    </h2>
+
+
+    @if (Model)
+    {
+        <a asp-controller="App" asp-action="Index" class="btn btn-findme btn-lg"><span class="fa fa-chevron-left"></span>&nbsp;&nbsp;@Html.GetLabel("Lbl_BckOffc")</a>
+    }
+
+</div>

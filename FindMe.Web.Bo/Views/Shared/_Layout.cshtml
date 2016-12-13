@@ -1,7 +1,17 @@
 ﻿@{
     string fullName;
 
-    bool hasAccess = Html.UserHasSignedInCookie(out fullName);
+    string helloFullName = "";
+
+    bool hasAccess = false;
+
+    if (Html.UserHasSignedInCookie(out fullName))
+    {
+        hasAccess = true;
+
+        helloFullName = Html.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", Html.GetLabel("Lbl_NoNm"));
+    }
+
 }
 
 
@@ -11,7 +21,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <base href="/">
 
     <title>@ViewBag.Title - @Html.GetLabel("Lbl_AppName") B.O</title>
@@ -20,10 +30,10 @@
         <link href="~/lib/boostrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="~/lib/bootstrap-themes/bootstrap-paper.min.css" rel="stylesheet" />
         <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-        <link href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
-        <link href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
-        <link href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
-        <link href="@Url.GetResPath("~/css/wait.css", (string)ViewBag.WebRootPath)" rel="stylesheet"/>
+        <link href="@Url.GetResPath("~/css/site.css", (string)ViewBag.WebRootPath)" rel="stylesheet" />
+        <link href="@Url.GetResPath("~/css/checkBox.css", (string)ViewBag.WebRootPath)" rel="stylesheet" />
+        <link href="@Url.GetResPath("~/css/colors.css", (string)ViewBag.WebRootPath)" rel="stylesheet" />
+        <link href="@Url.GetResPath("~/css/wait.css", (string)ViewBag.WebRootPath)" rel="stylesheet" />
     </environment>
 
     <environment names="Staging,Production">
@@ -58,6 +68,7 @@
     <div id="topbar" class="navbar navbar-inverse navbar-fixed-top findme-color-bc-pink">
         <div class="container">
             <div class="navbar-header">
+
                 @if (hasAccess)
                 {
                     <button type="button" class="navbar-toggle btn-user findme-color-fc-white" data-toggle="collapse" data-target=".navbar-collapse">
@@ -68,6 +79,7 @@
                 {
                     <a class="navbar-toggle findme-color-fc-white" data-toggle="collapse" data-target=".navbar-collapse" asp-controller="Account" asp-action="SignIn">Sign In</a>
                 }
+
                 <a asp-area="" asp-controller="App" asp-action="Index" class="navbar-brand findme-color-fc-white">
                     <img id="logo" src="~/images/FindMe-Logo.png" height="43" />
                     <i>Back Office</i>
@@ -77,23 +89,23 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
 
-                    @*@if (hasAccess)
-                    {*@
+                    @if (hasAccess)
+                    {
                         <li class="cursor-pointer">
-                            <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@Html.GetLabel("Lbl_HelloNm").Replace("{0}", fullName).Replace("{1}", Html.GetLabel("Lbl_NoNm"))<span class="caret"></span></a>
+                            <a class="dropdown-toggle findme-color-fc-white" data-toggle="dropdown" aria-expanded="false">@helloFullName &nbsp;&nbsp;<span class="fa fa-caret-right fa-rotate-90"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#!/profile">@Html.GetLabel("Lbl_Profile")</a></li>
                                 <li class="divider"></li>
                                 <li><a id="signOut">@Html.GetLabel("Lbl_SignOut")</a></li>
                             </ul>
                         </li>
-                    @*}
+                    }
                     else
                     {
                         <li class="cursor-pointer">
                             <a class="findme-color-fc-white" asp-controller="Account" asp-action="SignIn">Sign In</a>
                         </li>
-                    }*@
+                    }
                 </ul>
             </div>
         </div>

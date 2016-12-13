@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
@@ -8,16 +9,17 @@ namespace FindMe.Web.App
     {
         public AppController(
             IConfigurationRoot config,
+            WebDbRepository repo,
             IHostingEnvironment env)
-            : base(config, null, env, null, null)
+            : base(config, repo, env, null, null)
         {
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return CheckForAccess(
-                AccessLevel.CookieSignedIn,
+            return await CheckForAccess(
+                AccessLevel.DbSignedIn,
                 () =>
                 {
                     WebRootPath();

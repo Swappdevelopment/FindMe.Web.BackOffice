@@ -103,7 +103,8 @@ namespace FindMe.Web.App
 
                     case "resendemailconfirmation":
 
-                        string link = Url.Action("ValidateEmail", "Account") + profile.emailToValToken.ToString();
+                        string link = Url.Action("ValidateEmail", "Account", null, this.Request.Scheme);
+                        link += (link.EndsWith("/") ? "" : "/") + profile.emailToValToken.ToString();
 
 
                         string message = "This Email as sent to verify that the Email you are associating with your Find Me Back Office Application is valid." +
