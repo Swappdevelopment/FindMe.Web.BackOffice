@@ -4,21 +4,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FindMe.Web.Bo.Migrations
 {
-    public partial class Mig_016 : Migration
+    public partial class Mig_001 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ContactNumber",
+            migrationBuilder.RenameColumn(
+                name: "IsValidated",
                 table: "Users",
-                nullable: true);
+                newName: "IsEmailValidated");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ContactNumber",
-                table: "Users");
+            migrationBuilder.RenameColumn(
+                name: "IsEmailValidated",
+                table: "Users",
+                newName: "IsValidated");
         }
     }
 }

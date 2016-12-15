@@ -107,9 +107,7 @@ namespace FindMe.Web.App
                         link += (link.EndsWith("/") ? "" : "/") + profile.emailToValToken.ToString();
 
 
-                        string message = "This Email as sent to verify that the Email you are associating with your Find Me Back Office Application is valid." +
-                                         "\r\nClick on the following link, or copy and paste in to your favorite browser's address bar, to complete the verification process.\r\n\r\n" +
-                                         link;
+                        string message = this.GetMessage("Msg_ValEmail") + link;
 
 
                         await _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("Lbl_FndMeBoValEmail"), message);
@@ -162,6 +160,29 @@ namespace FindMe.Web.App
             }
 
             return Ok(new { result = result, error = error, date = DateTime.Now, fn = fullName });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> IsEmailValidationTokenConfirmed([FromBody]dynamic param = null)
+        {
+            bool result = false;
+
+            try
+            {
+                string tokenValue = param.tokenValue;
+
+                if (!string.IsNullOrEmpty(tokenValue))
+                {
+                    result = await _repo.Execute<bool>("IsEmailValidationTokenConfirmed", tokenValue);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+
+            return Ok(new { result = result });
         }
 
 

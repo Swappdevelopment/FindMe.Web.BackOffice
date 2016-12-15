@@ -19,8 +19,6 @@
 
             if (headerConfigService) {
 
-                vm.buttonClick = headerConfigService.tbBtnClickCallback;
-
                 if (headerConfigService.showSearchCtrl) {
                     showMainSearchCtrl();
                 }

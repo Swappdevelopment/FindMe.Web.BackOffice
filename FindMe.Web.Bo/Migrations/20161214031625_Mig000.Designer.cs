@@ -10,14 +10,13 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20161211130729_Mig_017")]
-    partial class Mig_017
+    [Migration("20161214031625_Mig000")]
+    partial class Mig000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
             modelBuilder.Entity("FindMe.Data.Models.AccessToken", b =>
                 {
@@ -32,6 +31,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<bool>("InvalidPsswrdFormat")
                         .HasColumnName("InvalidPsswrdFormat");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -82,6 +83,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<double?>("Latitude")
                         .HasColumnName("Latitude");
 
@@ -102,6 +105,9 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("PhysAddress")
                         .HasMaxLength(512);
 
+                    b.Property<bool>("RecByFbFans")
+                        .HasColumnName("RecByFbFans");
+
                     b.Property<long>("Region_Id")
                         .HasColumnName("Region_Id");
 
@@ -121,6 +127,59 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.AddressContact", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Address_Id")
+                        .HasColumnName("Address_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<DateTime>("FromUtc")
+                        .HasColumnName("FromUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnName("Link")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnName("Text")
+                        .HasMaxLength(128);
+
+                    b.Property<DateTime?>("ToUtc")
+                        .IsRequired()
+                        .HasColumnName("ToUtc");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Address_Id", "FromUtc", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Contacts");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.AddressImage", b =>
                 {
                     b.Property<long>("ID")
@@ -128,6 +187,10 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<long>("Address_Id")
                         .HasColumnName("Address_Id");
+
+                    b.Property<string>("Alt")
+                        .HasColumnName("Alt")
+                        .HasMaxLength(128);
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -144,20 +207,10 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Format")
                         .HasMaxLength(32);
 
-                    b.Property<string>("ImgAlt")
-                        .HasColumnName("ImgAlt")
-                        .HasMaxLength(128);
+                    b.Property<int>("Height")
+                        .HasColumnName("Height");
 
-                    b.Property<int>("ImgHeight")
-                        .HasColumnName("ImgHeight");
-
-                    b.Property<string>("ImgUrl")
-                        .IsRequired()
-                        .HasColumnName("ImgUrl")
-                        .HasMaxLength(256);
-
-                    b.Property<int>("ImgWidth")
-                        .HasColumnName("ImgWidth");
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -174,28 +227,20 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<short>("Status");
 
-                    b.Property<string>("ThmbAlt")
-                        .IsRequired()
-                        .HasColumnName("ThmbAlt")
-                        .HasMaxLength(128);
-
-                    b.Property<int>("ThmbHeight")
-                        .HasColumnName("ThmbHeight");
-
-                    b.Property<string>("ThmbUrl")
-                        .IsRequired()
-                        .HasColumnName("ThmbUrl")
-                        .HasMaxLength(256);
-
-                    b.Property<int>("ThmbWidth")
-                        .HasColumnName("ThmbWidth");
-
                     b.Property<short>("Type")
                         .HasColumnName("Type");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnName("Url")
+                        .HasMaxLength(256);
+
+                    b.Property<int>("Width")
+                        .HasColumnName("Width");
+
                     b.HasKey("ID");
 
-                    b.HasIndex("Address_Id", "Name", "ImgHeight", "ImgWidth")
+                    b.HasIndex("Address_Id", "Name", "Height", "Width")
                         .IsUnique();
 
                     b.ToTable("AddressImages");
@@ -218,18 +263,22 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<DateTime>("FromUtc")
                         .HasColumnName("FromUtc");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
                     b.Property<DateTime?>("ModifiedTimeUtc");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
                     b.Property<short>("Status");
 
                     b.Property<DateTime?>("ToUtc")
                         .HasColumnName("ToUtc");
-
-                    b.Property<short>("Type")
-                        .HasColumnName("Type");
 
                     b.Property<string>("Url")
                         .HasColumnName("Url")
@@ -237,7 +286,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Address_Id", "Type", "FromUtc")
+                    b.HasIndex("Address_Id", "Name", "FromUtc")
                         .IsUnique();
 
                     b.ToTable("AddressLinks");
@@ -256,6 +305,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasMaxLength(50);
 
                     b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -277,6 +328,64 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("AddressTags");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.AddressThumbnail", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Alt")
+                        .HasColumnName("Alt")
+                        .HasMaxLength(128);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<string>("Desc")
+                        .HasColumnName("Desc")
+                        .HasMaxLength(512);
+
+                    b.Property<string>("Format")
+                        .IsRequired()
+                        .HasColumnName("Format")
+                        .HasMaxLength(32);
+
+                    b.Property<int>("Height")
+                        .HasColumnName("Height");
+
+                    b.Property<long>("Image_Id")
+                        .HasColumnName("Image_Id");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<int>("Seqn")
+                        .HasColumnName("Seqn");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnName("Url")
+                        .HasMaxLength(512);
+
+                    b.Property<int>("Width")
+                        .HasColumnName("Width");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Image_Id", "Height", "Width")
+                        .IsUnique();
+
+                    b.ToTable("AddressThumbnails");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.Category", b =>
                 {
                     b.Property<long>("ID")
@@ -292,6 +401,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasMaxLength(50);
 
                     b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<short>("Level")
                         .HasColumnName("Level");
@@ -351,15 +462,27 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
 
+                    b.Property<string>("FName")
+                        .IsRequired()
+                        .HasColumnName("FName")
+                        .HasMaxLength(128);
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<string>("LName")
+                        .IsRequired()
+                        .HasColumnName("LName")
+                        .HasMaxLength(128);
+
+                    b.Property<string>("LegalName")
+                        .IsRequired()
+                        .HasColumnName("LegalName")
+                        .HasMaxLength(128);
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
                     b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
 
                     b.Property<string>("PhysAddress")
                         .HasColumnName("PhysAddress")
@@ -372,55 +495,9 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.HasIndex("Name");
+                    b.HasIndex("LegalName");
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.Contact", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("Client_Id")
-                        .HasColumnName("Client_Id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
-
-                    b.Property<short>("Status");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnName("UID")
-                        .HasMaxLength(128);
-
-                    b.Property<string>("Value")
-                        .HasColumnName("Value")
-                        .HasMaxLength(512);
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("UID")
-                        .IsUnique();
-
-                    b.HasIndex("Client_Id", "Name")
-                        .IsUnique();
-
-                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.Country", b =>
@@ -440,6 +517,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("Currency")
                         .HasColumnName("Currency")
                         .HasMaxLength(32);
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("Iso")
                         .HasColumnName("Iso")
@@ -488,6 +567,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<short>("HoursTo")
                         .HasColumnName("HoursTo");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<short>("MinutesFrom")
                         .HasColumnName("MinutesFrom");
 
@@ -526,6 +607,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("IdendityRef_Id")
                         .HasColumnName("IdendityRef_Id");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -553,6 +636,12 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Desc")
+                        .HasColumnName("Desc")
+                        .HasMaxLength(512);
+
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("Name")
@@ -575,6 +664,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<bool>("Confirmed")
                         .HasColumnName("Confirmed");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<short>("Status");
 
@@ -609,6 +700,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("Exception")
                         .HasColumnName("Exception")
                         .HasMaxLength(4096);
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<short>("LogLevel")
                         .HasColumnName("LogLevel");
@@ -650,6 +743,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("IPAddress_Id")
                         .HasColumnName("IPAddress_Id");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -675,6 +770,9 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<long>("Address_Id")
+                        .HasColumnName("Address_Id");
+
                     b.Property<int?>("ClickCount");
 
                     b.Property<string>("CreatedBy")
@@ -686,8 +784,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<DateTime>("FromUtc")
                         .HasColumnName("FromUtc");
 
-                    b.Property<long>("IPAddress_Id")
-                        .HasColumnName("IPAddress_Id");
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -704,7 +801,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("IPAddress_Id", "FromUtc")
+                    b.HasIndex("Address_Id", "FromUtc")
                         .IsUnique();
 
                     b.ToTable("RatingOverrides");
@@ -723,6 +820,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasMaxLength(50);
 
                     b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<DateTime>("LastActivityTime")
                         .HasColumnName("LastActivityTime");
@@ -772,6 +871,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime>("CreationTimeUtc");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<short>("Level")
                         .HasColumnName("Level");
 
@@ -817,6 +918,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("Name")
@@ -858,6 +961,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<short>("Status");
 
                     b.Property<long>("SysParMaster_Id")
@@ -885,6 +990,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<short>("Status");
 
                     b.HasKey("ID");
@@ -906,6 +1013,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime>("CreationTimeUtc");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -918,9 +1027,16 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<short>("Status");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
                     b.HasKey("ID");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("Tags");
@@ -953,6 +1069,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("FName")
                         .HasColumnName("FName")
                         .HasMaxLength(128);
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<bool>("IsValidated")
                         .HasColumnName("IsValidated");
@@ -1017,6 +1135,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("IPAddress_Id")
                         .HasColumnName("IPAddress_Id");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -1045,6 +1165,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<short>("AttemptResult")
                         .HasColumnName("AttemptResult");
 
+                    b.Property<bool>("IsImported");
+
                     b.Property<short>("Status");
 
                     b.Property<DateTime>("TimeDate")
@@ -1067,6 +1189,8 @@ namespace FindMe.Web.Bo.Migrations
                 {
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<long>("Role_Id")
                         .HasColumnName("Role_Id");
@@ -1106,6 +1230,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime?>("EmailSentStatusTime")
                         .HasColumnName("EmailSentStatusTime");
+
+                    b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -1157,6 +1283,13 @@ namespace FindMe.Web.Bo.Migrations
                         .HasForeignKey("Region_Id");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.AddressContact", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Address", "Address")
+                        .WithMany("Contacts")
+                        .HasForeignKey("Address_Id");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.AddressImage", b =>
                 {
                     b.HasOne("FindMe.Data.Models.Address", "Address")
@@ -1182,18 +1315,18 @@ namespace FindMe.Web.Bo.Migrations
                         .HasForeignKey("Tag_Id");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.AddressThumbnail", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.AddressImage", "Image")
+                        .WithMany("Thumbnails")
+                        .HasForeignKey("Image_Id");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.Category", b =>
                 {
                     b.HasOne("FindMe.Data.Models.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("Parent_Id");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.Contact", b =>
-                {
-                    b.HasOne("FindMe.Data.Models.Client", "Client")
-                        .WithMany("Contacts")
-                        .HasForeignKey("Client_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.DayOpen", b =>
@@ -1227,9 +1360,9 @@ namespace FindMe.Web.Bo.Migrations
 
             modelBuilder.Entity("FindMe.Data.Models.RatingOverride", b =>
                 {
-                    b.HasOne("FindMe.Data.Models.IPAddress", "IPAddress")
+                    b.HasOne("FindMe.Data.Models.Address", "Address")
                         .WithMany("RatingOverrides")
-                        .HasForeignKey("IPAddress_Id");
+                        .HasForeignKey("Address_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.RefreshToken", b =>

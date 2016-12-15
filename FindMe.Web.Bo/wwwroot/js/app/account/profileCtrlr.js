@@ -5,10 +5,10 @@
 
 
     angular.module('app-mainmenu')
-           .controller('profileCtrlr', ['$http', 'appProps', 'headerConfigService', profileCtrlrFunc]);
+           .controller('profileCtrlr', ['$http', '$interval', 'appProps', 'headerConfigService', profileCtrlrFunc]);
 
 
-    function profileCtrlrFunc($http, appProps, headerConfigService) {
+    function profileCtrlrFunc($http, $interval, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -39,7 +39,7 @@
             userName: '',
             userNameLocked: false,
             contactNumber: '',
-            isValidated: false,
+            isEmailValidated: false,
             accessFailedCount: 0,
             emailConfirmed: false,
             lockoutEnabled: false,
@@ -47,6 +47,8 @@
 
         vm.cancelingEmail = false;
         vm.resendingEmail = false;
+
+
 
 
         var successFunc = function (resp) {
@@ -63,7 +65,7 @@
                 vm.profile.userName = resp.data.result.userName;
                 vm.profile.userNameLocked = resp.data.result.userNameLocked;
                 vm.profile.contactNumber = resp.data.result.contactNumber;
-                vm.profile.isValidated = resp.data.result.isValidated;
+                vm.profile.isEmailValidated = resp.data.result.isEmailValidated;
                 vm.profile.accessFailedCount = resp.data.result.accessFailedCount;
                 vm.profile.emailConfirmed = resp.data.result.emailConfirmed;
                 vm.profile.lockoutEnabled = resp.data.result.lockoutEnabled;
@@ -73,6 +75,14 @@
                     var fn = globalOptns.lbl_HelloNm.replace('{0}', resp.data.fn).replace('{1}', globalOptns.lbl_NoNm);
 
                     $('#topbar .container .navbar-right a.dropdown-toggle').text(fn);
+                }
+
+                if (vm.profile.emailToVal
+                    && vm.profile.emailToVal.length > 0
+                    && vm.profile.emailToValToken
+                    && vm.profile.emailToValToken.length > 0) {
+
+                    vm.resendEmail();
                 }
             }
         };
@@ -93,6 +103,8 @@
             toggleGlblWaitVisibility(false);
         };
 
+
+
         vm.manageProfile = function (data) {
 
             if (!data) {
@@ -110,6 +122,55 @@
                  .finally(finallyFunc);
         };
 
+
+
+        var checkEmailToken = function () {
+
+            var scsFunc = function (resp) {
+
+                if (resp
+                    && resp.data
+                    && resp.data.result) {
+
+                    vm.manageProfile();
+                }
+                else {
+                    $interval(checkEmailToken, 5000, 1);
+                }
+            };
+
+            $http.post(appProps.urlCheckEmailToken, {
+                tokenValue: vm.profile.emailToValToken
+            })
+            .then(scsFunc, scsFunc);
+        };
+
+
+        vm.resendEmail = function () {
+
+            vm.resendingEmail = true;
+
+            var scsFunc = function (resp) {
+                $interval(checkEmailToken, 5000, 1);
+            };
+
+            var finFunc = function (resp) {
+
+                vm.resendingEmail = false;
+            };
+
+            $http.post(appProps.urlMngProfile, {
+                profile: {
+                    emailToVal: vm.profile.emailToVal,
+                    emailToValToken: vm.profile.emailToValToken,
+                },
+                action: 'resendemailconfirmation',
+                skipGet: true
+            })
+            .then(scsFunc, errorFunc)
+            .finally(finFunc);
+
+        };
 
         vm.cancelEmail = function () {
 
@@ -136,47 +197,22 @@
             .finally(finFunc);
         };
 
-        vm.resendEmail = function () {
 
-            vm.resendingEmail = true;
+        var buttonClick = function (e) {
 
-            var scsFunc = function (resp) {
-            };
+            var $btn = $(this);
 
-            var finFunc = function (resp) {
+            if ($btn.hasClass('refresh')) {
 
-                vm.resendingEmail = false;
-            };
+                vm.manageProfile();
+            }
+            else if ($btn.hasClass('save')) {
 
-            $http.post(appProps.urlMngProfile, {
-                profile: {
-                    emailToVal: vm.profile.emailToVal,
-                    emailToValToken: vm.profile.emailToValToken,
-                },
-                action: 'resendemailconfirmation',
-                skipGet: true
-            })
-            .then(scsFunc, errorFunc)
-            .finally(finFunc);
-
-        };
-
-
-        var buttonClick = function (tag) {
-            switch (tag) {
-
-                case 'refresh':
-                    vm.manageProfile();
-                    break;
-
-                case 'save':
-                    vm.manageProfile(vm.profile);
-                    break;
+                $('form[name="userProfileForm"]').submit();
             }
         };
 
-
-        headerConfigService.tbBtnClickCallback = buttonClick;
+        $('#searchBar .btn.btn-tb').on('click', buttonClick);
 
         vm.manageProfile();
     }

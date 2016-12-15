@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161215151656_Mig_003")]
+    partial class Mig_003
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
@@ -1173,6 +1174,11 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime?>("ModifiedTimeUtc");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
                     b.Property<short>("Status");
 
                     b.Property<string>("UID")
@@ -1182,58 +1188,12 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("Name");
+
                     b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.Tag_Lang", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ColTag")
-                        .IsRequired()
-                        .HasColumnName("ColTag")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<bool>("IsImported");
-
-                    b.Property<long>("Language_Id")
-                        .HasColumnName("Language_Id");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<short>("Status");
-
-                    b.Property<long>("Tag_Id")
-                        .HasColumnName("Tag_Id");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnName("Value")
-                        .HasMaxLength(64);
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ColTag");
-
-                    b.HasIndex("Language_Id");
-
-                    b.HasIndex("Tag_Id", "Language_Id", "ColTag")
-                        .IsUnique();
-
-                    b.ToTable("Tag_Langs");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.User", b =>
@@ -1611,17 +1571,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.SysParMaster", "SysParMaster")
                         .WithMany("SysParDetails")
                         .HasForeignKey("SysParMaster_Id");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.Tag_Lang", b =>
-                {
-                    b.HasOne("FindMe.Data.Models.Language", "Language")
-                        .WithMany("TagLangs")
-                        .HasForeignKey("Language_Id");
-
-                    b.HasOne("FindMe.Data.Models.Tag", "Tag")
-                        .WithMany("TagLangs")
-                        .HasForeignKey("Tag_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.UserIP", b =>

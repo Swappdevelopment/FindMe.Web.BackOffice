@@ -341,6 +341,8 @@ namespace FindMe.Web.App
                     }
                     catch (Exception ex)
                     {
+                        this.RemoveSignedCookies();
+
                         if (ex is ExceptionID)
                         {
                             this.LogError(ex);

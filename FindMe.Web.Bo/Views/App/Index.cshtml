@@ -5,6 +5,7 @@
     var obj = Html.ToJSonHtmlString(new
     {
         urlMngProfile = Url.Action("ManageProfile", "ApiAccount"),
+        urlCheckEmailToken = Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount"),
         lbl_FName = Html.GetLabel("Lbl_FName"),
         lbl_LName = Html.GetLabel("Lbl_LName"),
         lbl_Email = Html.GetLabel("Lbl_Email"),
@@ -134,9 +135,9 @@
                 </div>
 
                 <div class="tb col-md-6 col-sm-12 clsp hidden">
-                    <button type="button" class="btn btn-tb refresh" ng-click="vm.headerConfig.tbBtnClickCallback('refresh')" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb add" ng-click="vm.headerConfig.tbBtnClickCallback('add')" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb save" ng-click="vm.headerConfig.tbBtnClickCallback('save')" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
                 </div>
             </div>
 
