@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161216113231_Mig_008")]
+    partial class Mig_008
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
@@ -87,9 +88,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnName("Longitude");
 
-                    b.Property<long?>("MainTag_Id")
-                        .HasColumnName("MainTag_Id");
-
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -113,8 +111,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<short>("Status");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("MainTag_Id");
 
                     b.HasIndex("Name");
 
@@ -217,42 +213,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("FindMe.Data.Models.AddressFlag", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("Address_Id")
-                        .HasColumnName("Address_Id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<long>("Flag_Id")
-                        .HasColumnName("Flag_Id");
-
-                    b.Property<bool>("IsImported");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<short>("Status");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("Flag_Id");
-
-                    b.HasIndex("Address_Id", "Flag_Id")
-                        .IsUnique();
-
-                    b.ToTable("AddressFlags");
-                });
-
             modelBuilder.Entity("FindMe.Data.Models.AddressImage", b =>
                 {
                     b.Property<long>("ID")
@@ -282,9 +242,6 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<int>("Height")
                         .HasColumnName("Height");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnName("IsDefault");
 
                     b.Property<bool>("IsImported");
 
@@ -990,42 +947,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("DaysOpen");
                 });
 
-            modelBuilder.Entity("FindMe.Data.Models.FlagProperty", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<bool>("IsImported");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
-
-                    b.Property<short>("Status");
-
-                    b.Property<bool>("Value")
-                        .HasColumnName("Value");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("FlagPropertys");
-                });
-
             modelBuilder.Entity("FindMe.Data.Models.Idendity", b =>
                 {
                     b.Property<long>("ID")
@@ -1717,10 +1638,6 @@ namespace FindMe.Web.Bo.Migrations
                         .WithMany("Addresses")
                         .HasForeignKey("Client_Id");
 
-                    b.HasOne("FindMe.Data.Models.Tag", "MainTag")
-                        .WithMany("MainAddresses")
-                        .HasForeignKey("MainTag_Id");
-
                     b.HasOne("FindMe.Data.Models.CityDetail", "RegionDetail")
                         .WithMany("Addresses")
                         .HasForeignKey("RegionDetail_Id");
@@ -1742,17 +1659,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.Address", "Address")
                         .WithMany("Contacts")
                         .HasForeignKey("Address_Id");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.AddressFlag", b =>
-                {
-                    b.HasOne("FindMe.Data.Models.Address", "Address")
-                        .WithMany("AddressFlags")
-                        .HasForeignKey("Address_Id");
-
-                    b.HasOne("FindMe.Data.Models.FlagProperty", "Flag")
-                        .WithMany("AddressFlags")
-                        .HasForeignKey("Flag_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.AddressImage", b =>
