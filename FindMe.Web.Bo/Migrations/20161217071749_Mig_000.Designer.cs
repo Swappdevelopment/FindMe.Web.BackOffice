@@ -10,8 +10,8 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20161216103124_Mig_007")]
-    partial class Mig_007
+    [Migration("20161217071749_Mig_000")]
+    partial class Mig_000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,20 +65,26 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("Client_Id")
                         .HasColumnName("Client_Id");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnName("Code")
-                        .HasMaxLength(64);
-
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasMaxLength(50);
 
                     b.Property<DateTime>("CreationTimeUtc");
 
-                    b.Property<string>("Desc")
-                        .HasColumnName("Desc")
-                        .HasMaxLength(512);
+                    b.Property<bool>("FlgIsFeatured")
+                        .HasColumnName("FlgIsFeatured");
+
+                    b.Property<bool>("FlgIsFeaturedMenu")
+                        .HasColumnName("FlgIsFeaturedMenu");
+
+                    b.Property<bool>("FlgPassport")
+                        .HasColumnName("FlgPassport");
+
+                    b.Property<bool>("FlgRecByFbFans")
+                        .HasColumnName("FlgRecByFbFans");
+
+                    b.Property<bool>("FlgTripAdvisor")
+                        .HasColumnName("FlgTripAdvisor");
 
                     b.Property<bool>("IsImported");
 
@@ -87,6 +93,9 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<double?>("Longitude")
                         .HasColumnName("Longitude");
+
+                    b.Property<long?>("MainTag_Id")
+                        .HasColumnName("MainTag_Id");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
@@ -102,24 +111,69 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("PhysAddress")
                         .HasMaxLength(512);
 
-                    b.Property<bool>("RecByFbFans")
-                        .HasColumnName("RecByFbFans");
-
                     b.Property<long>("RegionDetail_Id")
                         .HasColumnName("RegionDetail_Id");
 
                     b.Property<short>("Status");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
                     b.HasKey("ID");
+
+                    b.HasIndex("MainTag_Id");
 
                     b.HasIndex("Name");
 
                     b.HasIndex("RegionDetail_Id");
 
-                    b.HasIndex("Client_Id", "Code")
+                    b.HasIndex("Client_Id", "UID")
                         .IsUnique();
 
                     b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.Address_LangDesc", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Address_Id")
+                        .HasColumnName("Address_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<long>("Language_Id")
+                        .HasColumnName("Language_Id");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnName("Value")
+                        .HasMaxLength(4096);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Language_Id");
+
+                    b.HasIndex("Address_Id", "Language_Id")
+                        .IsUnique();
+
+                    b.ToTable("Address_LangDescs");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.AddressCategory", b =>
@@ -242,6 +296,9 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<int>("Height")
                         .HasColumnName("Height");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnName("IsDefault");
 
                     b.Property<bool>("IsImported");
 
@@ -567,6 +624,236 @@ namespace FindMe.Web.Bo.Migrations
                         .IsUnique();
 
                     b.ToTable("Category_LangDescs");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityDetail", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<long>("District_Id")
+                        .HasColumnName("District_Id");
+
+                    b.Property<long?>("Group_Id")
+                        .HasColumnName("Group_Id");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnName("Latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
+                    b.Property<long>("Region_Id")
+                        .HasColumnName("Region_Id");
+
+                    b.Property<int>("Seqn")
+                        .HasColumnName("Seqn");
+
+                    b.Property<string>("Slug")
+                        .HasColumnName("Slug")
+                        .HasMaxLength(128);
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("District_Id");
+
+                    b.HasIndex("Group_Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Region_Id");
+
+                    b.HasIndex("UID")
+                        .IsUnique();
+
+                    b.ToTable("CityDetails");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityDistrict", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Country_Id")
+                        .HasColumnName("Country_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnName("Latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("Seqn")
+                        .HasColumnName("Seqn");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Country_Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UID")
+                        .IsUnique();
+
+                    b.ToTable("CityDistricts");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityGroup", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Country_Id")
+                        .HasColumnName("Country_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnName("Latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("Seqn")
+                        .HasColumnName("Seqn");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Country_Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UID")
+                        .IsUnique();
+
+                    b.ToTable("CityGroups");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityRegion", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Country_Id")
+                        .HasColumnName("Country_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnName("Latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("Name")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("Seqn")
+                        .HasColumnName("Seqn");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnName("UID")
+                        .HasMaxLength(128);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Country_Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("UID")
+                        .IsUnique();
+
+                    b.ToTable("CityRegions");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.Client", b =>
@@ -1006,121 +1293,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("FindMe.Data.Models.RegionDetail", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<bool>("IsImported");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnName("Latitude");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnName("Longitude");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
-
-                    b.Property<long>("RegionHeader_Id")
-                        .HasColumnName("RegionHeader_Id");
-
-                    b.Property<int>("Seqn")
-                        .HasColumnName("Seqn");
-
-                    b.Property<string>("Slug")
-                        .HasColumnName("Slug")
-                        .HasMaxLength(128);
-
-                    b.Property<short>("Status");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnName("UID")
-                        .HasMaxLength(128);
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("Name");
-
-                    b.HasIndex("RegionHeader_Id");
-
-                    b.HasIndex("UID", "RegionHeader_Id")
-                        .IsUnique();
-
-                    b.ToTable("RegionDetails");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.RegionHeader", b =>
-                {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("Country_Id")
-                        .HasColumnName("Country_Id");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<bool>("IsImported");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnName("Latitude");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnName("Longitude");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasMaxLength(50);
-
-                    b.Property<DateTime?>("ModifiedTimeUtc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
-
-                    b.Property<int>("Seqn")
-                        .HasColumnName("Seqn");
-
-                    b.Property<short>("Status");
-
-                    b.Property<short>("Type")
-                        .HasColumnName("Type");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnName("UID")
-                        .HasMaxLength(128);
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("Country_Id");
-
-                    b.HasIndex("Name");
-
-                    b.HasIndex("UID", "Type")
-                        .IsUnique();
-
-                    b.ToTable("RegionHeaders");
-                });
-
             modelBuilder.Entity("FindMe.Data.Models.Role", b =>
                 {
                     b.Property<long>("ID")
@@ -1523,9 +1695,24 @@ namespace FindMe.Web.Bo.Migrations
                         .WithMany("Addresses")
                         .HasForeignKey("Client_Id");
 
-                    b.HasOne("FindMe.Data.Models.RegionDetail", "RegionDetail")
+                    b.HasOne("FindMe.Data.Models.Tag", "MainTag")
+                        .WithMany("MainAddresses")
+                        .HasForeignKey("MainTag_Id");
+
+                    b.HasOne("FindMe.Data.Models.CityDetail", "RegionDetail")
                         .WithMany("Addresses")
                         .HasForeignKey("RegionDetail_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.Address_LangDesc", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Address", "Address")
+                        .WithMany("AddressLangDescs")
+                        .HasForeignKey("Address_Id");
+
+                    b.HasOne("FindMe.Data.Models.Language", "Language")
+                        .WithMany("AddressLangDescs")
+                        .HasForeignKey("Language_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.AddressCategory", b =>
@@ -1607,6 +1794,42 @@ namespace FindMe.Web.Bo.Migrations
                         .HasForeignKey("Language_Id");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.CityDetail", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.CityDistrict", "District")
+                        .WithMany("CityDetails")
+                        .HasForeignKey("District_Id");
+
+                    b.HasOne("FindMe.Data.Models.CityGroup", "Group")
+                        .WithMany("CityDetails")
+                        .HasForeignKey("Group_Id");
+
+                    b.HasOne("FindMe.Data.Models.CityRegion", "Region")
+                        .WithMany("CityDetails")
+                        .HasForeignKey("Region_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityDistrict", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Country", "Country")
+                        .WithMany("CityDistricts")
+                        .HasForeignKey("Country_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityGroup", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Country", "Country")
+                        .WithMany("CityGroups")
+                        .HasForeignKey("Country_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityRegion", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Country", "Country")
+                        .WithMany("CityRegions")
+                        .HasForeignKey("Country_Id");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.DayOpen", b =>
                 {
                     b.HasOne("FindMe.Data.Models.Address", "Address")
@@ -1648,20 +1871,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("User_Id");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.RegionDetail", b =>
-                {
-                    b.HasOne("FindMe.Data.Models.RegionHeader", "RegionHeader")
-                        .WithMany("RegionDetails")
-                        .HasForeignKey("RegionHeader_Id");
-                });
-
-            modelBuilder.Entity("FindMe.Data.Models.RegionHeader", b =>
-                {
-                    b.HasOne("FindMe.Data.Models.Country", "Country")
-                        .WithMany("RegionHeaders")
-                        .HasForeignKey("Country_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.SysParDetail", b =>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FindMe.Web.Bo.Migrations
 {
-    public partial class Mig000 : Migration
+    public partial class Mig_000 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,18 +14,20 @@ namespace FindMe.Web.Bo.Migrations
                 {
                     ID = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    Code = table.Column<string>(maxLength: 128, nullable: false),
+                    BgFx = table.Column<string>(maxLength: 16, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IconClass = table.Column<string>(maxLength: 64, nullable: true),
+                    IconFx = table.Column<string>(maxLength: 16, nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
                     Level = table.Column<short>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
                     Parent_Id = table.Column<long>(nullable: true),
                     Path = table.Column<string>(maxLength: 128, nullable: false),
                     Seqn = table.Column<int>(nullable: false),
-                    Status = table.Column<short>(nullable: false)
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,6 +117,22 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Code = table.Column<string>(maxLength: 32, nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Status = table.Column<short>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Loggings",
                 columns: table => new
                 {
@@ -179,7 +197,6 @@ namespace FindMe.Web.Bo.Migrations
                     IsImported = table.Column<bool>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
                     Status = table.Column<short>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false)
                 },
@@ -201,8 +218,8 @@ namespace FindMe.Web.Bo.Migrations
                     Email = table.Column<string>(maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(nullable: false),
                     FName = table.Column<string>(maxLength: 128, nullable: true),
+                    IsEmailValidated = table.Column<bool>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
-                    IsValidated = table.Column<bool>(nullable: false),
                     LName = table.Column<string>(maxLength: 128, nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     LockoutEndDateUtc = table.Column<DateTime>(nullable: true),
@@ -219,38 +236,91 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Regions",
+                name: "CityDistricts",
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    Code = table.Column<string>(maxLength: 128, nullable: false),
                     Country_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
-                    Level = table.Column<short>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
-                    Parent_Id = table.Column<long>(nullable: false),
-                    Path = table.Column<string>(maxLength: 128, nullable: false),
                     Seqn = table.Column<int>(nullable: false),
-                    Status = table.Column<short>(nullable: false)
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Regions", x => x.ID);
+                    table.PrimaryKey("PK_CityDistricts", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Regions_Countrys_Country_Id",
+                        name: "FK_CityDistricts_Countrys_Country_Id",
                         column: x => x.Country_Id,
                         principalTable: "Countrys",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CityGroups",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Country_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Seqn = table.Column<int>(nullable: false),
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityGroups", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Regions_Regions_Parent_Id",
-                        column: x => x.Parent_Id,
-                        principalTable: "Regions",
+                        name: "FK_CityGroups_Countrys_Country_Id",
+                        column: x => x.Country_Id,
+                        principalTable: "Countrys",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CityRegions",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Country_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Seqn = table.Column<int>(nullable: false),
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityRegions", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_CityRegions_Countrys_Country_Id",
+                        column: x => x.Country_Id,
+                        principalTable: "Countrys",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -289,6 +359,73 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Category_Langs",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Category_Id = table.Column<long>(nullable: false),
+                    ColTag = table.Column<string>(maxLength: 64, nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Language_Id = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    Value = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category_Langs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Category_Langs_Categorys_Category_Id",
+                        column: x => x.Category_Id,
+                        principalTable: "Categorys",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Category_Langs_Languages_Language_Id",
+                        column: x => x.Language_Id,
+                        principalTable: "Languages",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Category_LangDescs",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Category_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Language_Id = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    Value = table.Column<string>(maxLength: 4096, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category_LangDescs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Category_LangDescs_Categorys_Category_Id",
+                        column: x => x.Category_Id,
+                        principalTable: "Categorys",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Category_LangDescs_Languages_Language_Id",
+                        column: x => x.Language_Id,
+                        principalTable: "Languages",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SysParDetails",
                 columns: table => new
                 {
@@ -308,6 +445,40 @@ namespace FindMe.Web.Bo.Migrations
                         name: "FK_SysParDetails_SysParMasters_SysParMaster_Id",
                         column: x => x.SysParMaster_Id,
                         principalTable: "SysParMasters",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag_Langs",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    ColTag = table.Column<string>(maxLength: 64, nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Language_Id = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    Tag_Id = table.Column<long>(nullable: false),
+                    Value = table.Column<string>(maxLength: 64, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag_Langs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Tag_Langs_Languages_Language_Id",
+                        column: x => x.Language_Id,
+                        principalTable: "Languages",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tag_Langs_Tags_Tag_Id",
+                        column: x => x.Tag_Id,
+                        principalTable: "Tags",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -432,47 +603,46 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addresses",
+                name: "CityDetails",
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGeneratedOnAdd", true),
-                    Category_Id = table.Column<long>(nullable: false),
-                    Client_Id = table.Column<long>(nullable: false),
-                    Code = table.Column<string>(maxLength: 64, nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
-                    Desc = table.Column<string>(maxLength: 512, nullable: true),
+                    District_Id = table.Column<long>(nullable: false),
+                    Group_Id = table.Column<long>(nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
-                    Latitude = table.Column<double>(nullable: true),
-                    Longitude = table.Column<double>(nullable: true),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
-                    PhysAddress = table.Column<string>(maxLength: 512, nullable: true),
-                    RecByFbFans = table.Column<bool>(nullable: false),
                     Region_Id = table.Column<long>(nullable: false),
-                    Status = table.Column<short>(nullable: false)
+                    Seqn = table.Column<int>(nullable: false),
+                    Slug = table.Column<string>(maxLength: 128, nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Addresses", x => x.ID);
+                    table.PrimaryKey("PK_CityDetails", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Addresses_Categorys_Category_Id",
-                        column: x => x.Category_Id,
-                        principalTable: "Categorys",
+                        name: "FK_CityDetails_CityDistricts_District_Id",
+                        column: x => x.District_Id,
+                        principalTable: "CityDistricts",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Addresses_Clients_Client_Id",
-                        column: x => x.Client_Id,
-                        principalTable: "Clients",
+                        name: "FK_CityDetails_CityGroups_Group_Id",
+                        column: x => x.Group_Id,
+                        principalTable: "CityGroups",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Addresses_Regions_Region_Id",
+                        name: "FK_CityDetails_CityRegions_Region_Id",
                         column: x => x.Region_Id,
-                        principalTable: "Regions",
+                        principalTable: "CityRegions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -528,6 +698,124 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Client_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    FlgIsFeatured = table.Column<bool>(nullable: false),
+                    FlgIsFeaturedMenu = table.Column<bool>(nullable: false),
+                    FlgPassport = table.Column<bool>(nullable: false),
+                    FlgRecByFbFans = table.Column<bool>(nullable: false),
+                    FlgTripAdvisor = table.Column<bool>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Latitude = table.Column<double>(nullable: true),
+                    Longitude = table.Column<double>(nullable: true),
+                    MainTag_Id = table.Column<long>(nullable: true),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Name = table.Column<string>(maxLength: 128, nullable: false),
+                    PhysAddress = table.Column<string>(maxLength: 512, nullable: true),
+                    RegionDetail_Id = table.Column<long>(nullable: false),
+                    Status = table.Column<short>(nullable: false),
+                    UID = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Clients_Client_Id",
+                        column: x => x.Client_Id,
+                        principalTable: "Clients",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Tags_MainTag_Id",
+                        column: x => x.MainTag_Id,
+                        principalTable: "Tags",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Addresses_CityDetails_RegionDetail_Id",
+                        column: x => x.RegionDetail_Id,
+                        principalTable: "CityDetails",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Address_LangDescs",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    Address_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Language_Id = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    Value = table.Column<string>(maxLength: 4096, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address_LangDescs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Address_LangDescs_Addresses_Address_Id",
+                        column: x => x.Address_Id,
+                        principalTable: "Addresses",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Address_LangDescs_Languages_Language_Id",
+                        column: x => x.Language_Id,
+                        principalTable: "Languages",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AddressCategory",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                    AddressID = table.Column<long>(nullable: true),
+                    Address_Id = table.Column<long>(nullable: false),
+                    CategoryID = table.Column<long>(nullable: true),
+                    Category_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    IsNotifiable = table.Column<bool>(nullable: false),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    RecordState = table.Column<short>(nullable: false),
+                    Status = table.Column<short>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AddressCategory", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_AddressCategory_Addresses_AddressID",
+                        column: x => x.AddressID,
+                        principalTable: "Addresses",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AddressCategory_Categorys_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categorys",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Contacts",
                 columns: table => new
                 {
@@ -570,6 +858,7 @@ namespace FindMe.Web.Bo.Migrations
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
                     Format = table.Column<string>(maxLength: 32, nullable: false),
                     Height = table.Column<int>(nullable: false),
+                    IsDefault = table.Column<bool>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
@@ -783,9 +1072,9 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_Category_Id",
+                name: "IX_Addresses_MainTag_Id",
                 table: "Addresses",
-                column: "Category_Id");
+                column: "MainTag_Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_Name",
@@ -793,15 +1082,36 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_Region_Id",
+                name: "IX_Addresses_RegionDetail_Id",
                 table: "Addresses",
-                column: "Region_Id");
+                column: "RegionDetail_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_Client_Id_Code",
+                name: "IX_Addresses_Client_Id_UID",
                 table: "Addresses",
-                columns: new[] { "Client_Id", "Code" },
+                columns: new[] { "Client_Id", "UID" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Address_LangDescs_Language_Id",
+                table: "Address_LangDescs",
+                column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Address_LangDescs_Address_Id_Language_Id",
+                table: "Address_LangDescs",
+                columns: new[] { "Address_Id", "Language_Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AddressCategory_AddressID",
+                table: "AddressCategory",
+                column: "AddressID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AddressCategory_CategoryID",
+                table: "AddressCategory",
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contacts_Address_Id_FromUtc_Name",
@@ -839,20 +1149,116 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorys_Code",
-                table: "Categorys",
-                column: "Code",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Categorys_Name",
-                table: "Categorys",
-                column: "Name");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Categorys_Parent_Id",
                 table: "Categorys",
                 column: "Parent_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categorys_UID",
+                table: "Categorys",
+                column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_Langs_ColTag",
+                table: "Category_Langs",
+                column: "ColTag");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_Langs_Language_Id",
+                table: "Category_Langs",
+                column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_Langs_Category_Id_Language_Id_ColTag",
+                table: "Category_Langs",
+                columns: new[] { "Category_Id", "Language_Id", "ColTag" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_LangDescs_Language_Id",
+                table: "Category_LangDescs",
+                column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_LangDescs_Category_Id_Language_Id",
+                table: "Category_LangDescs",
+                columns: new[] { "Category_Id", "Language_Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDetails_District_Id",
+                table: "CityDetails",
+                column: "District_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDetails_Group_Id",
+                table: "CityDetails",
+                column: "Group_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDetails_Name",
+                table: "CityDetails",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDetails_Region_Id",
+                table: "CityDetails",
+                column: "Region_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDetails_UID",
+                table: "CityDetails",
+                column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDistricts_Country_Id",
+                table: "CityDistricts",
+                column: "Country_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDistricts_Name",
+                table: "CityDistricts",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityDistricts_UID",
+                table: "CityDistricts",
+                column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityGroups_Country_Id",
+                table: "CityGroups",
+                column: "Country_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityGroups_Name",
+                table: "CityGroups",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityGroups_UID",
+                table: "CityGroups",
+                column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegions_Country_Id",
+                table: "CityRegions",
+                column: "Country_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegions_Name",
+                table: "CityRegions",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegions_UID",
+                table: "CityRegions",
+                column: "UID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_Code",
@@ -901,6 +1307,12 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Languages_Code",
+                table: "Languages",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Loggings_UID",
                 table: "Loggings",
                 column: "UID",
@@ -930,27 +1342,6 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Regions_Code",
-                table: "Regions",
-                column: "Code",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Regions_Country_Id",
-                table: "Regions",
-                column: "Country_Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Regions_Name",
-                table: "Regions",
-                column: "Name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Regions_Parent_Id",
-                table: "Regions",
-                column: "Parent_Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Roles_Name",
                 table: "Roles",
                 column: "Name",
@@ -975,14 +1366,25 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_Name",
-                table: "Tags",
-                column: "Name");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tags_UID",
                 table: "Tags",
                 column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_Langs_ColTag",
+                table: "Tag_Langs",
+                column: "ColTag");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_Langs_Language_Id",
+                table: "Tag_Langs",
+                column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_Langs_Tag_Id_Language_Id_ColTag",
+                table: "Tag_Langs",
+                columns: new[] { "Tag_Id", "Language_Id", "ColTag" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1054,6 +1456,12 @@ namespace FindMe.Web.Bo.Migrations
                 name: "AccessTokens");
 
             migrationBuilder.DropTable(
+                name: "Address_LangDescs");
+
+            migrationBuilder.DropTable(
+                name: "AddressCategory");
+
+            migrationBuilder.DropTable(
                 name: "Contacts");
 
             migrationBuilder.DropTable(
@@ -1064,6 +1472,12 @@ namespace FindMe.Web.Bo.Migrations
 
             migrationBuilder.DropTable(
                 name: "AddressThumbnails");
+
+            migrationBuilder.DropTable(
+                name: "Category_Langs");
+
+            migrationBuilder.DropTable(
+                name: "Category_LangDescs");
 
             migrationBuilder.DropTable(
                 name: "DaysOpen");
@@ -1084,6 +1498,9 @@ namespace FindMe.Web.Bo.Migrations
                 name: "SysParDetails");
 
             migrationBuilder.DropTable(
+                name: "Tag_Langs");
+
+            migrationBuilder.DropTable(
                 name: "UserLogins");
 
             migrationBuilder.DropTable(
@@ -1096,16 +1513,19 @@ namespace FindMe.Web.Bo.Migrations
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "AddressImages");
 
             migrationBuilder.DropTable(
-                name: "AddressImages");
+                name: "Categorys");
 
             migrationBuilder.DropTable(
                 name: "IdendityRefs");
 
             migrationBuilder.DropTable(
                 name: "SysParMasters");
+
+            migrationBuilder.DropTable(
+                name: "Languages");
 
             migrationBuilder.DropTable(
                 name: "UserIPs");
@@ -1123,13 +1543,22 @@ namespace FindMe.Web.Bo.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Categorys");
-
-            migrationBuilder.DropTable(
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "Regions");
+                name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "CityDetails");
+
+            migrationBuilder.DropTable(
+                name: "CityDistricts");
+
+            migrationBuilder.DropTable(
+                name: "CityGroups");
+
+            migrationBuilder.DropTable(
+                name: "CityRegions");
 
             migrationBuilder.DropTable(
                 name: "Countrys");
