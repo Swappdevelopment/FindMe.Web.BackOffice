@@ -1,6 +1,7 @@
 ﻿
 #wrapper {
-    width: 100%;
+    /*width: inherit;*/
+    /*height: inherit;*/
     padding-left: 200px;
     transition: padding-left ease-in 300ms;
 }
@@ -27,13 +28,18 @@
     }
 
 
+    #wrapper .vw-container {
+        /*height: inherit;*/
+    }
+
 
     #wrapper .main-ctrlr {
-        padding: 15px 10px 5px 20px;
+        padding: 65px 10px 5px 20px;
+        /*height: inherit;*/
     }
 
         #wrapper .main-ctrlr.bs-small-res {
-            padding-top: 35px;
+            padding-top: 105px;
         }
 
         #wrapper .main-ctrlr .title-bar {

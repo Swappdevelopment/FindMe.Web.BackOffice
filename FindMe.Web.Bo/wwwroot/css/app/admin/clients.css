@@ -1,0 +1,9 @@
+﻿
+#clientsVw {
+}
+
+    #clientsVw table tbody {
+        height: 100px;
+        overflow-y: auto;
+        width: 100%;
+    }

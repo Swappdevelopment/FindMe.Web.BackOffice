@@ -89,6 +89,8 @@ namespace FindMe.Web.App
 
             dynamic profile = null;
 
+            string tokenValue = null;
+
             try
             {
                 profile = param.profile;
@@ -103,14 +105,21 @@ namespace FindMe.Web.App
 
                     case "resendemailconfirmation":
 
+                        tokenValue = profile.emailToValToken.ToString();
+
                         string link = Url.Action("ValidateEmail", "Account", null, this.Request.Scheme);
-                        link += (link.EndsWith("/") ? "" : "/") + profile.emailToValToken.ToString();
+                        link += (link.EndsWith("/") ? "" : "/") + tokenValue;
 
 
                         string message = this.GetMessage("Msg_ValEmail") + link;
 
 
-                        await _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("Lbl_FndMeBoValEmail"), message);
+                        await Task.WhenAll(
+                                    _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sending),
+                                    _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("Lbl_FndMeBoValEmail"), message));
+
+                        await _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sent);
+
                         break;
 
                     default:

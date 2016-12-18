@@ -36,6 +36,7 @@
             emailLocked: false,
             emailToVal: '',
             emailToValToken: '',
+            emailToValSent: false,
             userName: '',
             userNameLocked: false,
             contactNumber: '',
@@ -62,6 +63,7 @@
                 vm.profile.emailLocked = resp.data.result.emailLocked;
                 vm.profile.emailToVal = resp.data.result.emailToVal;
                 vm.profile.emailToValToken = resp.data.result.emailToValToken;
+                vm.profile.emailToValSent = resp.data.result.emailToValSent;
                 vm.profile.userName = resp.data.result.userName;
                 vm.profile.userNameLocked = resp.data.result.userNameLocked;
                 vm.profile.contactNumber = resp.data.result.contactNumber;
@@ -77,7 +79,8 @@
                     $('#topbar .container .navbar-right a.dropdown-toggle').text(fn);
                 }
 
-                if (vm.profile.emailToVal
+                if (!vm.profile.emailToValSent
+                    && vm.profile.emailToVal
                     && vm.profile.emailToVal.length > 0
                     && vm.profile.emailToValToken
                     && vm.profile.emailToValToken.length > 0) {

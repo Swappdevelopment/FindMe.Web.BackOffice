@@ -1,6 +1,8 @@
 ﻿
 #searchBar {
     height: 65px;
+    position: fixed;
+    width: 100%;
 }
 
     #searchBar .btn.btn-burger {
