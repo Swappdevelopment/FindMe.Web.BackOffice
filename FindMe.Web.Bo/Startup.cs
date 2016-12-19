@@ -21,6 +21,13 @@ namespace FindMe.Web.App
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
+                builder.AddApplicationInsightsSettings(developerMode: true);
+            }
+
             Configuration = builder.Build();
         }
 
@@ -29,6 +36,9 @@ namespace FindMe.Web.App
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(Configuration);
+
+            // Add framework services.
+            services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc()
                 .AddJsonOptions(options =>
@@ -56,7 +66,6 @@ namespace FindMe.Web.App
             IApplicationBuilder app,
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
-            WebDbRepository repo,
             AppMigrationSeedManager seeder)
         {
             //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
