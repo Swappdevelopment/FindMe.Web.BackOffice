@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FindMe.Web.App
 {
     public class BaseController : Controller
-    {
+    { 
         public const string TOKENS_KEY = "APP_TOKENS";
         public const string REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
         public const string ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
