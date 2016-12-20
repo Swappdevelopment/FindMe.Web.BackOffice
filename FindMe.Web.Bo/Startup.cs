@@ -37,7 +37,6 @@ namespace FindMe.Web.App
         {
             services.AddSingleton(Configuration);
 
-            // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc()
@@ -95,8 +94,6 @@ namespace FindMe.Web.App
                     routes.MapRoute(
                         name: "default",
                         template: "{controller=App}/{action=Index}/{id?}");
-                    //defaults: "App/Index");
-
                 }
             );
 

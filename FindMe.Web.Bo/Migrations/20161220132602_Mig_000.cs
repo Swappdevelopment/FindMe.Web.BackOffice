@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FindMe.Web.Bo.Migrations
 {
@@ -13,7 +14,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     BgFx = table.Column<string>(maxLength: 16, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -45,17 +46,19 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Civility = table.Column<string>(maxLength: 32, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
                     FName = table.Column<string>(maxLength: 128, nullable: true),
+                    ImpID = table.Column<string>(maxLength: 32, nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
                     LName = table.Column<string>(maxLength: 128, nullable: true),
                     LegalName = table.Column<string>(maxLength: 128, nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Paid = table.Column<bool>(nullable: false),
                     PhysAddress = table.Column<string>(maxLength: 512, nullable: true),
                     RememberToken = table.Column<string>(maxLength: 128, nullable: true),
                     Status = table.Column<short>(nullable: false),
@@ -71,7 +74,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Capital = table.Column<string>(maxLength: 32, nullable: true),
                     Code = table.Column<string>(maxLength: 32, nullable: false),
                     Currency = table.Column<string>(maxLength: 32, nullable: true),
@@ -91,7 +94,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
@@ -107,7 +110,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Confirmed = table.Column<bool>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
                     Status = table.Column<short>(nullable: false),
@@ -123,7 +126,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Code = table.Column<string>(maxLength: 32, nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
@@ -139,7 +142,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
@@ -161,7 +164,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsImported = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(maxLength: 64, nullable: false),
                     Status = table.Column<short>(nullable: false),
@@ -177,7 +180,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Code = table.Column<string>(maxLength: 128, nullable: false),
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
@@ -193,7 +196,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
@@ -212,7 +215,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ContactNumber = table.Column<string>(nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
@@ -242,7 +245,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Country_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -272,7 +275,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Country_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -302,7 +305,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Country_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -332,7 +335,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Client_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -365,7 +368,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Category_Id = table.Column<long>(nullable: false),
                     ColTag = table.Column<string>(maxLength: 64, nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
@@ -399,7 +402,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Category_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -432,7 +435,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Code = table.Column<string>(maxLength: 256, nullable: false),
                     Data = table.Column<string>(maxLength: 2048, nullable: true),
                     Desc = table.Column<string>(maxLength: 512, nullable: true),
@@ -456,7 +459,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ColTag = table.Column<string>(maxLength: 64, nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -490,7 +493,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ClientType = table.Column<short>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -519,7 +522,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     IPAddress_Id = table.Column<long>(nullable: false),
@@ -551,7 +554,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsImported = table.Column<bool>(nullable: false),
                     Role_Id = table.Column<long>(nullable: false),
                     Status = table.Column<short>(nullable: false),
@@ -579,7 +582,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AddData = table.Column<string>(maxLength: 256, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -609,7 +612,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     District_Id = table.Column<long>(nullable: false),
@@ -654,7 +657,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     InvalidPsswrdFormat = table.Column<bool>(nullable: false),
@@ -681,7 +684,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AttemptResult = table.Column<short>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
                     Status = table.Column<short>(nullable: false),
@@ -704,16 +707,15 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CityDetail_Id = table.Column<long>(nullable: false),
                     ClientType = table.Column<short>(nullable: false),
                     Client_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
-                    FlgIsFeatured = table.Column<bool>(nullable: false),
-                    FlgIsFeaturedMenu = table.Column<bool>(nullable: false),
                     FlgPassport = table.Column<bool>(nullable: false),
                     FlgRecByFbFans = table.Column<bool>(nullable: false),
+                    ImpID = table.Column<string>(maxLength: 32, nullable: true),
                     IsImported = table.Column<bool>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
@@ -753,7 +755,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -786,7 +788,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     Category_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
@@ -818,7 +820,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -850,7 +852,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     Alt = table.Column<string>(maxLength: 128, nullable: true),
                     Caption = table.Column<string>(maxLength: 128, nullable: true),
@@ -882,11 +884,39 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AddressIsFeatureds",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Address_Id = table.Column<long>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    FromUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Status = table.Column<short>(nullable: false),
+                    ToUtc = table.Column<DateTime>(nullable: true),
+                    Type = table.Column<short>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AddressIsFeatureds", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_AddressIsFeatureds_Addresses_Address_Id",
+                        column: x => x.Address_Id,
+                        principalTable: "Addresses",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AddressLinks",
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -915,7 +945,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -947,7 +977,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -977,7 +1007,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -1010,7 +1040,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Address_Id = table.Column<long>(nullable: false),
                     ClickCount = table.Column<int>(nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
@@ -1039,7 +1069,7 @@ namespace FindMe.Web.Bo.Migrations
                 columns: table => new
                 {
                     ID = table.Column<long>(nullable: false)
-                        .Annotation("MySql:ValueGeneratedOnAdd", true),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Alt = table.Column<string>(maxLength: 128, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -1125,6 +1155,12 @@ namespace FindMe.Web.Bo.Migrations
                 name: "IX_AddressFiles_Address_Id_UID_Height_Width",
                 table: "AddressFiles",
                 columns: new[] { "Address_Id", "UID", "Height", "Width" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AddressIsFeatureds_Address_Id_Type_FromUtc",
+                table: "AddressIsFeatureds",
+                columns: new[] { "Address_Id", "Type", "FromUtc" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1465,6 +1501,9 @@ namespace FindMe.Web.Bo.Migrations
 
             migrationBuilder.DropTable(
                 name: "AddressContacts");
+
+            migrationBuilder.DropTable(
+                name: "AddressIsFeatureds");
 
             migrationBuilder.DropTable(
                 name: "AddressLinks");

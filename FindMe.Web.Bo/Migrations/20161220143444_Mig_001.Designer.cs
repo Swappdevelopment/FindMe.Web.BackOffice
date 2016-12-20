@@ -10,13 +10,14 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20161218153239_{db_migration_name}")]
-    partial class db_migration_name
+    [Migration("20161220143444_Mig_001")]
+    partial class Mig_001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("FindMe.Data.Models.AccessToken", b =>
                 {
@@ -77,12 +78,6 @@ namespace FindMe.Web.Bo.Migrations
                         .HasMaxLength(50);
 
                     b.Property<DateTime>("CreationTimeUtc");
-
-                    b.Property<bool>("FlgIsFeatured")
-                        .HasColumnName("FlgIsFeatured");
-
-                    b.Property<bool>("FlgIsFeaturedMenu")
-                        .HasColumnName("FlgIsFeaturedMenu");
 
                     b.Property<bool>("FlgPassport")
                         .HasColumnName("FlgPassport");
@@ -330,7 +325,6 @@ namespace FindMe.Web.Bo.Migrations
                         .HasMaxLength(128);
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnName("Url")
                         .HasMaxLength(256);
 
@@ -343,6 +337,46 @@ namespace FindMe.Web.Bo.Migrations
                         .IsUnique();
 
                     b.ToTable("AddressFiles");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.AddressIsFeatured", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("Address_Id")
+                        .HasColumnName("Address_Id");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<DateTime>("FromUtc")
+                        .HasColumnName("FromUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<short>("Status");
+
+                    b.Property<DateTime?>("ToUtc")
+                        .HasColumnName("ToUtc");
+
+                    b.Property<short>("Type")
+                        .HasColumnName("Type");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("Address_Id", "Type", "FromUtc")
+                        .IsUnique();
+
+                    b.ToTable("AddressIsFeatureds");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.AddressLink", b =>
@@ -1759,6 +1793,13 @@ namespace FindMe.Web.Bo.Migrations
                 {
                     b.HasOne("FindMe.Data.Models.Address", "Address")
                         .WithMany("Files")
+                        .HasForeignKey("Address_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.AddressIsFeatured", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Address", "Address")
+                        .WithMany("IsFeatureds")
                         .HasForeignKey("Address_Id");
                 });
 
