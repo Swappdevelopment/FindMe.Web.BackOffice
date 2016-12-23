@@ -49,10 +49,37 @@ namespace FindMe.Web.App
             if (_env.IsDevelopment())
             {
                 services.AddTransient<IMailService, DevMailService>();
+
+                services.AddSingleton(ConnectionStringManager.Create(
+                    (type) =>
+                    {
+                        switch (type == null ? "" : type.ToLower())
+                        {
+                            case "mysql":
+                                return DevSecrets.GetSecretValue("connectionStrings:findme:mysql");
+
+                            default:
+                                return DevSecrets.GetSecretValue("connectionStrings:findme:mssql");
+                        }
+                    }));
             }
             else
             {
                 services.AddTransient<IMailService, MailService>();
+
+                services.AddSingleton(ConnectionStringManager.Create(
+                    (type) =>
+                    {
+
+                        switch (type == null ? "" : type.ToLower())
+                        {
+                            case "mysql":
+                                return Configuration["ConnectionStrings:MySqlConnection"];
+
+                            default:
+                                return Configuration["ConnectionStrings:MsSqlConnection"];
+                        }
+                    }));
             }
 
             services.AddDbContext<AppDbContext>();

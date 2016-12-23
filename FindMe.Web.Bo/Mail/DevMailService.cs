@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Swapp.Data;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -7,26 +8,14 @@ namespace FindMe.Web.App
     {
         private IHostingEnvironment _env;
 
-        private string _rootPath;
-
         public DevMailService(IHostingEnvironment env)
             : base()
         {
             _env = env;
 
-            _rootPath = _env == null ? null : _env.WebRootPath;
-
-            if (string.IsNullOrEmpty(_rootPath))
-            {
-                _baseEmail = null;
-                _baseEmailPassword = null;
-            }
-            else
-            {
-                _baseEmailServerName = DevSecrets.GetSecretValue("swappAccount:serverName", _rootPath);
-                _baseEmail = DevSecrets.GetSecretValue("swappAccount:email", _rootPath);
-                _baseEmailPassword = DevSecrets.GetSecretValue("swappAccount:emailPassword", _rootPath);
-            }
+            _baseEmailServerName = DevSecrets.GetSecretValue("swappAccount:serverName");
+            _baseEmail = DevSecrets.GetSecretValue("swappAccount:email");
+            _baseEmailPassword = DevSecrets.GetSecretValue("swappAccount:emailPassword");
         }
 
 
@@ -41,7 +30,6 @@ namespace FindMe.Web.App
             base.Dispose();
 
             _env = null;
-            _rootPath = null;
         }
     }
 }
