@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161223151653_Mig_005")]
+    partial class Mig_005
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
@@ -65,6 +66,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long?>("CityDetail_Id")
                         .IsRequired()
                         .HasColumnName("CityDetail_Id");
+
+                    b.Property<long?>("CityLiteID");
 
                     b.Property<short>("ClientType")
                         .HasColumnName("ClientType");
@@ -123,6 +126,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("CityDetail_Id");
+
+                    b.HasIndex("CityLiteID");
 
                     b.HasIndex("Name");
 
@@ -467,6 +472,8 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<long?>("AddressID");
+
                     b.Property<string>("Alt")
                         .HasColumnName("Alt")
                         .HasMaxLength(128);
@@ -513,6 +520,8 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Width");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("AddressID");
 
                     b.HasIndex("Image_Id", "Height", "Width")
                         .IsUnique();
@@ -673,6 +682,38 @@ namespace FindMe.Web.Bo.Migrations
                         .IsUnique();
 
                     b.ToTable("Category_LangDescs");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CategoryLite", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long?>("AddressID");
+
+                    b.Property<string>("IconClass");
+
+                    b.Property<int>("Level");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Parent_IconClass");
+
+                    b.Property<long>("Parent_Id");
+
+                    b.Property<string>("Parent_Name");
+
+                    b.Property<string>("Parent_Slug");
+
+                    b.Property<string>("Path");
+
+                    b.Property<string>("Slug");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddressID");
+
+                    b.ToTable("CategoryLite");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.CityDetail", b =>
@@ -849,6 +890,32 @@ namespace FindMe.Web.Bo.Migrations
                         .IsUnique();
 
                     b.ToTable("CityGroups");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityLite", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("District_Id");
+
+                    b.Property<string>("District_Name");
+
+                    b.Property<long>("Group_Id");
+
+                    b.Property<string>("Group_Name");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("Region_Id");
+
+                    b.Property<string>("Region_Name");
+
+                    b.Property<string>("Slug");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("CityLite");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.CityRegion", b =>
@@ -1525,6 +1592,24 @@ namespace FindMe.Web.Bo.Migrations
                     b.ToTable("Tag_Langs");
                 });
 
+            modelBuilder.Entity("FindMe.Data.Models.TagLite", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long?>("AddressID");
+
+                    b.Property<bool>("IsMain");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AddressID");
+
+                    b.ToTable("TagLite");
+                });
+
             modelBuilder.Entity("FindMe.Data.Models.User", b =>
                 {
                     b.Property<long>("ID")
@@ -1757,6 +1842,10 @@ namespace FindMe.Web.Bo.Migrations
                         .WithMany("Addresses")
                         .HasForeignKey("CityDetail_Id");
 
+                    b.HasOne("FindMe.Data.Models.CityLite", "CityLite")
+                        .WithMany()
+                        .HasForeignKey("CityLiteID");
+
                     b.HasOne("FindMe.Data.Models.Client", "Client")
                         .WithMany("Addresses")
                         .HasForeignKey("Client_Id");
@@ -1825,6 +1914,10 @@ namespace FindMe.Web.Bo.Migrations
 
             modelBuilder.Entity("FindMe.Data.Models.AddressThumbnail", b =>
                 {
+                    b.HasOne("FindMe.Data.Models.Address")
+                        .WithMany("Thumbnails")
+                        .HasForeignKey("AddressID");
+
                     b.HasOne("FindMe.Data.Models.AddressFile", "Image")
                         .WithMany("Thumbnails")
                         .HasForeignKey("Image_Id");
@@ -1857,6 +1950,13 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.Language", "Language")
                         .WithMany("CategoryLangDescs")
                         .HasForeignKey("Language_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CategoryLite", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Address")
+                        .WithMany("CategoryLites")
+                        .HasForeignKey("AddressID");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.CityDetail", b =>
@@ -1954,6 +2054,13 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.Tag", "Tag")
                         .WithMany("TagLangs")
                         .HasForeignKey("Tag_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.TagLite", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Address")
+                        .WithMany("TagLites")
+                        .HasForeignKey("AddressID");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.UserIP", b =>

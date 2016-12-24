@@ -1,6 +1,5 @@
 ﻿using FindMe.Data;
 using Microsoft.EntityFrameworkCore;
-using Swapp.Data;
 
 namespace FindMe.Web.App
 {
