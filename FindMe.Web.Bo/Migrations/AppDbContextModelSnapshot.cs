@@ -628,6 +628,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Language_Id");
 
+                    b.HasIndex("Value");
+
                     b.HasIndex("Category_Id", "Language_Id", "ColTag")
                         .IsUnique();
 
@@ -878,11 +880,6 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime?>("ModifiedTimeUtc");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("Name")
-                        .HasMaxLength(128);
-
                     b.Property<int>("Seqn")
                         .HasColumnName("Seqn");
 
@@ -897,12 +894,60 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Country_Id");
 
-                    b.HasIndex("Name");
-
                     b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("CityRegions");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityRegion_Lang", b =>
+                {
+                    b.Property<long>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ColTag")
+                        .IsRequired()
+                        .HasColumnName("ColTag")
+                        .HasMaxLength(64);
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreationTimeUtc");
+
+                    b.Property<bool>("IsImported");
+
+                    b.Property<long>("Language_Id")
+                        .HasColumnName("Language_Id");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifiedTimeUtc");
+
+                    b.Property<long>("Region_Id")
+                        .HasColumnName("Region_Id");
+
+                    b.Property<short>("Status");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnName("Value")
+                        .HasMaxLength(128);
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ColTag");
+
+                    b.HasIndex("Language_Id");
+
+                    b.HasIndex("Value");
+
+                    b.HasIndex("Region_Id", "Language_Id", "ColTag")
+                        .IsUnique();
+
+                    b.ToTable("CityRegion_Langs");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.Client", b =>
@@ -1519,6 +1564,8 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Language_Id");
 
+                    b.HasIndex("Value");
+
                     b.HasIndex("Tag_Id", "Language_Id", "ColTag")
                         .IsUnique();
 
@@ -1832,6 +1879,10 @@ namespace FindMe.Web.Bo.Migrations
 
             modelBuilder.Entity("FindMe.Data.Models.Category", b =>
                 {
+                    b.HasOne("FindMe.Data.Models.Category", "Base")
+                        .WithMany("Descendants")
+                        .HasForeignKey("Base_Id");
+
                     b.HasOne("FindMe.Data.Models.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("Parent_Id");
@@ -1893,6 +1944,17 @@ namespace FindMe.Web.Bo.Migrations
                     b.HasOne("FindMe.Data.Models.Country", "Country")
                         .WithMany("CityRegions")
                         .HasForeignKey("Country_Id");
+                });
+
+            modelBuilder.Entity("FindMe.Data.Models.CityRegion_Lang", b =>
+                {
+                    b.HasOne("FindMe.Data.Models.Language", "Language")
+                        .WithMany("CityRegionLangs")
+                        .HasForeignKey("Language_Id");
+
+                    b.HasOne("FindMe.Data.Models.CityRegion", "Region")
+                        .WithMany("CityRegionLangs")
+                        .HasForeignKey("Region_Id");
                 });
 
             modelBuilder.Entity("FindMe.Data.Models.DayOpen", b =>

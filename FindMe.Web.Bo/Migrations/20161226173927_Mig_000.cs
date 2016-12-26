@@ -15,6 +15,7 @@ namespace FindMe.Web.Bo.Migrations
                 {
                     ID = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Base_Id = table.Column<long>(nullable: true),
                     BgFx = table.Column<string>(maxLength: 16, nullable: true),
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
@@ -33,6 +34,12 @@ namespace FindMe.Web.Bo.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categorys", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Categorys_Categorys_Base_Id",
+                        column: x => x.Base_Id,
+                        principalTable: "Categorys",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Categorys_Categorys_Parent_Id",
                         column: x => x.Parent_Id,
@@ -314,7 +321,6 @@ namespace FindMe.Web.Bo.Migrations
                     Longitude = table.Column<double>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
                     Seqn = table.Column<int>(nullable: false),
                     Status = table.Column<short>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false)
@@ -653,6 +659,40 @@ namespace FindMe.Web.Bo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CityRegion_Langs",
+                columns: table => new
+                {
+                    ID = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ColTag = table.Column<string>(maxLength: 64, nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
+                    CreationTimeUtc = table.Column<DateTime>(nullable: false),
+                    IsImported = table.Column<bool>(nullable: false),
+                    Language_Id = table.Column<long>(nullable: false),
+                    ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
+                    ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
+                    Region_Id = table.Column<long>(nullable: false),
+                    Status = table.Column<short>(nullable: false),
+                    Value = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityRegion_Langs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_CityRegion_Langs_Languages_Language_Id",
+                        column: x => x.Language_Id,
+                        principalTable: "Languages",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CityRegion_Langs_CityRegions_Region_Id",
+                        column: x => x.Region_Id,
+                        principalTable: "CityRegions",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AccessTokens",
                 columns: table => new
                 {
@@ -719,10 +759,10 @@ namespace FindMe.Web.Bo.Migrations
                     IsImported = table.Column<bool>(nullable: false),
                     Latitude = table.Column<double>(nullable: true),
                     Longitude = table.Column<double>(nullable: true),
-                    MainTag_Id = table.Column<long>(nullable: true),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Slug = table.Column<string>(maxLength: 128, nullable: true),
                     Status = table.Column<short>(nullable: false),
                     TripAdvisorID = table.Column<long>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false)
@@ -740,12 +780,6 @@ namespace FindMe.Web.Bo.Migrations
                         name: "FK_Addresses_Clients_Client_Id",
                         column: x => x.Client_Id,
                         principalTable: "Clients",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Tags_MainTag_Id",
-                        column: x => x.MainTag_Id,
-                        principalTable: "Tags",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -869,7 +903,7 @@ namespace FindMe.Web.Bo.Migrations
                     Status = table.Column<short>(nullable: false),
                     Type = table.Column<short>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false),
-                    Url = table.Column<string>(maxLength: 256, nullable: false),
+                    Url = table.Column<string>(maxLength: 256, nullable: true),
                     Width = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -950,6 +984,7 @@ namespace FindMe.Web.Bo.Migrations
                     CreatedBy = table.Column<string>(maxLength: 50, nullable: false),
                     CreationTimeUtc = table.Column<DateTime>(nullable: false),
                     IsImported = table.Column<bool>(nullable: false),
+                    IsMain = table.Column<bool>(nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Status = table.Column<short>(nullable: false),
@@ -1108,11 +1143,6 @@ namespace FindMe.Web.Bo.Migrations
                 column: "CityDetail_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_MainTag_Id",
-                table: "Addresses",
-                column: "MainTag_Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Addresses_Name",
                 table: "Addresses",
                 column: "Name");
@@ -1187,6 +1217,11 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categorys_Base_Id",
+                table: "Categorys",
+                column: "Base_Id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categorys_Parent_Id",
                 table: "Categorys",
                 column: "Parent_Id");
@@ -1206,6 +1241,11 @@ namespace FindMe.Web.Bo.Migrations
                 name: "IX_Category_Langs_Language_Id",
                 table: "Category_Langs",
                 column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Category_Langs_Value",
+                table: "Category_Langs",
+                column: "Value");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Category_Langs_Category_Id_Language_Id_ColTag",
@@ -1288,14 +1328,30 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Country_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CityRegions_Name",
-                table: "CityRegions",
-                column: "Name");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CityRegions_UID",
                 table: "CityRegions",
                 column: "UID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegion_Langs_ColTag",
+                table: "CityRegion_Langs",
+                column: "ColTag");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegion_Langs_Language_Id",
+                table: "CityRegion_Langs",
+                column: "Language_Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegion_Langs_Value",
+                table: "CityRegion_Langs",
+                column: "Value");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CityRegion_Langs_Region_Id_Language_Id_ColTag",
+                table: "CityRegion_Langs",
+                columns: new[] { "Region_Id", "Language_Id", "ColTag" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1420,6 +1476,11 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Language_Id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tag_Langs_Value",
+                table: "Tag_Langs",
+                column: "Value");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tag_Langs_Tag_Id_Language_Id_ColTag",
                 table: "Tag_Langs",
                 columns: new[] { "Tag_Id", "Language_Id", "ColTag" },
@@ -1521,6 +1582,9 @@ namespace FindMe.Web.Bo.Migrations
                 name: "Category_LangDescs");
 
             migrationBuilder.DropTable(
+                name: "CityRegion_Langs");
+
+            migrationBuilder.DropTable(
                 name: "DaysOpen");
 
             migrationBuilder.DropTable(
@@ -1569,6 +1633,9 @@ namespace FindMe.Web.Bo.Migrations
                 name: "Languages");
 
             migrationBuilder.DropTable(
+                name: "Tags");
+
+            migrationBuilder.DropTable(
                 name: "UserIPs");
 
             migrationBuilder.DropTable(
@@ -1588,9 +1655,6 @@ namespace FindMe.Web.Bo.Migrations
 
             migrationBuilder.DropTable(
                 name: "Clients");
-
-            migrationBuilder.DropTable(
-                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "CityDistricts");
