@@ -63,6 +63,7 @@ namespace FindMe.Web.Bo.Migrations
                     IsImported = table.Column<bool>(nullable: false),
                     LName = table.Column<string>(maxLength: 128, nullable: true),
                     LegalName = table.Column<string>(maxLength: 128, nullable: false),
+                    LegalName_Comp = table.Column<string>(maxLength: 128, nullable: false),
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Paid = table.Column<bool>(nullable: false),
@@ -262,6 +263,7 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Name_Comp = table.Column<string>(maxLength: 128, nullable: false),
                     Seqn = table.Column<int>(nullable: false),
                     Status = table.Column<short>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false)
@@ -292,6 +294,7 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Name_Comp = table.Column<string>(maxLength: 128, nullable: false),
                     Seqn = table.Column<int>(nullable: false),
                     Status = table.Column<short>(nullable: false),
                     UID = table.Column<string>(maxLength: 128, nullable: false)
@@ -384,7 +387,8 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Status = table.Column<short>(nullable: false),
-                    Value = table.Column<string>(maxLength: 128, nullable: false)
+                    Value = table.Column<string>(maxLength: 128, nullable: false),
+                    Value_Comp = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -475,7 +479,8 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Status = table.Column<short>(nullable: false),
                     Tag_Id = table.Column<long>(nullable: false),
-                    Value = table.Column<string>(maxLength: 64, nullable: false)
+                    Value = table.Column<string>(maxLength: 64, nullable: false),
+                    Value_Comp = table.Column<string>(maxLength: 64, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -629,6 +634,7 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Name_Comp = table.Column<string>(maxLength: 128, nullable: false),
                     Region_Id = table.Column<long>(nullable: false),
                     Seqn = table.Column<int>(nullable: false),
                     Slug = table.Column<string>(maxLength: 128, nullable: true),
@@ -673,7 +679,8 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Region_Id = table.Column<long>(nullable: false),
                     Status = table.Column<short>(nullable: false),
-                    Value = table.Column<string>(maxLength: 128, nullable: false)
+                    Value = table.Column<string>(maxLength: 128, nullable: false),
+                    Value_Comp = table.Column<string>(maxLength: 128, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -762,6 +769,7 @@ namespace FindMe.Web.Bo.Migrations
                     ModifiedBy = table.Column<string>(maxLength: 50, nullable: true),
                     ModifiedTimeUtc = table.Column<DateTime>(nullable: true),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
+                    Name_Comp = table.Column<string>(maxLength: 128, nullable: false),
                     Slug = table.Column<string>(maxLength: 128, nullable: true),
                     Status = table.Column<short>(nullable: false),
                     TripAdvisorID = table.Column<long>(nullable: false),
@@ -1143,9 +1151,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "CityDetail_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_Name",
+                name: "IX_Addresses_Name_Comp",
                 table: "Addresses",
-                column: "Name");
+                column: "Name_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_Client_Id_UID",
@@ -1243,9 +1251,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Language_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_Langs_Value",
+                name: "IX_Category_Langs_Value_Comp",
                 table: "Category_Langs",
-                column: "Value");
+                column: "Value_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Category_Langs_Category_Id_Language_Id_ColTag",
@@ -1275,9 +1283,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Group_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CityDetails_Name",
+                name: "IX_CityDetails_Name_Comp",
                 table: "CityDetails",
-                column: "Name");
+                column: "Name_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CityDetails_Region_Id",
@@ -1296,9 +1304,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Country_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CityDistricts_Name",
+                name: "IX_CityDistricts_Name_Comp",
                 table: "CityDistricts",
-                column: "Name");
+                column: "Name_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CityDistricts_UID",
@@ -1312,9 +1320,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Country_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CityGroups_Name",
+                name: "IX_CityGroups_Name_Comp",
                 table: "CityGroups",
-                column: "Name");
+                column: "Name_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CityGroups_UID",
@@ -1344,9 +1352,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Language_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CityRegion_Langs_Value",
+                name: "IX_CityRegion_Langs_Value_Comp",
                 table: "CityRegion_Langs",
-                column: "Value");
+                column: "Value_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CityRegion_Langs_Region_Id_Language_Id_ColTag",
@@ -1355,9 +1363,9 @@ namespace FindMe.Web.Bo.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clients_LegalName",
+                name: "IX_Clients_LegalName_Comp",
                 table: "Clients",
-                column: "LegalName");
+                column: "LegalName_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_UID",
@@ -1476,9 +1484,9 @@ namespace FindMe.Web.Bo.Migrations
                 column: "Language_Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_Langs_Value",
+                name: "IX_Tag_Langs_Value_Comp",
                 table: "Tag_Langs",
-                column: "Value");
+                column: "Value_Comp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tag_Langs_Tag_Id_Language_Id_ColTag",

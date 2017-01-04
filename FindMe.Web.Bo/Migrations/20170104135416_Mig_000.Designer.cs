@@ -10,7 +10,7 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20170104113548_Mig_000")]
+    [Migration("20170104135416_Mig_000")]
     partial class Mig_000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,6 +107,11 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Name")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Name_Comp")
+                        .IsRequired()
+                        .HasColumnName("Name_Comp")
+                        .HasMaxLength(128);
+
                     b.Property<string>("Slug")
                         .HasColumnName("Slug")
                         .HasMaxLength(128);
@@ -125,7 +130,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("CityDetail_Id");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name_Comp");
 
                     b.HasIndex("Client_Id", "UID")
                         .IsUnique();
@@ -623,13 +628,18 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Value")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Value_Comp")
+                        .IsRequired()
+                        .HasColumnName("Value_Comp")
+                        .HasMaxLength(128);
+
                     b.HasKey("ID");
 
                     b.HasIndex("ColTag");
 
                     b.HasIndex("Language_Id");
 
-                    b.HasIndex("Value");
+                    b.HasIndex("Value_Comp");
 
                     b.HasIndex("Category_Id", "Language_Id", "ColTag")
                         .IsUnique();
@@ -713,6 +723,11 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Name")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Name_Comp")
+                        .IsRequired()
+                        .HasColumnName("Name_Comp")
+                        .HasMaxLength(128);
+
                     b.Property<long>("Region_Id")
                         .HasColumnName("Region_Id");
 
@@ -736,7 +751,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Group_Id");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name_Comp");
 
                     b.HasIndex("Region_Id");
 
@@ -778,6 +793,11 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Name")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Name_Comp")
+                        .IsRequired()
+                        .HasColumnName("Name_Comp")
+                        .HasMaxLength(128);
+
                     b.Property<int>("Seqn")
                         .HasColumnName("Seqn");
 
@@ -792,7 +812,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Country_Id");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name_Comp");
 
                     b.HasIndex("UID")
                         .IsUnique();
@@ -832,6 +852,11 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Name")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Name_Comp")
+                        .IsRequired()
+                        .HasColumnName("Name_Comp")
+                        .HasMaxLength(128);
+
                     b.Property<int>("Seqn")
                         .HasColumnName("Seqn");
 
@@ -846,7 +871,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasIndex("Country_Id");
 
-                    b.HasIndex("Name");
+                    b.HasIndex("Name_Comp");
 
                     b.HasIndex("UID")
                         .IsUnique();
@@ -937,13 +962,18 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Value")
                         .HasMaxLength(128);
 
+                    b.Property<string>("Value_Comp")
+                        .IsRequired()
+                        .HasColumnName("Value_Comp")
+                        .HasMaxLength(128);
+
                     b.HasKey("ID");
 
                     b.HasIndex("ColTag");
 
                     b.HasIndex("Language_Id");
 
-                    b.HasIndex("Value");
+                    b.HasIndex("Value_Comp");
 
                     b.HasIndex("Region_Id", "Language_Id", "ColTag")
                         .IsUnique();
@@ -989,6 +1019,11 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("LegalName")
                         .HasMaxLength(128);
 
+                    b.Property<string>("LegalName_Comp")
+                        .IsRequired()
+                        .HasColumnName("LegalName_Comp")
+                        .HasMaxLength(128);
+
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
@@ -1014,7 +1049,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("LegalName");
+                    b.HasIndex("LegalName_Comp");
 
                     b.HasIndex("UID")
                         .IsUnique();
@@ -1559,13 +1594,18 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Value")
                         .HasMaxLength(64);
 
+                    b.Property<string>("Value_Comp")
+                        .IsRequired()
+                        .HasColumnName("Value_Comp")
+                        .HasMaxLength(64);
+
                     b.HasKey("ID");
 
                     b.HasIndex("ColTag");
 
                     b.HasIndex("Language_Id");
 
-                    b.HasIndex("Value");
+                    b.HasIndex("Value_Comp");
 
                     b.HasIndex("Tag_Id", "Language_Id", "ColTag")
                         .IsUnique();
