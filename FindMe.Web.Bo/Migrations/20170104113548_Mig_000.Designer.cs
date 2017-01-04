@@ -10,7 +10,7 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20161226173927_Mig_000")]
+    [Migration("20170104113548_Mig_000")]
     partial class Mig_000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
