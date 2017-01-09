@@ -25,13 +25,13 @@
     "FindMe.Data.Db": "1.0.0-*",
     "MailKit": "1.10.1",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.1.0",
-    "FindMe.Data.Db.MsSql": "1.0.0-*",
     "Microsoft.AspNetCore.Razor.Tools": {
       "version": "1.1.0-preview4-final",
       "type": "build"
     },
     "Microsoft.EntityFrameworkCore.Tools": "1.1.0-preview4-final",
-    "Microsoft.ApplicationInsights.AspNetCore": "2.0.0-beta1"
+    "Microsoft.ApplicationInsights.AspNetCore": "2.0.0-beta1",
+    "FindMe.Data.Db.MySql": "1.0.0-*"
   },
 
   "tools": {
