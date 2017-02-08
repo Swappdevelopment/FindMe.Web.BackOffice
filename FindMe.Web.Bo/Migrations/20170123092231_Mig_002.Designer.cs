@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170123092231_Mig_002")]
+    partial class Mig_002
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
@@ -406,8 +407,6 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<DateTime?>("ToUtc")
                         .HasColumnName("ToUtc");
-
-                    b.Property<short>("Type");
 
                     b.Property<string>("Url")
                         .HasColumnName("Url")
@@ -1498,8 +1497,6 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
 
-                    b.Property<bool>("Editable");
-
                     b.Property<bool>("IsImported");
 
                     b.Property<short>("Status");
@@ -1528,8 +1525,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("Desc")
                         .HasColumnName("Desc")
                         .HasMaxLength(512);
-
-                    b.Property<bool>("Editable");
 
                     b.Property<bool>("IsImported");
 
