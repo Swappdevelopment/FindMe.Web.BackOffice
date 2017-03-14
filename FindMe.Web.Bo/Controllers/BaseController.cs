@@ -23,6 +23,9 @@ namespace FindMe.Web.App
         public const string USER_FULL_NAME = "USER_FULL_NAME";
 
 
+        public const int SEARCH_RESULT_ITEMS_PER_PAGE = 20;
+
+
 
         protected IConfigurationRoot _config;
         protected WebDbRepository _repo;
@@ -153,7 +156,7 @@ namespace FindMe.Web.App
                 this.LogCritical(ex);
             }
 
-            message = string.IsNullOrEmpty(message) ? this.GetMessage("ErMsg_SmthngWntWrng") : message;
+            message = string.IsNullOrEmpty(message) ? this.GetMessage("erMsg_SmthngWntWrng") : message;
 
             return BadRequest(
                         new

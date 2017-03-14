@@ -1,56 +1,26 @@
 ﻿@{
     ViewBag.Title = "App";
-
-
-    var obj = Html.ToJSonHtmlString(new
-    {
-        urlMngProfile = Url.Action("ManageProfile", "ApiAccount"),
-        urlCheckEmailToken = Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount"),
-        lbl_Name = Html.GetLabel("Lbl_Name"),
-        lbl_FullName = Html.GetLabel("Lbl_FullName"),
-        lbl_LglName = Html.GetLabel("Lbl_LglName"),
-        lbl_Actns = Html.GetLabel("Lbl_Actns"),
-        lbl_Actv = Html.GetLabel("Lbl_Actv"),
-        lbl_PdClnt = Html.GetLabel("Lbl_PdClnt"),
-        lbl_ID = Html.GetLabel("Lbl_ID"),
-        lbl_FName = Html.GetLabel("Lbl_FName"),
-        lbl_LName = Html.GetLabel("Lbl_LName"),
-        lbl_Email = Html.GetLabel("Lbl_Email"),
-        lbl_Usrnm = Html.GetLabel("Lbl_Usrnm"),
-        lbl_CntctNm = Html.GetLabel("Lbl_CntctNm"),
-        lbl_LckOut = Html.GetLabel("Lbl_LckOut"),
-        lbl_Prfl = Html.GetLabel("Lbl_Prfl"),
-        lbl_ReSnd = Html.GetLabel("Lbl_ReSnd"),
-        lbl_CnclCnfrmtn = Html.GetLabel("Lbl_CnclCnfrmtn"),
-        lbl_Clnts = Html.GetLabel("Lbl_Clnts"),
-
-        erMsg_InvldEmail = Html.GetMessage("ErMsg_InvldEmail"),
-        msg_RfrshPrfl = Html.GetMessage("Msg_RfrshPrfl"),
-        msg_SavePrfl = Html.GetMessage("Msg_SavePrfl"),
-        msg_WtngEmailCnfrmtn = Html.GetMessage("Msg_WtngEmailCnfrmtn"),
-        msg_AddClnts = Html.GetMessage("Msg_AddClnts"),
-        msg_RfrshClnts = Html.GetMessage("Msg_RfrshClnts"),
-        msg_SaveClnts = Html.GetMessage("Msg_SaveClnts")
-    });
 }
 
 
 @section css {
     <environment names="Development">
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/wrapper.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/side-bar.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/search-bar.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/home.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/admin/clients.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/account/profile.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="~/css/app/wrapper.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/side-bar.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/search-bar.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/pagination.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true"/>
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/css/app/wrapper.min.css" />
-        <link rel="stylesheet" href="~/css/app/side-bar.min.css" />
-        <link rel="stylesheet" href="~/css/app/search-bar.min.css" />
-        <link rel="stylesheet" href="~/css/app/home.min.css" />
-        <link rel="stylesheet" href="~/css/app/admin/clients.min.css" />
-        <link rel="stylesheet" href="~/css/app/account/profile.min.css" />
+        <link rel="stylesheet" href="~/css/app/wrapper.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/side-bar.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/search-bar.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/pagination.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/home.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/clients.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/account/profile.min.css" swp-cache-version="true" />
     </environment>
 }
 
@@ -65,7 +35,44 @@
 
         <script>
             angular.module('app-mainmenu')
-                   .value('appProps', JSON.parse('@obj'));
+                   .value('appProps',
+                        {
+                            resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+
+                            urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
+                            urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
+                            urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
+
+                            lbl_Name: '@Html.GetLabel("lbl_Name")',
+                            lbl_FullName: '@Html.GetLabel("lbl_FullName")',
+                            lbl_LglName: '@Html.GetLabel("lbl_LglName")',
+                            lbl_Actns: '@Html.GetLabel("lbl_Actns")',
+                            lbl_Actv: '@Html.GetLabel("lbl_Actv")',
+                            lbl_PdClnt: '@Html.GetLabel("lbl_PdClnt")',
+                            lbl_ID: '@Html.GetLabel("lbl_ID")',
+                            lbl_FName: '@Html.GetLabel("lbl_FName")',
+                            lbl_LName: '@Html.GetLabel("lbl_LName")',
+                            lbl_Email: '@Html.GetLabel("lbl_Email")',
+                            lbl_Usrnm: '@Html.GetLabel("lbl_Usrnm")',
+                            lbl_CntctNm: '@Html.GetLabel("lbl_CntctNm")',
+                            lbl_LckOut: '@Html.GetLabel("lbl_LckOut")',
+                            lbl_Prfl: '@Html.GetLabel("lbl_Prfl")',
+                            lbl_ReSnd: '@Html.GetLabel("lbl_ReSnd")',
+                            lbl_CnclCnfrmtn: '@Html.GetLabel("lbl_CnclCnfrmtn")',
+                            lbl_Clnts: '@Html.GetLabel("lbl_Clnts")',
+                            lbl_Pgs: '@Html.GetLabel("lbl_Pgs")',
+                            lbl_of: '@Html.GetLabel("lbl_of")',
+                            lbl_TtlClnts: '@Html.GetLabel("lbl_TtlClnts")',
+
+                            erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
+
+                            msg_RfrshPrfl: '@Html.GetMessage("msg_RfrshPrfl")',
+                            msg_SavePrfl: '@Html.GetMessage("msg_SavePrfl")',
+                            msg_WtngEmailCnfrmtn: '@Html.GetMessage("msg_WtngEmailCnfrmtn")',
+                            msg_AddClnts: '@Html.GetMessage("msg_AddClnts")',
+                            msg_RfrshClnts: '@Html.GetMessage("msg_RfrshClnts")',
+                            msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")'
+                        });
         </script>
 
         <script src="@Url.GetResPath("~/js/app/mainCtrlr.js", (string)ViewBag.WebRootPath)"></script>
@@ -89,10 +96,10 @@
         <script src="~/js/app/index.js" asp-append-version="true"></script>
         <script src="~/js/app/app-mainmenu.min.js" asp-append-version="true"></script>
 
-        <script>
+        @*<script>
             angular.module('app-mainmenu')
                    .value('appProps', JSON.parse('@obj'));
-        </script>
+        </script>*@
 
         <script src="~/js/app/mainCtrlr.min.js" asp-append-version="true"></script>
         <script src="~/js/app/homeCtrlr.min.js" asp-append-version="true"></script>
@@ -113,9 +120,9 @@
         <div id="sideBar">
             <div class="sb sb-lbls findme-color-bc-darker">
                 <ul>
-                    <li><a href="#!/users"><span>@Html.GetLabel("Lbl_Usrs")</span></a></li>
-                    <li><a href="#!/clients"><span>@Html.GetLabel("Lbl_Clnts")</span></a></li>
-                    <li><a href="#!/addresses"><span>@Html.GetLabel("Lbl_Addresses")</span></a></li>
+                    <li><a href="#!/users"><span>@Html.GetLabel("lbl_Usrs")</span></a></li>
+                    <li><a href="#!/clients"><span>@Html.GetLabel("lbl_Clnts")</span></a></li>
+                    <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
                 </ul>
             </div>
 
@@ -133,7 +140,7 @@
 
             <div id="searchBar" class="findme-color-bc-lgray">
 
-                <div class="col-md-6 col-sm-12">
+                <div class="cont col-md-6 col-sm-12">
                     <button type="button" class="btn btn-burger findme-color-fc-white findme-color-bc-yellow">
                         <span class="fa fa-bars fa-2x"></span>
                     </button>
@@ -147,7 +154,7 @@
                     </span>
                 </div>
 
-                <div class="tb col-md-6 col-sm-12 clsp hidden">
+                <div class="tb col-md-6 col-sm-12 clsp hidden findme-color-bc-lgray">
                     <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
                     <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
                     <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>

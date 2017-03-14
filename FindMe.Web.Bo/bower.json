@@ -1,12 +1,5 @@
 {
   "name": "asp.net",
   "private": true,
-  "dependencies": {
-    "jquery": "3.1.1",
-    "tether": "1.4.0",
-    "bootstrap-table": "1.11.0",
-    "font-awesome": "4.7.0",
-    "angular": "1.6.1-build.5198+sha.1ecf6ef",
-    "angular-route": "1.6.1-build.5198+sha.1ecf6ef"
-  }
+  "dependencies": {}
 }

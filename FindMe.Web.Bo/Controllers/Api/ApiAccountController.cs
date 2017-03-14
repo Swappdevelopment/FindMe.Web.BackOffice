@@ -57,7 +57,7 @@ namespace FindMe.Web.App
                     case MessageIdentifier.SIGNIN_FAILED:
                         error = new
                         {
-                            msg = this.GetMessage("Msg_SgnInFld"),
+                            msg = this.GetMessage("msg_SgnInFld"),
                             id = (int)ex.ErrorID
                         };
                         break;
@@ -111,12 +111,12 @@ namespace FindMe.Web.App
                         link += (link.EndsWith("/") ? "" : "/") + tokenValue;
 
 
-                        string message = this.GetMessage("Msg_ValEmail") + link;
+                        string message = this.GetMessage("msg_ValEmail") + link;
 
 
                         await Task.WhenAll(
                                     _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sending),
-                                    _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("Lbl_FndMeBoValEmail"), message));
+                                    _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("lbl_FndMeBoValEmail"), message));
 
                         await _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sent);
 
@@ -153,11 +153,11 @@ namespace FindMe.Web.App
                 switch (ex.ErrorID)
                 {
                     case MessageIdentifier.USERNAME_ALREADY_USED:
-                        msg = this.GetMessage("Msg_UsrnmAlrdUsed");
+                        msg = this.GetMessage("msg_UsrnmAlrdUsed");
                         break;
 
                     case MessageIdentifier.USER_EMAIL_ALREADY_USED:
-                        msg = this.GetMessage("Msg_EmailAlrdUsed");
+                        msg = this.GetMessage("msg_EmailAlrdUsed");
                         break;
                 }
 

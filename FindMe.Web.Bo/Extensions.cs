@@ -24,6 +24,19 @@ namespace FindMe.Web.App
         }
 
 
+        public static string GetCacheVersion(this IConfigurationRoot obj)
+        {
+            try
+            {
+                return obj["App:CacheVersion"];
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+
         public static ILoggerFactory AddDatabase(
             this ILoggerFactory factory,
             LogLevel minLevel)
@@ -78,7 +91,6 @@ namespace FindMe.Web.App
                         return ex.MergeMsgInnerExMsgs();
                     });
         }
-
 
 
         public static bool UserHasSignedInCookie(this IHtmlHelper htmlHelper)

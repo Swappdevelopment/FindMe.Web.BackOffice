@@ -101,7 +101,7 @@
             }
         };
 
-        var finallyFunc = function (resp) {
+        var finallyFunc = function () {
 
             toggleGlblWaitVisibility(false);
         };

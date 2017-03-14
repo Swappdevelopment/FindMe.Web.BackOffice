@@ -2,7 +2,28 @@
 
 <div id="clientsVw">
 
-    <table class="table table-striped table-hover">
+    <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
+        <tr>
+            <td class="findme-color-fc-pink">
+                <span>{{vm.appProps.lbl_Pgs}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
+                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlClnts}}: {{vm.clientsCount}}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="pagination" ng-repeat="pg in vm.pgsCollection">
+
+                    <li ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}}" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-striped table-hover" ng-init="vm.populateClients()">
         <thead>
             <tr>
                 <td>
@@ -12,198 +33,38 @@
                     <b>{{vm.appProps.lbl_ID}}</b>
                 </td>
                 <td>
-                    <b>{{vm.appProps.lbl_FullName}}</b>
-                </td>
-                <td>
                     <b>{{vm.appProps.lbl_LglName}}</b>
                 </td>
                 <td>
+                    <b>{{vm.appProps.lbl_Name}}</b>
+                </td>
+                <td class="text-center">
                     <b>{{vm.appProps.lbl_Actv}}</b>
                 </td>
-                <td>
+                <td class="text-center">
                     <b>{{vm.appProps.lbl_PdClnt}}</b>
                 </td>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr ng-repeat="client in vm.clients">
                 <td>
-                    Datatatatata
+                    <div></div>
                 </td>
                 <td>
-                    Datatatatata
+                    <b>{{client.id}}</b>
                 </td>
                 <td>
-                    Datatatatata
+                    <span>{{client.legalName}}</span>
                 </td>
                 <td>
-                    Datatatatata
+                    <span>{{client.dispName}}</span>
                 </td>
-                <td>
-                    Datatatatata
+                <td class="text-center">
+                    <span class="fa {{client.active ? 'fa-check text-success' : 'fa-times text-danger'}}"></span>
                 </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
-                </td>
-                <td>
-                    Datatatatata
+                <td class="text-center">
+                    <span class="fa {{client.paid ? 'fa-check text-success' : 'fa-times text-danger'}}"></span>
                 </td>
             </tr>
         </tbody>
