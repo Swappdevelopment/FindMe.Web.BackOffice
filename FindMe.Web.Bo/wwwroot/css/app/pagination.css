@@ -22,11 +22,15 @@
         -webkit-transition: all ease-in 300ms;
         transition: all ease-in 300ms;
         font-weight: bold;
+        height: 38px;
+        width: 35px;
     }
 
-        .pages .pagination li a .fa-step-forward,
-        .pages .pagination li a .fa-step-backward {
-            margin-top: -1px;
+        .pages .pagination li a span {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .pages .pagination li a.active {

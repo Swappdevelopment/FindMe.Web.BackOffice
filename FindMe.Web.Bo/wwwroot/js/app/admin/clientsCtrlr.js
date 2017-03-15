@@ -50,8 +50,6 @@
                 vm.currentPgNmbr = pg.index;
 
                 vm.populateClients(appProps.resultItemsPerPg, offset);
-
-                refreshToOtherListUrl();
             }
         };
 

@@ -38,14 +38,35 @@
     color: #424242;
 }
 
-.btn.btn-findme {
-    background-color: #E20E53 !important;
-    color: white !important;
+
+.btn {
+    text-transform: none !important;
 }
 
-    .btn.btn-findme:active {
-        background-color: #C00C48 !important;
+    .btn.btn-findme {
+        background-color: #E20E53 !important;
+        color: white !important;
+        border: solid 0.5px #E20E53;
+        transition: background-color color ease-in 200ms;
     }
+
+        .btn.btn-findme.hollow {
+            background-color: white !important;
+            color: #E20E53 !important;
+            border: solid 0.5px #E20E53;
+            transition: background-color color ease-in 200ms;
+        }
+
+        .btn.btn-findme:active {
+            background-color: #C00C48 !important;
+        }
+
+        .btn.btn-findme:hover {
+            border: solid 0.5px #FFCC00;
+            color: white !important;
+            background-color: #FFCC00 !important;
+            transition: border background-color color ease-in 200ms;
+        }
 
 
 
@@ -82,10 +103,6 @@ textarea {
         background-color: #E20E53;
         color: #EDF1F8;
     }
-
-.btn {
-    text-transform: none !important;
-}
 
 .crsr-pointer {
     cursor: pointer;

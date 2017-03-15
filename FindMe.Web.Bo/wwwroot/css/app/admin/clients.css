@@ -1,9 +1,4 @@
 ﻿
-#clientsVw {
-}
-
-    #clientsVw table tbody {
-        height: 100px;
-        overflow-y: auto;
-        width: 100%;
+    #clientsVw .main-table-container {
+        padding-top: 80px;
     }
