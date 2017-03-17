@@ -3,7 +3,7 @@
     height: 65px;
     position: fixed;
     width: 100%;
-    z-index: 1240;
+    /*z-index: 1240;*/
 }
 
     #searchBar .btn.btn-burger {

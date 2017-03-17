@@ -4,7 +4,7 @@
     'use strict';
 
     //Creating the module
-    angular.module('app-mainmenu', ['ngRoute'])
+    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap'])
            .config(function ($routeProvider, $locationProvider) {
 
                $routeProvider.when('/', {

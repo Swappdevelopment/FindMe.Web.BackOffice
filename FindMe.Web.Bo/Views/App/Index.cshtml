@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="~/css/app/pagination.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true"/>
+        <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/css/app/wrapper.min.css" swp-cache-version="true" />
@@ -30,10 +30,23 @@
     <environment names="Development">
         <script src="~/lib/angular/angular.js"></script>
         <script src="~/lib/angular-route/angular-route.js"></script>
-        <script src="@Url.GetResPath("~/js/app/index.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/app-mainmenu.js", (string)ViewBag.WebRootPath)"></script>
+        <script src="~/lib/angular-animate/angular-animate.js"></script>
+        <script src="~/lib/angular-touch/angular-touch.js"></script>
+        <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+        <script src="~/js/app/index.js" swp-cache-version="true"></script>
+        <script src="~/js/app/app-mainmenu.js" swp-cache-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/lib/angular/angular.min.js"></script>
+        <script src="~/lib/angular-route/angular-route.min.js"></script>
+        <script src="~/lib/angular-animate/angular-animate.min.js"></script>
+        <script src="~/lib/angular-touch/angular-touch.min.js"></script>
+        <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
+        <script src="~/js/app/index.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/app-mainmenu.min.js" swp-cache-version="true"></script>
+    </environment>
 
-        <script>
+    <script>
             angular.module('app-mainmenu')
                    .value('appProps',
                         {
@@ -66,6 +79,9 @@
                             lbl_TtlClnts: '@Html.GetLabel("lbl_TtlClnts")',
                             lbl_Edit: '@Html.GetLabel("lbl_Edit")',
                             lbl_Delete: '@Html.GetLabel("lbl_Delete")',
+                            lbl_Save: '@Html.GetLabel("lbl_Save")',
+                            lbl_Cancel: '@Html.GetLabel("lbl_Cancel")',
+                            lbl_Desc: '@Html.GetLabel("lbl_Desc")',
 
                             erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
 
@@ -76,42 +92,24 @@
                             msg_RfrshClnts: '@Html.GetMessage("msg_RfrshClnts")',
                             msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")'
                         });
-        </script>
+    </script>
 
-        <script src="@Url.GetResPath("~/js/app/mainCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/homeCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/account/profileCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/usersCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/clientsCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/addressesCtrlr.js", (string)ViewBag.WebRootPath)"></script>
+    <environment names="Development">
+        <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/account/profileCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/usersCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
-
     <environment names="Staging,Production">
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular.min.js"
-                asp-fallback-src="~/lib/angular/angular.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular-route.min.js"
-                asp-fallback-src="~/lib/angular-route/angular-route.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-
-        <script src="~/js/app/index.js" asp-append-version="true"></script>
-        <script src="~/js/app/app-mainmenu.min.js" asp-append-version="true"></script>
-
-        @*<script>
-            angular.module('app-mainmenu')
-                   .value('appProps', JSON.parse('@obj'));
-        </script>*@
-
-        <script src="~/js/app/mainCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/homeCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/account/profileCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/usersCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/clientsCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/addressesCtrlr.min.js" asp-append-version="true"></script>
+        <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/account/profileCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/usersCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
-
 
 }
 
@@ -158,9 +156,9 @@
                 </div>
 
                 <div class="tb col-md-6 col-sm-12 clsp hidden findme-color-bc-lgray">
-                    <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
                 </div>
             </div>
 

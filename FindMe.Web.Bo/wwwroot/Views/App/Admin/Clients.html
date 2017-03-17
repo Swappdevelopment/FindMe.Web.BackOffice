@@ -2,6 +2,81 @@
 
 <div id="clientsVw">
 
+    <script type="text/ng-template" id="clientModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{(vm.client.legalName || vm.client.dispName ? (vm.client.legalName ? vm.client.legalName : vm.client.dispName) : 'New Client')}}</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+
+            <form name="frmClient" class="form-horizontal">
+
+                <div class="form-group">
+
+                    <label for="clientLglName" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label">{{vm.appProps.lbl_LglName}}</label>
+
+                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <input id="clientLglName" placeholder="{{vm.appProps.lbl_LglName}}" type="text" class="form-control" ng-model="vm.client.legalName">
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="clientFName" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label">{{vm.appProps.lbl_FName}}</label>
+
+                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <input id="clientFName" placeholder="{{vm.appProps.lbl_FName}}" type="text" class="form-control" ng-model="vm.client.fName">
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="clientLName" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label">{{vm.appProps.lbl_LName}}</label>
+
+                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <input id="clientName" placeholder="{{vm.appProps.lbl_LName}}" type="text" class="form-control" ng-model="vm.client.lName">
+                    </div>
+                </div>
+
+                <div class="form-group">
+
+                    <label for="clientPaid" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label">{{vm.appProps.lbl_PdClnt}}</label>
+                    <span class="check-box col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <input type="checkbox" value="None" id="clientPaid" name="clientPaid" ng-model="vm.client.paid" />
+                        <label class="lbl-chkb" for="clientPaid"></label>
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientDesc" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label">{{vm.appProps.lbl_Desc}}</label>
+
+                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+                        <textarea id="clientDesc" placeholder="{{vm.appProps.lbl_Desc}}" class="form-control" ng-model="vm.client.desc"></textarea>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.ok()">
+                <span class="fa fa-save">&nbsp;&nbsp;</span>
+                <b>{{vm.appProps.lbl_Save}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.cancel()">
+                <span class="fa fa-times">&nbsp;&nbsp;</span>
+                <b>{{vm.appProps.lbl_Cancel}}</b>
+            </button>
+        </div>
+    </script>
+
+
+
+
     <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
         <tr>
             <td class="findme-color-fc-pink">
@@ -51,8 +126,8 @@
                 <tr ng-repeat="client in vm.clients">
                     <td>
                         <div class="btn-toolbar">
-                            <button type="button" class="btn btn-sm btn-findme" title="{{vm.appProps.lbl_Edit}}"><span class="fa fa-edit"></span></button>
-                            <button type="button" class="btn btn-sm btn-findme hollow" title="{{vm.appProps.lbl_Delete}}"><span class="fa fa-times-circle"></span></button>
+                            <button type="button" class="btn btn-sm btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="vm.openModal(client)"><span class="fa fa-edit"></span></button>
+                            <button type="button" class="btn btn-sm btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}"><span class="fa fa-times-circle"></span></button>
                         </div>
                     </td>
                     <td>
@@ -93,5 +168,9 @@
     <br />
     <br />
     <br />
+
+    <div class="modal-container">
+
+    </div>
 
 </div>

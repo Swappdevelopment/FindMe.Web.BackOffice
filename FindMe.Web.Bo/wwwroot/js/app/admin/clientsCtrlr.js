@@ -5,14 +5,13 @@
 
 
     angular.module('app-mainmenu')
-           .controller('clientsCtrlr', ['$http', 'appProps', 'headerConfigService', clientsCtrlrFunc]);
+           .controller('clientsCtrlr', ['$http', '$uibModal', 'appProps', 'headerConfigService', clientsCtrlrFunc]);
 
-
-    function clientsCtrlrFunc($http, appProps, headerConfigService) {
+    function clientsCtrlrFunc($http, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
-        
+
         headerConfigService.reset();
         headerConfigService.title = appProps.lbl_Clnts;
         headerConfigService.showToolBar = true;
@@ -51,6 +50,29 @@
 
                 vm.populateClients(appProps.resultItemsPerPg, offset);
             }
+        };
+
+
+        vm.openModal = function (client) {
+
+            $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'clientModal.html',
+                controller: 'clientInstanceCtrlr',
+                controllerAs: 'vm',
+                size: 'lg',
+                appendTo: $('#clientsVw .modal-container'),
+                resolve: {
+                    client: function () {
+
+                        var copy = jQuery.extend(true, {}, client);
+
+                        return copy;
+                    }
+                }
+            });
         };
 
 
@@ -189,6 +211,26 @@
         };
 
         $('#searchBar .btn.btn-tb').on('click', buttonClick);
+    }
+
+
+    angular.module('app-mainmenu')
+        .controller('clientInstanceCtrlr', ['$uibModalInstance', 'appProps', 'client', clientInstanceCtrlrFunc]);
+
+    function clientInstanceCtrlrFunc($uibModalInstance, appProps, client) {
+
+        var vm = this;
+        vm.appProps = appProps;
+
+        vm.client = client;
+
+        vm.ok = function () {
+            $uibModalInstance.close(vm.client);
+        };
+
+        vm.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
     }
 
 })();

@@ -68,6 +68,10 @@
             transition: border background-color color ease-in 200ms;
         }
 
+.modal .btn.btn-findme {
+    min-width: 150px;
+}
+
 
 
 input,
@@ -106,4 +110,13 @@ textarea {
 
 .crsr-pointer {
     cursor: pointer;
+}
+
+
+.modal-container .modal {
+    z-index: 1320 !important;
+}
+
+.modal-container .modal-backdrop {
+    z-index: 1310 !important;
 }

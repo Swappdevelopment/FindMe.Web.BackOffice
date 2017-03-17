@@ -1,4 +1,12 @@
 ﻿
-    #clientsVw .main-table-container {
-        padding-top: 80px;
+#clientsVw .main-table-container {
+    padding-top: 80px;
+}
+
+    #clientsVw .main-table-container .table .btn.action {
+        outline: none;
     }
+
+#clientsVw .modal-body .check-box {
+    transform: translate(10px, 40%);
+}
