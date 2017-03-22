@@ -119,6 +119,53 @@
 
 
 
+    $('#searchBar button.btn.btn-search').on('click', function () {
+
+        $('#searchBar').trigger('searchGo', { searchValue: $('#searchBar input.input-search').val() });
+    });
+    $('#searchBar input.input-search').keypress(function (e) {
+
+        if (e.which == 13) {
+
+            e.preventDefault();
+            $('#searchBar').trigger('searchGo', { searchValue: $(this).val() });
+        }
+    });
+
+    $('#searchBar span.input-bg button.clear').on('click', function () {
+
+        $('#searchBar input.input-search').val('');
+        $('#searchBar input.input-search').trigger('input');
+    });
+
+    $('#searchBar input.input-search').on('input', function () {
+
+        var value = $('#searchBar input.input-search').val();
+
+        if (value) {
+
+            $('#searchBar span.input-bg button.clear').removeClass('hidden');
+        }
+        else {
+
+            $('#searchBar span.input-bg button.clear').addClass('hidden');
+        }
+
+
+        var $sBar = $('#searchBar');
+
+        var prevValue = $sBar.data('prev-search');
+
+        if (!value && prevValue) {
+
+            $sBar.trigger('searchClear', { prevValue: prevValue });
+        }
+
+        $sBar.data('prev-search', value);
+    });
+
+
+
     //var btnProfileClick = function () {
 
     //    $liIcons.each(removeActive);

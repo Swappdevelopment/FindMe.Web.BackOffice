@@ -7,14 +7,13 @@ using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
-    public class ApiAddressController : BaseController
+    public class ApiCatgController : BaseController
     {
-        public ApiAddressController(
+        public ApiCatgController(
             IConfigurationRoot config,
             WebDbRepository repo,
             ILogger<ApiAccountController> logger,
@@ -25,49 +24,59 @@ namespace FindMe.Web.App
 
 
         [HttpPost]
-        public async Task<IActionResult> GetClients([FromBody]JObject param)
+        public async Task<IActionResult> GetCatgs([FromBody]JObject param)
         {
             object result = null;
             object error = null;
 
-            Client[] clients;
-
             int count = 0;
+
+            Func<Task> func;
 
             try
             {
                 int limit = 0;
                 int offset = 0;
 
-                string allNames = null;
+                long parentID = 0;
 
-                bool getTotalClients = false;
+                bool onlyParents = false;
+
+                string name = null;
+
+                bool getTotalCatgs = false;
 
                 if (param != null)
                 {
                     limit = param.GetPropVal<int>("limit");
                     offset = param.GetPropVal<int>("offset");
-                    allNames = param.GetPropVal<string>("allNames");
-                    getTotalClients = param.GetPropVal<bool>("getTotalClients");
+
+                    parentID = param.GetPropVal<long>("parentID");
+
+                    onlyParents = (parentID <= 0);
+
+                    name = param.GetPropVal<string>("name");
+                    getTotalCatgs = param.GetPropVal<bool>("getTotalCatgs");
                 }
 
-                if (getTotalClients)
+
+                func = async () =>
+                {
+                    result = await _repo.Execute<object>("GetPivotCategorys", 0, parentID, "", name, false, true, true, onlyParents, limit, offset);
+                };
+
+                if (getTotalCatgs)
                 {
                     await Task.WhenAll(
                                 Task.Run(async () =>
                                 {
-                                    count = await _repo.Execute<int>("GetClientsCount", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
+                                    count = await _repo.Execute<int>("GetCategorysCount", 0, parentID, "", name, false, onlyParents);
                                 }),
-                                Task.Run(async () =>
-                                {
-                                    clients = await _repo.Execute<Client[]>("GetClients", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
-                                    result = clients.Select(l => l.Simplify()).ToArray();
-                                }));
+                                func());
                 }
                 else
                 {
-                    clients = await _repo.Execute<Client[]>("GetClients", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
-                    result = clients.Select(l => l.Simplify()).ToArray();
+                    await func();
                 }
 
             }
@@ -85,14 +94,14 @@ namespace FindMe.Web.App
             }
             finally
             {
-                clients = null;
+                func = null;
             }
 
             return Ok(new { result = result, count = count, error = error });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveClients([FromBody]JObject param)
+        public async Task<IActionResult> SaveCatgs([FromBody]JObject param)
         {
             object result = null;
             object error = null;

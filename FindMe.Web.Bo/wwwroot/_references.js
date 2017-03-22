@@ -3,6 +3,8 @@
 /// <reference path="js/account/signinctrlr.min.js" />
 /// <reference path="js/app/account/profilectrlr.min.js" />
 /// <reference path="js/app/admin/addressesctrlr.min.js" />
+/// <reference path="js/app/admin/categoriesctrlr.min.js" />
+/// <reference path="js/app/admin/clientsctrlr - copy.js" />
 /// <reference path="js/app/admin/clientsctrlr.min.js" />
 /// <reference path="js/app/admin/usersctrlr.min.js" />
 /// <reference path="js/app/app-mainmenu.min.js" />

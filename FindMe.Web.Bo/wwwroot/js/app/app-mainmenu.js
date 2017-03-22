@@ -36,6 +36,12 @@
                    templateUrl: '/Views/App/Admin/Clients.html',
                });
 
+               $routeProvider.when('/categories', {
+                   controller: 'categoriesCtrlr',
+                   controllerAs: 'vm',
+                   templateUrl: '/Views/App/Admin/Categories.html',
+               });
+
                $routeProvider.when('/addresses', {
                    controller: 'addressesCtrlr',
                    controllerAs: 'vm',

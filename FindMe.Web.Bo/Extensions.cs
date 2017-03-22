@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -115,6 +116,16 @@ namespace FindMe.Web.App
         }
 
 
+        public static string GetCurrentLang(this IHtmlHelper htmlHelper)
+        {
+            return ResourceMngr.GetCurrentLang(htmlHelper == null || htmlHelper.ViewContext == null ? null : htmlHelper.ViewContext.HttpContext);
+        }
+        public static string GetCurrentLang(this HttpContext context)
+        {
+            return ResourceMngr.GetCurrentLang(context);
+        }
+
+
         public static string GetLabel(this IHtmlHelper htmlHelper, string key)
         {
             return ResourceMngr.GetLabel(key, htmlHelper);
@@ -152,7 +163,7 @@ namespace FindMe.Web.App
 
             if (result.Length > 1)
             {
-                if(result.StartsWith("\""))
+                if (result.StartsWith("\""))
                 {
                     result = result.Substring(1, result.Length - 1);
                 }

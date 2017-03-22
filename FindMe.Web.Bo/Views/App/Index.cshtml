@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="~/css/app/pagination.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/categories.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true" />
     </environment>
     <environment names="Staging,Production">
@@ -20,6 +21,7 @@
         <link rel="stylesheet" href="~/css/app/pagination.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/home.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/clients.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/categories.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.min.css" swp-cache-version="true" />
     </environment>
 }
@@ -47,51 +49,65 @@
     </environment>
 
     <script>
-            angular.module('app-mainmenu')
-                   .value('appProps',
-                        {
-                            resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+        angular.module('app-mainmenu')
+               .value('appProps',
+                    {
+                        resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+                        currentLang: '@Html.GetCurrentLang()',
 
-                            urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
-                            urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
-                            urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
+                        urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
+                        urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
+                        urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
+                        urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
+                        urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
 
-                            lbl_Name: '@Html.GetLabel("lbl_Name")',
-                            lbl_FullName: '@Html.GetLabel("lbl_FullName")',
-                            lbl_LglName: '@Html.GetLabel("lbl_LglName")',
-                            lbl_Actns: '@Html.GetLabel("lbl_Actns")',
-                            lbl_Actv: '@Html.GetLabel("lbl_Actv")',
-                            lbl_PdClnt: '@Html.GetLabel("lbl_PdClnt")',
-                            lbl_ID: '@Html.GetLabel("lbl_ID")',
-                            lbl_FName: '@Html.GetLabel("lbl_FName")',
-                            lbl_LName: '@Html.GetLabel("lbl_LName")',
-                            lbl_Email: '@Html.GetLabel("lbl_Email")',
-                            lbl_Usrnm: '@Html.GetLabel("lbl_Usrnm")',
-                            lbl_CntctNm: '@Html.GetLabel("lbl_CntctNm")',
-                            lbl_LckOut: '@Html.GetLabel("lbl_LckOut")',
-                            lbl_Prfl: '@Html.GetLabel("lbl_Prfl")',
-                            lbl_ReSnd: '@Html.GetLabel("lbl_ReSnd")',
-                            lbl_CnclCnfrmtn: '@Html.GetLabel("lbl_CnclCnfrmtn")',
-                            lbl_Clnts: '@Html.GetLabel("lbl_Clnts")',
-                            lbl_Pgs: '@Html.GetLabel("lbl_Pgs")',
-                            lbl_Pg: '@Html.GetLabel("lbl_Pg")',
-                            lbl_of: '@Html.GetLabel("lbl_of")',
-                            lbl_TtlClnts: '@Html.GetLabel("lbl_TtlClnts")',
-                            lbl_Edit: '@Html.GetLabel("lbl_Edit")',
-                            lbl_Delete: '@Html.GetLabel("lbl_Delete")',
-                            lbl_Save: '@Html.GetLabel("lbl_Save")',
-                            lbl_Cancel: '@Html.GetLabel("lbl_Cancel")',
-                            lbl_Desc: '@Html.GetLabel("lbl_Desc")',
+                        lbl_Name: '@Html.GetLabel("lbl_Name")',
+                        lbl_FullName: '@Html.GetLabel("lbl_FullName")',
+                        lbl_LglName: '@Html.GetLabel("lbl_LglName")',
+                        lbl_Actns: '@Html.GetLabel("lbl_Actns")',
+                        lbl_Actv: '@Html.GetLabel("lbl_Actv")',
+                        lbl_PdClnt: '@Html.GetLabel("lbl_PdClnt")',
+                        lbl_ID: '@Html.GetLabel("lbl_ID")',
+                        lbl_FName: '@Html.GetLabel("lbl_FName")',
+                        lbl_LName: '@Html.GetLabel("lbl_LName")',
+                        lbl_Email: '@Html.GetLabel("lbl_Email")',
+                        lbl_Usrnm: '@Html.GetLabel("lbl_Usrnm")',
+                        lbl_CntctNm: '@Html.GetLabel("lbl_CntctNm")',
+                        lbl_LckOut: '@Html.GetLabel("lbl_LckOut")',
+                        lbl_Prfl: '@Html.GetLabel("lbl_Prfl")',
+                        lbl_ReSnd: '@Html.GetLabel("lbl_ReSnd")',
+                        lbl_CnclCnfrmtn: '@Html.GetLabel("lbl_CnclCnfrmtn")',
+                        lbl_Clnts: '@Html.GetLabel("lbl_Clnts")',
+                        lbl_Pgs: '@Html.GetLabel("lbl_Pgs")',
+                        lbl_Pg: '@Html.GetLabel("lbl_Pg")',
+                        lbl_of: '@Html.GetLabel("lbl_of")',
+                        lbl_TtlClnts: '@Html.GetLabel("lbl_TtlClnts")',
+                        lbl_Edit: '@Html.GetLabel("lbl_Edit")',
+                        lbl_Delete: '@Html.GetLabel("lbl_Delete")',
+                        lbl_Save: '@Html.GetLabel("lbl_Save")',
+                        lbl_Cancel: '@Html.GetLabel("lbl_Cancel")',
+                        lbl_Desc: '@Html.GetLabel("lbl_Desc")',
+                        lbl_Cvlty: '@Html.GetLabel("lbl_Cvlty")',
+                        lbl_Yes: '@Html.GetLabel("lbl_Yes")',
+                        lbl_No: '@Html.GetLabel("lbl_No")',
+                        lbl_Categories: '@Html.GetLabel("lbl_Categories")',
+                        lbl_Slug: '@Html.GetLabel("lbl_Slug")',
+                        lbl_SbCatgs: '@Html.GetLabel("lbl_SbCatgs")',
+                        lbl_ShwSbCatgs: '@Html.GetLabel("lbl_ShwSbCatgs")',
+                        lbl_Back: '@Html.GetLabel("lbl_Back")',
 
-                            erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
+                        erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
 
-                            msg_RfrshPrfl: '@Html.GetMessage("msg_RfrshPrfl")',
-                            msg_SavePrfl: '@Html.GetMessage("msg_SavePrfl")',
-                            msg_WtngEmailCnfrmtn: '@Html.GetMessage("msg_WtngEmailCnfrmtn")',
-                            msg_AddClnts: '@Html.GetMessage("msg_AddClnts")',
-                            msg_RfrshClnts: '@Html.GetMessage("msg_RfrshClnts")',
-                            msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")'
-                        });
+                        msg_RfrshPrfl: '@Html.GetMessage("msg_RfrshPrfl")',
+                        msg_SavePrfl: '@Html.GetMessage("msg_SavePrfl")',
+                        msg_WtngEmailCnfrmtn: '@Html.GetMessage("msg_WtngEmailCnfrmtn")',
+                        msg_AddClnts: '@Html.GetMessage("msg_AddClnts")',
+                        msg_RfrshClnts: '@Html.GetMessage("msg_RfrshClnts")',
+                        msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")',
+                        msg_AddCatgs: '@Html.GetMessage("msg_AddCatgs")',
+                        msg_RfrshCatgs: '@Html.GetMessage("msg_RfrshCatgs")',
+                        msg_SaveCatgs: '@Html.GetMessage("msg_SaveCatgs")'
+                    });
     </script>
 
     <environment names="Development">
@@ -100,6 +116,7 @@
         <script src="~/js/app/account/profileCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/usersCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/categoriesCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -108,6 +125,7 @@
         <script src="~/js/app/account/profileCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/usersCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/categoriesCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 
@@ -123,6 +141,8 @@
                 <ul>
                     <li><a href="#!/users"><span>@Html.GetLabel("lbl_Usrs")</span></a></li>
                     <li><a href="#!/clients"><span>@Html.GetLabel("lbl_Clnts")</span></a></li>
+                    <li><a href="#!/categories"><span>@Html.GetLabel("lbl_Categories")</span></a></li>
+                    <li><a href="#!/cities"><span>@Html.GetLabel("lbl_Cities")</span></a></li>
                     <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
                 </ul>
             </div>
@@ -131,6 +151,8 @@
                 <ul>
                     <li><a href="#!/users"><div><span class="fa fa-users fa-2x"></span></div></a></li>
                     <li><a href="#!/clients"><div><span class="fa fa-vcard-o fa-2x"></span></div></a></li>
+                    <li><a href="#!/categories"><div><span class="fa fa-folder fa-2x"></span></div></a></li>
+                    <li><a href="#!/cities"><div><span class="fa fa-building-o fa-2x"></span></div></a></li>
                     <li><a href="#!/addresses"><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
                 </ul>
             </div>
@@ -147,7 +169,12 @@
                     </button>
 
                     <span class="search-ctrl clsp hidden">
-                        <span class="input-bg"><input type="search" /></span>
+                        <span class="input-bg">
+                            <input type="search" class="input-search" />
+                            <button type="button" class="btn btn-xs clear findme-color-fc-pink hidden">
+                                <span class="fa fa-times fa-2x"></span>
+                            </button>
+                        </span>
 
                         <button type="button" class="btn btn-search findme-color-bc-pink findme-color-fc-white">
                             <span class="fa fa-search fa-2x"></span>

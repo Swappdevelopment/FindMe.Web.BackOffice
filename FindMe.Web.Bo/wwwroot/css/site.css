@@ -120,3 +120,11 @@ textarea {
 .modal-container .modal-backdrop {
     z-index: 1310 !important;
 }
+
+.table.data tr.inEditMode {
+    background-color: #e5fff9;
+}
+
+.inline-element {
+    display: inline;
+}

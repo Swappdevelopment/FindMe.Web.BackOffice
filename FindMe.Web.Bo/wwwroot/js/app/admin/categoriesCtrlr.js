@@ -5,21 +5,21 @@
 
 
     angular.module('app-mainmenu')
-           .controller('clientsCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', clientsCtrlrFunc]);
+           .controller('categoriesCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', categoriesCtrlrFunc]);
 
-    function clientsCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function categoriesCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
 
         headerConfigService.reset();
-        headerConfigService.title = appProps.lbl_Clnts;
+        headerConfigService.title = appProps.lbl_Categories;
         headerConfigService.showToolBar = true;
         headerConfigService.showSearchCtrl = true;
         headerConfigService.showSaveBtn = false;
-        headerConfigService.addBtnTltp = appProps.msg_AddClnts;
-        headerConfigService.refreshBtnTltp = appProps.msg_RfrshClnts;
-        headerConfigService.saveBtnTltp = appProps.msg_SaveClnts;
+        headerConfigService.addBtnTltp = appProps.msg_AddCatgs;
+        headerConfigService.refreshBtnTltp = appProps.msg_RfrshCatgs;
+        headerConfigService.saveBtnTltp = appProps.msg_SaveCatgs;
 
         var vm = this;
 
@@ -29,9 +29,9 @@
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
-        vm.clientsCount = 0;
+        vm.categorysCount = 0;
 
-        vm.clients = [];
+        vm.categorys = [];
 
         vm.gotoPage = function (pg, scrollToTop) {
 
@@ -48,27 +48,27 @@
 
                 vm.currentPgNmbr = pg.index;
 
-                vm.populateClients(appProps.resultItemsPerPg, offset);
+                vm.populateCategorys(appProps.resultItemsPerPg, offset);
             }
         };
 
 
-        vm.deleteModal = function (client) {
+        vm.deleteModal = function (category) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteClientModal.html',
-                controller: 'deleteClientInstanceCtrlr',
+                templateUrl: 'deleteCategoryModal.html',
+                controller: 'deleteCategoryInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#clientsVw .modal-container'),
+                appendTo: $('#categorysVw .modal-container'),
                 resolve: {
                     param: function () {
 
                         return {
-                            client: client,
+                            category: category,
                             save: vm.save
                         };
                     }
@@ -77,21 +77,21 @@
         };
 
 
-        vm.openModal = function (client) {
+        vm.openModal = function (category) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'clientModal.html',
-                controller: 'clientInstanceCtrlr',
+                templateUrl: 'categoryModal.html',
+                controller: 'categoryInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#clientsVw .modal-container'),
+                appendTo: $('#categorysVw .modal-container'),
                 resolve: {
-                    client: function () {
+                    category: function () {
 
-                        var copy = jQuery.extend(true, {}, client);
+                        var copy = jQuery.extend(true, {}, category);
 
                         return copy;
                     }
@@ -161,58 +161,86 @@
 
 
 
-        var setDispName = function (client) {
+        var checkRecordState = function (category, compCategory, toBeDeleted) {
 
-            if (client) {
+            if (category
+                && compCategory) {
 
-                client.dispName = (!client.civility ? '' : (client.civility.toUpperCase() + ' ')) + (client.lName === null ? '' : client.lName.toUpperCase() + (!client.fName ? '' : ', ')) + (!client.fName ? '' : client.fName);
-            }
-        };
-
-        var checkRecordState = function (client, compClient, toBeDeleted) {
-
-            if (client
-                && compClient) {
-
-                if (client.id > 0) {
+                if (category.id > 0) {
 
                     if (toBeDeleted) {
 
-                        client.recordState = 30;
+                        category.recordState = 30;
                     }
-                    else if (client.legalName !== compClient.legalName
-                            || client.civility !== compClient.civility
-                            || client.lName !== compClient.lName
-                            || client.fName !== compClient.fName
-                            || client.paid !== compClient.paid
-                            || client.active !== compClient.active) {
+                    else if (category.legalName !== compCategory.legalName
+                            || category.civility !== compCategory.civility
+                            || category.lName !== compCategory.lName
+                            || category.fName !== compCategory.fName
+                            || category.paid !== compCategory.paid
+                            || category.active !== compCategory.active) {
 
-                        client.recordState = 20;
+                        category.recordState = 20;
                     }
                     else {
 
-                        client.recordState = 0;
+                        category.recordState = 0;
                     }
                 }
                 else {
 
-                    client.recordState = 10;
+                    category.recordState = 10;
                 }
             }
         };
 
 
-        var prevAllNames = '';
-        vm.populateClients = function (limit, offset, allNames) {
+        vm.parentIdFilter = 0;
+        vm.parentNameFilter = '';
+        vm.setParentCatg = function (catg) {
+
+            if (catg && catg.id > 0) {
+
+                vm.parentIdFilter = catg.id;
+
+                if (String(appProps.currentLang).toLowerCase().startsWith('en')) {
+
+                    vm.parentNameFilter = catg.name_en;
+                }
+                else {
+
+                    vm.parentNameFilter = catg.name_fr;
+                }
+
+                vm.searchValue = '';
+                vm.populateCategorys(appProps.resultItemsPerPg, 0);
+            }
+        };
+
+        vm.clearParentFilters = function () {
+
+            vm.parentIdFilter = 0;
+            vm.parentNameFilter = '';
+            vm.searchValue = $('#searchBar input.input-search').val();
+            vm.populateCategorys(appProps.resultItemsPerPg, 0);
+        };
+
+
+        var prevName = '';
+        var prevParentIdFilter = 0;
+        vm.populateCategorys = function (limit, offset, name) {
 
             var forceGetCount = false;
 
-            if (allNames || prevAllNames) {
+            if (name || prevName) {
 
-                forceGetCount = (allNames != prevAllNames);
+                forceGetCount = (name != prevName);
             }
 
-            prevAllNames = allNames;
+            forceGetCount = (forceGetCount || prevParentIdFilter != vm.parentIdFilter);
+
+            prevParentIdFilter = vm.parentIdFilter;
+
+            prevName = name;
 
             vm.errorstatus = '';
             vm.errormsg = '';
@@ -220,21 +248,21 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            allNames = !allNames ? vm.searchValue : allNames;
+            name = !name ? vm.searchValue : name;
 
             var successFunc = function (resp) {
 
-                vm.clients.length = 0;
+                vm.categorys.length = 0;
 
                 if (resp.data) {
 
                     if (resp.data.count > 0) {
 
-                        vm.clientsCount = resp.data.count;
+                        vm.categorysCount = resp.data.count;
 
-                        var ttlPgs = parseInt(vm.clientsCount / appProps.resultItemsPerPg);
+                        var ttlPgs = parseInt(vm.categorysCount / appProps.resultItemsPerPg);
 
-                        ttlPgs += ((vm.clientsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+                        ttlPgs += ((vm.categorysCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
 
                         vm.totalPgs = ttlPgs;
                     }
@@ -245,16 +273,14 @@
 
                         for (var i = 0; i < resp.data.result.length; i++) {
 
-                            var client = resp.data.result[i];
+                            var category = resp.data.result[i];
 
-                            client.__comp = jQuery.extend(true, {}, client);
+                            category.__comp = jQuery.extend(true, {}, category);
 
-                            vm.clients.push(client);
+                            vm.categorys.push(category);
 
-                            client.inEditMode = false;
-                            client.saving = false;
-
-                            setDispName(client);
+                            category.inEditMode = false;
+                            category.saving = false;
                         }
                     }
                 }
@@ -278,47 +304,45 @@
 
             toggleGlblWaitVisibility(true);
 
-            $http.post(appProps.urlGetClients, { limit: limit, offset: offset, getTotalClients: (vm.clientsCount <= 0 || forceGetCount), allNames: (allNames ? allNames : null) })
+            $http.post(appProps.urlGetCatgs, { parentID: vm.parentIdFilter, limit: limit, offset: offset, getTotalCatgs: (vm.categorysCount <= 0 || forceGetCount), name: (name ? name : null) })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
 
-        vm.revert = function (client) {
+        vm.revert = function (category) {
 
-            if (client
-                && client.__comp) {
+            if (category
+                && category.__comp) {
 
-                if (client.id > 0) {
+                if (category.id > 0) {
 
-                    var org = client.__comp;
+                    var org = category.__comp;
 
-                    client.legalName = org.legalName;
-                    client.civility = org.civility;
-                    client.lName = org.lName;
-                    client.fName = org.fName;
-                    client.paid = org.paid;
-                    client.active = org.active;
+                    category.legalName = org.legalName;
+                    category.civility = org.civility;
+                    category.lName = org.lName;
+                    category.fName = org.fName;
+                    category.paid = org.paid;
+                    category.active = org.active;
 
-                    setDispName(client);
-
-                    client.inEditMode = false;
+                    category.inEditMode = false;
                 }
                 else {
 
-                    vm.clients.remove(client);
+                    vm.categorys.remove(category);
                 }
             }
         };
 
 
-        vm.save = function (clients, finallyCallback, deleteFlags) {
+        vm.save = function (categorys, finallyCallback, deleteFlags) {
 
-            if (clients) {
+            if (categorys) {
 
-                if (!Array.isArray(clients)) {
+                if (!Array.isArray(categorys)) {
 
-                    clients = [clients];
+                    categorys = [categorys];
                 }
 
                 if (deleteFlags && !Array.isArray(deleteFlags)) {
@@ -326,32 +350,32 @@
                     deleteFlags = [deleteFlags];
                 }
 
-                var validClients = [];
-                var toBeSavedClients = [];
+                var validCategorys = [];
+                var toBeSavedCategorys = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == clients.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length == categorys.length);
 
-                for (var i = 0; i < clients.length; i++) {
+                for (var i = 0; i < categorys.length; i++) {
 
-                    var client = clients[i];
+                    var category = categorys[i];
 
-                    if (client
-                        && client.__comp) {
+                    if (category
+                        && category.__comp) {
 
-                        var toBeSaved = jQuery.extend(true, {}, client);
+                        var toBeSaved = jQuery.extend(true, {}, category);
                         delete toBeSaved.__comp;
 
                         toBeSaved.status = toBeSaved.active ? 1 : 0;
 
-                        checkRecordState(toBeSaved, client.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedClients.push(toBeSaved);
+                        checkRecordState(toBeSaved, category.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+                        toBeSavedCategorys.push(toBeSaved);
 
-                        client.saving = true;
-                        validClients.push(client);
+                        category.saving = true;
+                        validCategorys.push(category);
                     }
                 }
 
-                if (validClients.length > 0) {
+                if (validCategorys.length > 0) {
 
                     var successFunc = function (resp) {
 
@@ -359,11 +383,11 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validClients.length == resp.data.result.length) {
+                            if (validCategorys.length == resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
-                                    var tempValue = validClients[index];
+                                    var tempValue = validCategorys[index];
 
                                     if (value) {
 
@@ -375,8 +399,6 @@
                                         tempValue.paid = value.paid;
                                         tempValue.active = value.active;
 
-                                        setDispName(tempValue);
-
                                         delete tempValue.status;
                                         delete tempValue.recordState;
 
@@ -384,7 +406,7 @@
                                     }
                                     else {
 
-                                        vm.clients.remove(tempValue);
+                                        vm.categorys.remove(tempValue);
                                     }
                                 });
                             }
@@ -404,10 +426,10 @@
 
                     var finallyFunc = function () {
 
-                        for (var i = 0; i < validClients.length; i++) {
+                        for (var i = 0; i < validCategorys.length; i++) {
 
-                            validClients[i].saving = false;
-                            validClients[i].inEditMode = false;
+                            validCategorys[i].saving = false;
+                            validCategorys[i].inEditMode = false;
                         }
 
                         if (finallyCallback) {
@@ -416,7 +438,7 @@
                         }
                     };
 
-                    $http.post(appProps.urlSaveClients, { clients: toBeSavedClients })
+                    $http.post(appProps.urlSaveCategorys, { categorys: toBeSavedCategorys })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
@@ -431,7 +453,7 @@
             if ($btn.hasClass('refresh')) {
 
                 //$('#searchBar input.input-search').val('');
-                vm.populateClients();
+                vm.populateCategorys();
             }
             else if ($btn.hasClass('add')) {
 
@@ -452,7 +474,7 @@
                     newItem.inEditMode = true;
                     newItem.saving = false;
 
-                    vm.clients.insert(0, newItem);
+                    vm.categorys.insert(0, newItem);
                 });
             }
         };
@@ -466,7 +488,7 @@
                 $scope.$apply(function () {
 
                     vm.searchValue = arg.searchValue;
-                    vm.populateClients(appProps.resultItemsPerPg, 0, arg.searchValue);
+                    vm.populateCategorys(appProps.resultItemsPerPg, 0, arg.searchValue);
                 });
             }
         });
@@ -481,24 +503,23 @@
 
 
     angular.module('app-mainmenu')
-        .controller('deleteClientInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', deleteClientInstanceCtrlrFunc]);
+        .controller('deleteCategoryInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', deleteCategoryInstanceCtrlrFunc]);
 
-    function deleteClientInstanceCtrlrFunc($uibModalInstance, appProps, param) {
+    function deleteCategoryInstanceCtrlrFunc($uibModalInstance, appProps, param) {
 
         var vm = this;
         vm.appProps = appProps;
 
-        vm.client = param.client;
+        vm.category = param.category;
 
         vm.yes = function () {
 
-            $uibModalInstance.close(vm.client);
+            $uibModalInstance.close(vm.category);
+            $('#glblWait').removeClass('hidden');
 
-            toggleGlblWaitVisibility(true);
+            param.save(param.category, function () {
 
-            param.save(param.client, function () {
-
-                toggleGlblWaitVisibility(false);
+                $('#glblWait').addClass('hidden');
             }, true);
         };
 

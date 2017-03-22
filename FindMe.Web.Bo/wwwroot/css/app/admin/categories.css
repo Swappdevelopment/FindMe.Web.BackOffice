@@ -1,0 +1,11 @@
+﻿
+#categorysVw .parent-panel {
+    font-size: larger;
+}
+
+#categorysVw .parent-panel button.btn-findme {
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
+    margin-right: 10px;
+}

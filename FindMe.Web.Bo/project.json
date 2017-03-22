@@ -18,6 +18,7 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Microsoft.EntityFrameworkCore.Tools.DotNet": "1.1.0-preview4-final",
+    "Newtonsoft.Json": "10.0.1",
     "Swapp.Data": "1.0.0-*",
     "Swapp.Data.Db": "1.0.0-*",
     "Microsoft.EntityFrameworkCore.Design": "1.1.0",
