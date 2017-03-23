@@ -3,9 +3,18 @@
     font-size: larger;
 }
 
-#categorysVw .parent-panel button.btn-findme {
-    border-radius: 50%;
-    height: 45px;
-    width: 45px;
-    margin-right: 10px;
+    #categorysVw .parent-panel button.btn-findme {
+        border-radius: 50%;
+        height: 45px;
+        width: 45px;
+        margin-right: 10px;
+        outline: none;
+    }
+
+#categorysVw .main-table-container .table textarea.form-control {
+    display: inline-block;
+    margin: 0;
+    max-width: none;
+    max-height: 250px;
+    width: 100%;
 }

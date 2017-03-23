@@ -21,6 +21,7 @@
         headerConfigService.refreshBtnTltp = appProps.msg_RfrshCatgs;
         headerConfigService.saveBtnTltp = appProps.msg_SaveCatgs;
 
+
         var vm = this;
 
         vm.appProps = appProps;
@@ -99,6 +100,24 @@
             });
         };
 
+        vm.goInEditMode = function (e, category) {
+
+            if (category) {
+
+                category.inEditMode = true;
+
+                if (e && e.currentTarget) {
+
+                    var $tr = $(e.currentTarget).parents('tr').first();
+
+                    if ($tr && $tr.length > 0) {
+
+                        $('textarea[elastic]', $tr).trigger('input');
+                    }
+                }
+            }
+        };
+
 
         var setupPages = function () {
 
@@ -160,7 +179,6 @@
         };
 
 
-
         var checkRecordState = function (category, compCategory, toBeDeleted) {
 
             if (category
@@ -172,11 +190,12 @@
 
                         category.recordState = 30;
                     }
-                    else if (category.legalName !== compCategory.legalName
-                            || category.civility !== compCategory.civility
-                            || category.lName !== compCategory.lName
-                            || category.fName !== compCategory.fName
-                            || category.paid !== compCategory.paid
+                    else if (category.name_en !== compCategory.name_en
+                            || category.name_fr !== compCategory.name_fr
+                            || category.slug_en !== compCategory.slug_en
+                            || category.slug_fr !== compCategory.slug_fr
+                            || category.desc_en !== compCategory.desc_en
+                            || category.desc_fr !== compCategory.desc_fr
                             || category.active !== compCategory.active) {
 
                         category.recordState = 20;
@@ -256,7 +275,8 @@
 
                 if (resp.data) {
 
-                    if (resp.data.count > 0) {
+                    if (resp.data.count > 0
+                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
 
                         vm.categorysCount = resp.data.count;
 
@@ -319,11 +339,12 @@
 
                     var org = category.__comp;
 
-                    category.legalName = org.legalName;
-                    category.civility = org.civility;
-                    category.lName = org.lName;
-                    category.fName = org.fName;
-                    category.paid = org.paid;
+                    category.name_en = org.name_en;
+                    category.name_fr = org.name_fr;
+                    category.slug_en = org.slug_en;
+                    category.slug_fr = org.slug_fr;
+                    category.desc_en = org.desc_en;
+                    category.desc_fr = org.desc_fr;
                     category.active = org.active;
 
                     category.inEditMode = false;
@@ -365,8 +386,6 @@
                         var toBeSaved = jQuery.extend(true, {}, category);
                         delete toBeSaved.__comp;
 
-                        toBeSaved.status = toBeSaved.active ? 1 : 0;
-
                         checkRecordState(toBeSaved, category.__comp, hasDeleteFlags ? deleteFlags[i] : false);
                         toBeSavedCategorys.push(toBeSaved);
 
@@ -378,6 +397,8 @@
                 if (validCategorys.length > 0) {
 
                     var successFunc = function (resp) {
+
+                        vm.errormsg = "ERROR TESTING!!!";
 
                         if (resp.data
                             && resp.data.result
@@ -392,12 +413,26 @@
                                     if (value) {
 
                                         tempValue.id = value.id;
-                                        tempValue.legalName = value.legalName;
-                                        tempValue.civility = value.civility;
-                                        tempValue.lName = value.lName;
-                                        tempValue.fName = value.fName;
-                                        tempValue.paid = value.paid;
+                                        tempValue.level = value.level;
+                                        tempValue.path = value.path;
+                                        tempValue.parent_Id = value.parent_Id;
+                                        tempValue.name_en = value.name_en;
+                                        tempValue.name_fr = value.name_fr;
+                                        tempValue.slug_en = value.slug_en;
+                                        tempValue.slug_fr = value.slug_fr;
+                                        tempValue.desc_en = value.desc_en;
+                                        tempValue.desc_fr = value.desc_fr;
                                         tempValue.active = value.active;
+
+                                        if (toBeSavedCategorys[index].recordState == 10) {
+
+                                            vm.categorysCount += 1;
+
+                                            if (!vm.totalPgs || vm.totalPgs <= 0) {
+
+                                                vm.totalPgs = 1;
+                                            }
+                                        }
 
                                         delete tempValue.status;
                                         delete tempValue.recordState;
@@ -407,6 +442,13 @@
                                     else {
 
                                         vm.categorys.remove(tempValue);
+
+                                        vm.categorysCount -= 1;
+
+                                        if (vm.categorysCount <= 0) {
+
+                                            vm.totalPgs = 0;
+                                        }
                                     }
                                 });
                             }
@@ -438,7 +480,7 @@
                         }
                     };
 
-                    $http.post(appProps.urlSaveCategorys, { categorys: toBeSavedCategorys })
+                    $http.post(appProps.urlSaveCatgs, { catgs: toBeSavedCategorys })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
@@ -461,11 +503,15 @@
 
                     var newItem = {
                         id: 0,
-                        legalName: '',
-                        civility: '',
-                        lName: '',
-                        fName: '',
-                        paid: false,
+                        level: 0,
+                        path: '',
+                        parent_Id: vm.parentIdFilter > 0 ? vm.parentIdFilter : null,
+                        name_en: null,
+                        name_fr: null,
+                        slug_en: null,
+                        slug_fr: null,
+                        desc_en: null,
+                        desc_fr: null,
                         active: true
                     };
 
@@ -497,6 +543,7 @@
             $scope.$apply(function () {
 
                 vm.searchValue = '';
+                vm.populateCategorys(appProps.resultItemsPerPg, 0);
             });
         });
     }

@@ -24,8 +24,15 @@
     </script>
 
 
+    <div uib-collapse="!vm.errormsg">
+        <!--
+            Error Message HERE!!!
+        -->
+    </div>
+
+
     <div ng-show="vm.parentIdFilter > 0" class="parent-panel findme-color-fc-pink">
-        <button type="button" class="btn btn-findme"><span class="fa fa-chevron-left" title="{{vm.appProps.lbl_Back}}" ng-click="vm.clearParentFilters()"></span></button>
+        <button type="button" class="btn btn-findme" title="{{vm.appProps.lbl_Back}}" ng-click="vm.clearParentFilters()"><span class="fa fa-chevron-left"></span></button>
         <b>{{vm.parentNameFilter}}</b>&nbsp;<span class="fa fa-arrow-right"></span>&nbsp;<b>{{vm.appProps.lbl_SbCatgs}}</b>
         <br />
         <br />
@@ -58,22 +65,22 @@
         <table class="table table-striped table-hover data" ng-init="vm.populateCategorys()">
             <thead>
                 <tr>
-                    <td>
+                    <td class="col-md-2">
                         <b>{{vm.appProps.lbl_Actns}}</b>
                     </td>
-                    <td>
+                    <td class="col-md-1">
                         <b>{{vm.appProps.lbl_ID}}</b>
                     </td>
-                    <td>
+                    <td class="col-md-2">
                         <b>{{vm.appProps.lbl_Name}}</b>
                     </td>
-                    <td>
+                    <td class="col-md-2">
                         <b>{{vm.appProps.lbl_Slug}}</b>
                     </td>
-                    <td>
+                    <td class="col-md-4">
                         <b>{{vm.appProps.lbl_Desc}}</b>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center col-md-1">
                         <b>{{vm.appProps.lbl_Actv}}</b>
                     </td>
                 </tr>
@@ -84,7 +91,7 @@
                         <div class="btn-toolbar">
 
                             <button type="button" class="btn btn-findme action"
-                                    title="{{vm.appProps.lbl_Edit}}" ng-click="category.inEditMode = true;" ng-hide="category.inEditMode">
+                                    title="{{vm.appProps.lbl_Edit}}" ng-click="vm.goInEditMode($event, category)" ng-hide="category.inEditMode">
                                 <span class="fa fa-edit"></span>
                             </button>
                             <button type="button" class="btn btn-findme hollow action"
@@ -101,7 +108,7 @@
                                 <span class="fa fa-times-circle-o"></span>
                             </button>
 
-                            <button ng-show="category.id > 0 && category.level == 0" type="button" class="btn btn-findme action inline-element" style="margin-left: 20px;"
+                            <button ng-show="category.id > 0 && category.level == 0 && !category.saving" type="button" class="btn btn-findme action inline-element" style="margin-left: 20px;"
                                     title="{{vm.appProps.lbl_ShwSbCatgs}}" ng-click="vm.setParentCatg(category)">
                                 <span class="fa fa-arrow-right"></span>
                             </button>
@@ -134,13 +141,32 @@
                         <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element" ng-model="category.slug_fr">
                     </td>
                     <td>
-                        <b>EN:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.desc_en}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Desc}}" type="text" class="form-control inline-element" ng-model="category.desc_en">
-                        <br />
-                        <b>FR:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.desc_fr}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Desc}}" type="text" class="form-control inline-element" ng-model="category.desc_fr">
+                        <div ng-hide="category.inEditMode">
+                            <b>EN:&nbsp;</b>
+                            <span>{{category.desc_en}}</span>
+                            <br />
+                            <b>FR:&nbsp;</b>
+                            <span>{{category.desc_fr}}</span>
+                        </div>
+
+                        <div ng-show="category.inEditMode" class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-lg-1 col-md-1"><b>EN:</b></label>
+                                <div class="col-lg-11 col-md-11">
+                                    <textarea type="text" class="form-control" elastic
+                                              ng-disabled="category.saving"
+                                              placeholder="{{vm.appProps.lbl_Desc}}" ng-model="category.desc_en" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-lg-1 col-md-1"><b>FR:</b></label>
+                                <div class="col-lg-11 col-md-11">
+                                    <textarea type="text" class="form-control" elastic
+                                              ng-disabled="category.saving"
+                                              placeholder="{{vm.appProps.lbl_Desc}}" ng-model="category.desc_fr" />
+                                </div>
+                            </div>
+                        </div>
                     </td>
                     <td class="text-center">
                         <span ng-hide="category.inEditMode" class="fa {{category.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x"></span>

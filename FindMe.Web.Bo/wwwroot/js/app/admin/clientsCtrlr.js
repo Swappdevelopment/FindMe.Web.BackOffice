@@ -228,7 +228,8 @@
 
                 if (resp.data) {
 
-                    if (resp.data.count > 0) {
+                    if (resp.data.count > 0
+                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
 
                         vm.clientsCount = resp.data.count;
 
@@ -375,6 +376,16 @@
                                         tempValue.paid = value.paid;
                                         tempValue.active = value.active;
 
+                                        if (toBeSavedClients[index].recordState == 10) {
+
+                                            vm.clientsCount += 1;
+
+                                            if (!vm.totalPgs || vm.totalPgs <= 0) {
+
+                                                vm.totalPgs = 1;
+                                            }
+                                        }
+
                                         setDispName(tempValue);
 
                                         delete tempValue.status;
@@ -385,6 +396,13 @@
                                     else {
 
                                         vm.clients.remove(tempValue);
+
+                                        vm.clientsCount -= 1;
+
+                                        if (vm.clientsCount <= 0) {
+
+                                            vm.totalPgs = 0;
+                                        }
                                     }
                                 });
                             }
@@ -475,6 +493,7 @@
             $scope.$apply(function () {
 
                 vm.searchValue = '';
+                vm.populateClients(appProps.resultItemsPerPg, 0);
             });
         });
     }

@@ -1,12 +1,9 @@
-﻿using FindMe.Data;
-using FindMe.Data.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -51,11 +48,12 @@ namespace FindMe.Web.App
                     limit = param.GetPropVal<int>("limit");
                     offset = param.GetPropVal<int>("offset");
 
-                    parentID = param.GetPropVal<long>("parentID");
-
-                    onlyParents = (parentID <= 0);
-
                     name = param.GetPropVal<string>("name");
+
+                    parentID = string.IsNullOrEmpty(name) ? param.GetPropVal<long>("parentID") : 0;
+
+                    onlyParents = (parentID <= 0 && string.IsNullOrEmpty(name));
+
                     getTotalCatgs = param.GetPropVal<bool>("getTotalCatgs");
                 }
 
@@ -106,23 +104,23 @@ namespace FindMe.Web.App
             object result = null;
             object error = null;
 
-            Client[] clients;
+            object[] catgs;
 
             try
             {
                 if (param != null)
                 {
-                    clients = param.JGetPropVal<Client[]>("clients");
+                    catgs = param.JGetPropVal<object[]>("catgs");
 
-                    if (clients != null
-                        && clients.Length > 0)
+                    if (catgs != null
+                        && catgs.Length > 0)
                     {
-                        for (int i = 0; i < clients.Length; i++)
+                        for (int i = 0; i < catgs.Length; i++)
                         {
-                            clients[i] = await _repo.Execute<Client>("ManageClient", clients[i]);
+                            catgs[i] = await _repo.Execute<object>("ManagePivotedCategory", catgs[i]);
                         }
 
-                        result = clients.Select(l => l == null ? null : l.Simplify()).ToArray();
+                        result = catgs;
                     }
                 }
             }
@@ -140,7 +138,7 @@ namespace FindMe.Web.App
             }
             finally
             {
-                clients = null;
+                catgs = null;
             }
 
             return Ok(new { result = result, error = error });

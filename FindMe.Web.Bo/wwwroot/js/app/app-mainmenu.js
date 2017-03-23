@@ -85,5 +85,36 @@
             };
 
             return optns;
-        });
+        })
+    .directive('elastic', ['$timeout', function ($timeout) {
+
+        return {
+            restrict: 'A',
+            link: function ($scope, element) {
+
+                var target = element[0];
+
+                //$scope.initialHeight = $scope.initialHeight || target.style.height;
+
+                $scope.initialHeight = $(target).height();
+
+                var resize = function () {
+
+                    if (target.scrollHeight && target.scrollHeight > 0 && $(target).val()) {
+
+                        target.style.height = '' + target.scrollHeight + 'px';
+                    }
+                    else {
+
+                        target.style.height = '' + $scope.initialHeight + 'px';
+                    }
+                };
+
+                $(target).on('input change load ready', resize);
+
+                $timeout(resize, 0);
+            }
+        };
+    }
+    ]);
 })();
