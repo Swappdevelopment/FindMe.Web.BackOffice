@@ -97,6 +97,20 @@ function checkRedirectForSignIn(data) {
 }
 
 
+
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function (searchString, position) {
+        position = position || 0;
+        return this.indexOf(searchString, position) === position;
+    };
+}
+
+String.prototype.replaceAll = function (search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
+
 Array.prototype.insert = function (index, item) {
 
     this.splice(index, 0, item);

@@ -1,21 +1,17 @@
-﻿using FindMe.Data;
-using FindMe.Data.Models;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
-    public class ApiAddressController : BaseController
+    public class ApiRegionController : BaseController
     {
-        public ApiAddressController(
+        public ApiRegionController(
             IConfigurationRoot config,
             WebDbRepository repo,
             IHostingEnvironment env,
@@ -27,49 +23,56 @@ namespace FindMe.Web.App
 
 
         [HttpPost]
-        public async Task<IActionResult> GetClients([FromBody]JObject param)
+        public async Task<IActionResult> GetRegions([FromBody]JObject param)
         {
             object result = null;
+            object country = null;
             object error = null;
-
-            Client[] clients;
 
             int count = 0;
 
+            Func<Task> func;
+
             try
             {
+                country = await _repo.Execute<object>("GetDefaultCountry", true);
+
+
                 int limit = 0;
                 int offset = 0;
 
-                string allNames = null;
+                string name = null;
 
-                bool getTotalClients = false;
+                bool getTotalCatgs = false;
 
                 if (param != null)
                 {
                     limit = param.GetPropVal<int>("limit");
                     offset = param.GetPropVal<int>("offset");
-                    allNames = param.GetPropVal<string>("allNames");
-                    getTotalClients = param.GetPropVal<bool>("getTotalClients");
+
+                    name = param.GetPropVal<string>("name");
+
+                    getTotalCatgs = param.GetPropVal<bool>("getTotalCatgs");
                 }
 
-                if (getTotalClients)
+
+                func = async () =>
+                {
+                    result = await _repo.Execute<object>("GetPivotRegions", 0, "", name, false, true, limit, offset);
+                };
+
+                if (getTotalCatgs)
                 {
                     await Task.WhenAll(
                                 Task.Run(async () =>
                                 {
-                                    count = await _repo.Execute<int>("GetClientsCount", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
+                                    count = await _repo.Execute<int>("GetRegionsCount", 0, "", name, false);
                                 }),
-                                Task.Run(async () =>
-                                {
-                                    clients = await _repo.Execute<Client[]>("GetClients", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
-                                    result = clients.Select(l => l.Simplify()).ToArray();
-                                }));
+                                func());
                 }
                 else
                 {
-                    clients = await _repo.Execute<Client[]>("GetClients", 0, "", "", SqlSearchMode.Equals, allNames, true, true, limit, offset);
-                    result = clients.Select(l => l.Simplify()).ToArray();
+                    await func();
                 }
 
             }
@@ -87,35 +90,35 @@ namespace FindMe.Web.App
             }
             finally
             {
-                clients = null;
+                func = null;
             }
 
-            return Ok(new { result = result, count = count, error = error });
+            return Ok(new { result = result, count = count, defCountry = country, error = error });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveClients([FromBody]JObject param)
+        public async Task<IActionResult> SaveRegions([FromBody]JObject param)
         {
             object result = null;
             object error = null;
 
-            Client[] clients;
+            object[] regions;
 
             try
             {
                 if (param != null)
                 {
-                    clients = param.JGetPropVal<Client[]>("clients");
+                    regions = param.JGetPropVal<object[]>("regions");
 
-                    if (clients != null
-                        && clients.Length > 0)
+                    if (regions != null
+                        && regions.Length > 0)
                     {
-                        for (int i = 0; i < clients.Length; i++)
+                        for (int i = 0; i < regions.Length; i++)
                         {
-                            clients[i] = await _repo.Execute<Client>("ManageClient", clients[i]);
+                            regions[i] = await _repo.Execute<object>("ManagePivotedRegion", regions[i]);
                         }
 
-                        result = clients.Select(l => l == null ? null : l.Simplify()).ToArray();
+                        result = regions;
                     }
                 }
             }
@@ -133,7 +136,7 @@ namespace FindMe.Web.App
             }
             finally
             {
-                clients = null;
+                regions = null;
             }
 
             return Ok(new { result = result, error = error });

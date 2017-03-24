@@ -252,15 +252,16 @@
 
             if (name || prevName) {
 
-                forceGetCount = (name != prevName);
+                forceGetCount = (name !== prevName);
             }
 
-            forceGetCount = (forceGetCount || prevParentIdFilter != vm.parentIdFilter);
+            forceGetCount = (forceGetCount || prevParentIdFilter !== vm.parentIdFilter);
 
             prevParentIdFilter = vm.parentIdFilter;
 
             prevName = name;
 
+            vm.showError = false;
             vm.errorstatus = '';
             vm.errormsg = '';
             vm.errorid = 0;
@@ -276,7 +277,7 @@
                 if (resp.data) {
 
                     if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                        || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                         vm.categorysCount = resp.data.count;
 
@@ -314,6 +315,8 @@
                     vm.errorstatus = error.status + ' - ' + error.statusText;
                     vm.errormsg = error.data.msg;
                     vm.errorid = error.data.id;
+
+                    vm.showError = true;
                 }
             };
 
@@ -374,7 +377,7 @@
                 var validCategorys = [];
                 var toBeSavedCategorys = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == categorys.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === categorys.length);
 
                 for (var i = 0; i < categorys.length; i++) {
 
@@ -398,13 +401,11 @@
 
                     var successFunc = function (resp) {
 
-                        vm.errormsg = "ERROR TESTING!!!";
-
                         if (resp.data
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validCategorys.length == resp.data.result.length) {
+                            if (validCategorys.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -424,7 +425,7 @@
                                         tempValue.desc_fr = value.desc_fr;
                                         tempValue.active = value.active;
 
-                                        if (toBeSavedCategorys[index].recordState == 10) {
+                                        if (toBeSavedCategorys[index].recordState === 10) {
 
                                             vm.categorysCount += 1;
 
@@ -463,6 +464,7 @@
                             vm.errorstatus = error.status + ' - ' + error.statusText;
                             vm.errormsg = error.data.msg;
                             vm.errorid = error.data.id;
+                            vm.showError = true;
                         }
                     };
 
@@ -479,6 +481,12 @@
                             finallyCallback();
                         }
                     };
+
+
+                    vm.showError = false;
+                    vm.errorstatus = '';
+                    vm.errormsg = '';
+                    vm.errorid = 0;
 
                     $http.post(appProps.urlSaveCatgs, { catgs: toBeSavedCategorys })
                          .then(successFunc, errorFunc)
@@ -572,7 +580,7 @@
 
         vm.no = function () {
 
-            $uibModalInstance.dismiss('cancel');
+            $uibModalInstance.close();
         };
     }
 

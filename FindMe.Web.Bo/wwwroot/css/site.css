@@ -47,6 +47,9 @@
         background-color: #E20E53 !important;
         color: white !important;
         border: solid 0.5px #E20E53;
+        -moz-transition: background-color color ease-in 200ms;
+        -o-transition: background-color color ease-in 200ms;
+        -webkit-transition: background-color color ease-in 200ms;
         transition: background-color color ease-in 200ms;
     }
 
@@ -54,6 +57,9 @@
             background-color: white !important;
             color: #E20E53 !important;
             border: solid 0.5px #E20E53;
+            -moz-transition: background-color color ease-in 200ms;
+            -o-transition: background-color color ease-in 200ms;
+            -webkit-transition: background-color color ease-in 200ms;
             transition: background-color color ease-in 200ms;
         }
 
@@ -65,6 +71,9 @@
             border: solid 0.5px #FFCC00;
             color: white !important;
             background-color: #FFCC00 !important;
+            -moz-transition: border background-color color ease-in 200ms;
+            -o-transition: border background-color color ease-in 200ms;
+            -webkit-transition: border background-color color ease-in 200ms;
             transition: border background-color color ease-in 200ms;
         }
 
@@ -127,4 +136,16 @@ textarea {
 
 .inline-element {
     display: inline;
+}
+
+
+.ng-animate.no-animate {
+    -moz-transition: 0s none;
+    -o-transition: 0s none;
+    transition: 0s none;
+    -webkit-transition: 0s none;
+    -moz-animation: 0s none;
+    -o-animation: 0s none;
+    animation: 0s none;
+    -webkit-animation: 0s none;
 }

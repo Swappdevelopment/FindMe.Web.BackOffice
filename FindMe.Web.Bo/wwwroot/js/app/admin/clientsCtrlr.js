@@ -214,6 +214,7 @@
 
             prevAllNames = allNames;
 
+            vm.showError = false;
             vm.errorstatus = '';
             vm.errormsg = '';
             vm.errorid = 0;
@@ -269,6 +270,7 @@
                     vm.errorstatus = error.status + ' - ' + error.statusText;
                     vm.errormsg = error.data.msg;
                     vm.errorid = error.data.id;
+                    vm.showError = true;
                 }
             };
 
@@ -417,6 +419,7 @@
                             vm.errorstatus = error.status + ' - ' + error.statusText;
                             vm.errormsg = error.data.msg;
                             vm.errorid = error.data.id;
+                            vm.showError = true;
                         }
                     };
 
@@ -433,6 +436,11 @@
                             finallyCallback();
                         }
                     };
+
+                    vm.showError = false;
+                    vm.errorstatus = '';
+                    vm.errormsg = '';
+                    vm.errorid = 0;
 
                     $http.post(appProps.urlSaveClients, { clients: toBeSavedClients })
                          .then(successFunc, errorFunc)
@@ -523,7 +531,7 @@
 
         vm.no = function () {
 
-            $uibModalInstance.dismiss('cancel');
+            $uibModalInstance.close();
         };
     }
 

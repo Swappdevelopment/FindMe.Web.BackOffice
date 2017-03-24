@@ -23,15 +23,20 @@
         </div>
     </script>
 
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
 
-    <div uib-collapse="!vm.errormsg">
-        <!--
-            Error Message HERE!!!
-        -->
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
     </div>
 
 
-    <div ng-show="vm.parentIdFilter > 0" class="parent-panel findme-color-fc-pink">
+    <div ng-show="vm.parentIdFilter > 0" class="parent-panel findme-color-fc-pink no-animate">
         <button type="button" class="btn btn-findme" title="{{vm.appProps.lbl_Back}}" ng-click="vm.clearParentFilters()"><span class="fa fa-chevron-left"></span></button>
         <b>{{vm.parentNameFilter}}</b>&nbsp;<span class="fa fa-arrow-right"></span>&nbsp;<b>{{vm.appProps.lbl_SbCatgs}}</b>
         <br />
@@ -39,7 +44,7 @@
     </div>
 
 
-    <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
         <tr>
             <td class="findme-color-fc-pink">
                 <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
@@ -52,7 +57,7 @@
 
                     <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
                         <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
-                            <span class="{{pg.icon}}" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
                         </a>
                     </li>
                 </ul>
@@ -90,25 +95,25 @@
                     <td>
                         <div class="btn-toolbar">
 
-                            <button type="button" class="btn btn-findme action"
+                            <button type="button" class="btn btn-findme action no-animate"
                                     title="{{vm.appProps.lbl_Edit}}" ng-click="vm.goInEditMode($event, category)" ng-hide="category.inEditMode">
                                 <span class="fa fa-edit"></span>
                             </button>
-                            <button type="button" class="btn btn-findme hollow action"
+                            <button type="button" class="btn btn-findme hollow action no-animate"
                                     title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(category)" ng-hide="category.inEditMode">
                                 <span class="fa fa-trash"></span>
                             </button>
 
-                            <button type="button" class="btn btn-findme action"
+                            <button type="button" class="btn btn-findme action no-animate"
                                     title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(category)" ng-show="category.inEditMode && !category.saving">
                                 <span class="fa fa-save"></span>
                             </button>
-                            <button type="button" class="btn btn-findme hollow action"
+                            <button type="button" class="btn btn-findme hollow action no-animate"
                                     title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.revert(category)" ng-show="category.inEditMode && !category.saving">
                                 <span class="fa fa-times-circle-o"></span>
                             </button>
 
-                            <button ng-show="category.id > 0 && category.level == 0 && !category.saving" type="button" class="btn btn-findme action inline-element" style="margin-left: 20px;"
+                            <button ng-show="category.id > 0 && category.level == 0 && !category.saving && !category.inEditMode" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
                                     title="{{vm.appProps.lbl_ShwSbCatgs}}" ng-click="vm.setParentCatg(category)">
                                 <span class="fa fa-arrow-right"></span>
                             </button>
@@ -116,32 +121,32 @@
                         </div>
 
 
-                        <div ng-show="category.inEditMode && category.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink"></div>
+                        <div ng-show="category.inEditMode && category.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
 
                     </td>
                     <td>
-                        <b ng-show="category.id > 0">{{category.id}}</b>
+                        <b ng-show="category.id > 0" class="no-animate">{{category.id}}</b>
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.name_en}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element" ng-model="category.name_en">
+                        <span ng-hide="category.inEditMode" class="no-animate">{{category.name_en}}</span>
+                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="category.name_en">
                         <br />
                         <b>FR:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.name_fr}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element" ng-model="category.name_fr">
+                        <span ng-hide="category.inEditMode" class="no-animate">{{category.name_fr}}</span>
+                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="category.name_fr">
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.slug_en}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element" ng-model="category.slug_en">
+                        <span ng-hide="category.inEditMode" class="no-animate">{{category.slug_en}}</span>
+                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="category.slug_en">
                         <br />
                         <b>FR:&nbsp;</b>
-                        <span ng-hide="category.inEditMode">{{category.slug_fr}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element" ng-model="category.slug_fr">
+                        <span ng-hide="category.inEditMode" class="no-animate">{{category.slug_fr}}</span>
+                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="category.slug_fr">
                     </td>
                     <td>
-                        <div ng-hide="category.inEditMode">
+                        <div ng-hide="category.inEditMode" class="no-animate">
                             <b>EN:&nbsp;</b>
                             <span>{{category.desc_en}}</span>
                             <br />
@@ -149,7 +154,7 @@
                             <span>{{category.desc_fr}}</span>
                         </div>
 
-                        <div ng-show="category.inEditMode" class="form-horizontal">
+                        <div ng-show="category.inEditMode" class="form-horizontal no-animate">
                             <div class="form-group">
                                 <label class="control-label col-lg-1 col-md-1"><b>EN:</b></label>
                                 <div class="col-lg-11 col-md-11">
@@ -169,9 +174,9 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <span ng-hide="category.inEditMode" class="fa {{category.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x"></span>
+                        <span ng-hide="category.inEditMode" class="fa {{category.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
-                        <span ng-show="category.inEditMode" class="check-box">
+                        <span ng-show="category.inEditMode" class="check-box no-animate">
                             <input ng-disabled="category.saving" type="checkbox" value="None" id="categoryActive-{{category.id}}" name="categoryActive-{{category.id}}" ng-model="category.active" />
                             <label class="lbl-chkb" for="categoryActive-{{category.id}}"></label>
                         </span>
@@ -181,14 +186,14 @@
         </table>
     </div>
 
-    <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
         <tr>
             <td>
                 <ul class="pagination">
 
                     <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
                         <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
-                            <span class="{{pg.icon}}" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
                         </a>
                     </li>
                 </ul>

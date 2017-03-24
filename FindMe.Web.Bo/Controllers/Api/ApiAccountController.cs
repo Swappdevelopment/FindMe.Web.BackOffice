@@ -1,4 +1,5 @@
 ﻿using FindMe.Data;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,9 +17,10 @@ namespace FindMe.Web.App
         public ApiAccountController(
             IConfigurationRoot config,
             WebDbRepository repo,
+            IHostingEnvironment env,
             ILogger<ApiAccountController> logger,
             IMailService mailService)
-            : base(config, repo, null, logger, mailService)
+            : base(config, repo, env, logger, mailService)
         {
         }
 
@@ -148,20 +150,16 @@ namespace FindMe.Web.App
             }
             catch (ExceptionID ex)
             {
-                string msg = null;
-
                 switch (ex.ErrorID)
                 {
                     case MessageIdentifier.USERNAME_ALREADY_USED:
-                        msg = this.GetMessage("msg_UsrnmAlrdUsed");
-                        break;
+                        return BadRequest(this.GetMessage("msg_UsrnmAlrdUsed"));
 
                     case MessageIdentifier.USER_EMAIL_ALREADY_USED:
-                        msg = this.GetMessage("msg_EmailAlrdUsed");
-                        break;
+                        return BadRequest(this.GetMessage("msg_EmailAlrdUsed"));
                 }
 
-                return BadRequestEx(ex, msg);
+                return BadRequestEx(ex);
             }
             catch (Exception ex)
             {

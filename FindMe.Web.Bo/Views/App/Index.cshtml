@@ -61,6 +61,11 @@
                         urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
                         urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
                         urlSaveCatgs: '@Url.Action("SaveCatgs", "ApiCatg")',
+                        urlGetCitys: '@Url.Action("GetClients", "ApiAddress")',
+                        urlGetRegions: '@Url.Action("GetRegions", "ApiRegion")',
+                        urlSaveRegions: '@Url.Action("SaveRegions", "ApiRegion")',
+                        urlGetDistricts: '@Url.Action("GetClients", "ApiAddress")',
+                        urlGetCityGroups: '@Url.Action("GetClients", "ApiAddress")',
 
                         lbl_Name: '@Html.GetLabel("lbl_Name")',
                         lbl_FullName: '@Html.GetLabel("lbl_FullName")',
@@ -96,6 +101,11 @@
                         lbl_SbCatgs: '@Html.GetLabel("lbl_SbCatgs")',
                         lbl_ShwSbCatgs: '@Html.GetLabel("lbl_ShwSbCatgs")',
                         lbl_Back: '@Html.GetLabel("lbl_Back")',
+                        lbl_Cities: '@Html.GetLabel("lbl_Cities")',
+                        lbl_Rgns: '@Html.GetLabel("lbl_Rgns")',
+                        lbl_Dstrcts: '@Html.GetLabel("lbl_Dstrcts")',
+                        lbl_Grps: '@Html.GetLabel("lbl_Grps")',
+                        lbl_CtsRgnsDstrctsGrps: '@Html.GetLabel("lbl_CtsRgnsDstrctsGrps")',
 
                         erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
 
@@ -107,8 +117,11 @@
                         msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")',
                         msg_AddCatgs: '@Html.GetMessage("msg_AddCatgs")',
                         msg_RfrshCatgs: '@Html.GetMessage("msg_RfrshCatgs")',
-                        msg_SaveCatgs: '@Html.GetMessage("msg_SaveCatgs")'
-                    });
+                        msg_SaveCatgs: '@Html.GetMessage("msg_SaveCatgs")',
+                        msg_SHwRgnsCtys: '@Html.GetMessage("msg_SHwRgnsCtys")',
+                        msg_SHwDstrctsCtys: '@Html.GetMessage("msg_SHwDstrctsCtys")',
+                        msg_SHwGrpsCtys: '@Html.GetMessage("msg_SHwGrpsCtys")'
+        });
     </script>
 
     <environment names="Development">
@@ -118,6 +131,7 @@
         <script src="~/js/app/admin/usersCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/categoriesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/citiesCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -127,6 +141,7 @@
         <script src="~/js/app/admin/usersCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/categoriesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/citiesCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 

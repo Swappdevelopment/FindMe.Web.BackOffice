@@ -24,7 +24,20 @@
     </script>
 
 
-    <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
         <tr>
             <td class="findme-color-fc-pink">
                 <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
@@ -37,7 +50,7 @@
 
                     <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
                         <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
-                            <span class="{{pg.icon}}" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
                         </a>
                     </li>
                 </ul>
@@ -73,29 +86,29 @@
             <tbody>
                 <tr ng-repeat="client in vm.clients" ng-class="client.inEditMode ? 'inEditMode' : ''">
                     <td>
-                        <div ng-hide="client.inEditMode" class="btn-toolbar">
+                        <div ng-hide="client.inEditMode" class="btn-toolbar no-animate">
                             <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="client.inEditMode = true;"><span class="fa fa-edit"></span></button>
                             <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(client)"><span class="fa fa-trash"></span></button>
                         </div>
-                        <div ng-show="client.inEditMode && !client.saving" class="btn-toolbar">
+                        <div ng-show="client.inEditMode && !client.saving" class="btn-toolbar no-animate">
                             <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(client)"><span class="fa fa-save"></span></button>
                             <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.revert(client)"><span class="fa fa-times-circle-o"></span></button>
                         </div>
 
-                        <div ng-show="client.inEditMode && client.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink"></div>
+                        <div ng-show="client.inEditMode && client.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
 
                     </td>
                     <td>
-                        <b ng-show="client.id > 0">{{client.id}}</b>
+                        <b ng-show="client.id > 0" class="no-animate">{{client.id}}</b>
                     </td>
                     <td>
-                        <span ng-hide="client.inEditMode">{{client.legalName}}</span>
-                        <input ng-disabled="client.saving" ng-show="client.inEditMode" placeholder="{{vm.appProps.lbl_LglName}}" type="text" class="form-control" ng-model="client.legalName">
+                        <span ng-hide="client.inEditMode" class="no-animate">{{client.legalName}}</span>
+                        <input ng-disabled="client.saving" ng-show="client.inEditMode" placeholder="{{vm.appProps.lbl_LglName}}" type="text" class="form-control no-animate" ng-model="client.legalName">
                     </td>
                     <td>
-                        <span ng-hide="client.inEditMode">{{client.dispName}}</span>
+                        <span ng-hide="client.inEditMode" class="no-animate">{{client.dispName}}</span>
 
-                        <div ng-show="client.inEditMode">
+                        <div ng-show="client.inEditMode" class="no-animate">
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_Cvlty}}" type="text" class="form-control" ng-model="client.civility">
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_LName}}" type="text" class="form-control" ng-model="client.lName">
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_FName}}" type="text" class="form-control" ng-model="client.fName">
@@ -103,15 +116,15 @@
 
                     </td>
                     <td class="text-center">
-                        <span ng-hide="client.inEditMode" class="fa {{client.paid ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x"></span>
+                        <span ng-hide="client.inEditMode" class="fa {{client.paid ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
-                        <span ng-show="client.inEditMode" class="check-box">
+                        <span ng-show="client.inEditMode" class="check-box no-animate">
                             <input ng-disabled="client.saving" type="checkbox" value="None" id="clientPaid-{{client.id}}" name="clientPaid-{{client.id}}" ng-model="client.paid" />
                             <label class="lbl-chkb" for="clientPaid-{{client.id}}"></label>
                         </span>
                     </td>
                     <td class="text-center">
-                        <span ng-hide="client.inEditMode" class="fa {{client.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x"></span>
+                        <span ng-hide="client.inEditMode" class="fa {{client.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
                         <span ng-show="client.inEditMode" class="check-box">
                             <input ng-disabled="client.saving" type="checkbox" value="None" id="clientActive-{{client.id}}" name="clientActive-{{client.id}}" ng-model="client.active" />
@@ -123,14 +136,14 @@
         </table>
     </div>
 
-    <table class="pages col-sm-12 col-xs-12" ng-hide="vm.isBusy">
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
         <tr>
             <td>
                 <ul class="pagination">
 
                     <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
                         <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
-                            <span class="{{pg.icon}}" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
                         </a>
                     </li>
                 </ul>

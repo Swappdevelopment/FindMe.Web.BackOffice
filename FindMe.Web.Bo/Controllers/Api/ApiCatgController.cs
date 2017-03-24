@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -13,9 +14,10 @@ namespace FindMe.Web.App
         public ApiCatgController(
             IConfigurationRoot config,
             WebDbRepository repo,
+            IHostingEnvironment env,
             ILogger<ApiAccountController> logger,
             IMailService mailService)
-            : base(config, repo, null, logger, mailService)
+            : base(config, repo, env, logger, mailService)
         {
         }
 
