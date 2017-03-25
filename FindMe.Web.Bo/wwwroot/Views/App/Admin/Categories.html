@@ -77,6 +77,9 @@
                         <b>{{vm.appProps.lbl_ID}}</b>
                     </td>
                     <td class="col-md-2">
+                        <b>{{vm.appProps.lbl_Icon}}</b>
+                    </td>
+                    <td class="col-md-2">
                         <b>{{vm.appProps.lbl_Name}}</b>
                     </td>
                     <td class="col-md-2">
@@ -126,6 +129,10 @@
                     </td>
                     <td>
                         <b ng-show="category.id > 0" class="no-animate">{{category.id}}</b>
+                    </td>
+                    <td>
+                        <span ng-hide="category.inEditMode" class="no-animate">{{category.iconClass}}</span>
+                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Icon}}" type="text" class="form-control no-animate" ng-model="category.iconClass">
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
