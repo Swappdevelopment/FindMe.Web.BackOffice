@@ -28,7 +28,7 @@
 }
 
 <div id="signin" ng-app="app-signin" class="container">
-    <h2 class="findme-color-fc-pink">@Html.GetLabel("Lbl_SignIn")</h2>
+    <h2 class="findme-color-fc-pink">@Html.GetLabel("lbl_SignIn")</h2>
 
     <div ng-controller="signInCtrlr as vm">
 
@@ -44,16 +44,16 @@
                     </div>
 
                     <div class="form-group">
-                        @*<label class="findme-color-fc-dark" for="username">@rscMngr.GetLabel("Lbl_EmailUsrnm")</label>*@
-                        <input type="text" class="form-control" id="userName" name="userName" placeholder="@Html.GetLabel("Lbl_EmailUsrnm")" ng-model="vm.obj.userName" required ng-minlength="4" ng-disabled="vm.isBusy" />
-                        <span class="text-warning show-on-load" ng-show="signinform.userName.$touched && signinform.userName.$error.required">@Html.GetMessage("ErMsg_VldEmailOrUsrnmReq")</span>
-                        <span class="text-warning show-on-load" ng-show="signinform.userName.$touched && signinform.userName.$error.minlength">@Html.GetMessage("ErMsg_VldEmailOrUsrnmReq")</span>
+                        @*<label class="findme-color-fc-dark" for="username">@rscMngr.GetLabel("lbl_EmailUsrnm")</label>*@
+                        <input type="text" class="form-control" id="userName" name="userName" placeholder="@Html.GetLabel("lbl_EmailUsrnm")" ng-model="vm.obj.userName" required ng-minlength="4" ng-disabled="vm.isBusy" />
+                        <span class="text-warning show-on-load" ng-show="signinform.userName.$touched && signinform.userName.$error.required">@Html.GetMessage("erMsg_VldEmailOrUsrnmReq")</span>
+                        <span class="text-warning show-on-load" ng-show="signinform.userName.$touched && signinform.userName.$error.minlength">@Html.GetMessage("erMsg_VldEmailOrUsrnmReq")</span>
                     </div>
 
                     <div class="form-group">
-                        @*<label class="findme-color-fc-dark" for="password">@rscMngr.GetLabel("Lbl_Psswrd")</label>*@
-                        <input type="password" class="form-control" id="password" name="password" placeholder="@Html.GetLabel("Lbl_Psswrd")" ng-model="vm.obj.password" required ng-disabled="vm.isBusy" />
-                        @*<span class="text-warning show-on-load" ng-show="signinform.password.$error.required">@rscMngr.GetMessage("ErMsg_PsswrdReq")</span>*@
+                        @*<label class="findme-color-fc-dark" for="password">@rscMngr.GetLabel("lbl_Psswrd")</label>*@
+                        <input type="password" class="form-control" id="password" name="password" placeholder="@Html.GetLabel("lbl_Psswrd")" ng-model="vm.obj.password" required ng-disabled="vm.isBusy" />
+                        @*<span class="text-warning show-on-load" ng-show="signinform.password.$error.required">@rscMngr.GetMessage("erMsg_PsswrdReq")</span>*@
                     </div>
 
                     <div class="form-group">
@@ -64,12 +64,12 @@
                                 <label class="lbl-chkb" for="remember"></label>
 
                                 <label id="lblRemember" class="findme-color-fc-dark" for="remember">
-                                    &nbsp;@Html.GetLabel("Lbl_RmbrMe")
+                                    &nbsp;@Html.GetLabel("lbl_RmbrMe")
                                 </label>
                             </span>
 
                             <div class="col-lg-8 col-md-12">
-                                <a asp-controller="Account" asp-action="ForgotPassword">@Html.GetLabel("Lbl_FrgtPsswrd")</a>
+                                <a asp-controller="Account" asp-action="ForgotPassword">@Html.GetLabel("lbl_FrgtPsswrd")</a>
                             </div>
                         </div>
                     </div>

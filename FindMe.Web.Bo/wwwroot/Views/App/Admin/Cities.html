@@ -1,0 +1,299 @@
+﻿
+
+<div id="citiesVw">
+
+    <script type="text/ng-template" id="deleteObjectModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{(vm.targetName)}}?</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.yes()">
+                <b>{{vm.appProps.lbl_Yes}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.no()">
+                <b>{{vm.appProps.lbl_No}}</b>
+            </button>
+        </div>
+    </script>
+
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <uib-tabset active="vm.tabIndex">
+
+        <uib-tab index="0">
+            <uib-tab-heading>
+                <b>{{vm.appProps.lbl_Cities}}</b>
+            </uib-tab-heading>
+
+            <div class="cities">
+
+                <br />
+                <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.cVm.isBusy">
+                    <tr>
+                        <td class="findme-color-fc-pink">
+                            <span>{{vm.appProps.lbl_Pg}}: {{vm.cVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.cVm.totalPgs}}</span>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlClnts}}: {{vm.cVm.citysCount}}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul class="pagination">
+
+                                <li ng-repeat="pg in vm.cVm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                                    <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.cVm.gotoPage(pg, true)">
+                                        <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <div class="main-table-container">
+                    <table class="table table-striped table-hover data">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <b>{{vm.appProps.lbl_Actns}}</b>
+                                </td>
+                                <td>
+                                    <b>{{vm.appProps.lbl_ID}}</b>
+                                </td>
+                                <td>
+                                    <b>{{vm.appProps.lbl_LglName}}</b>
+                                </td>
+                                <td>
+                                    <b>{{vm.appProps.lbl_Name}}</b>
+                                </td>
+                                <td class="text-center">
+                                    <b>{{vm.appProps.lbl_PdClnt}}</b>
+                                </td>
+                                <td class="text-center">
+                                    <b>{{vm.appProps.lbl_Actv}}</b>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="city in vm.cVm.citys" ng-class="city.inEditMode ? 'inEditMode' : ''">
+                                <td>
+                                    <div ng-hide="city.inEditMode" class="btn-toolbar no-animate">
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="city.inEditMode = true;"><span class="fa fa-edit"></span></button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.cVm.deleteModal(city)"><span class="fa fa-trash"></span></button>
+                                    </div>
+                                    <div ng-show="city.inEditMode && !city.saving" class="btn-toolbar no-animate">
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.cVm.save(city)"><span class="fa fa-save"></span></button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.cVm.revert(city)"><span class="fa fa-times-circle-o"></span></button>
+                                    </div>
+
+                                    <div ng-show="city.inEditMode && city.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                                </td>
+                                <td>
+                                    <b ng-show="city.id > 0" class="no-animate">{{city.id}}</b>
+                                </td>
+                                <td>
+                                    <span ng-hide="city.inEditMode" class="no-animate">{{city.legalName}}</span>
+                                    <input ng-disabled="city.saving" ng-show="city.inEditMode" placeholder="{{vm.appProps.lbl_LglName}}" type="text" class="form-control no-animate" ng-model="city.legalName">
+                                </td>
+                                <td>
+                                    <span ng-hide="city.inEditMode" class="no-animate">{{city.dispName}}</span>
+
+                                    <div ng-show="city.inEditMode" class="no-animate">
+                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_Cvlty}}" type="text" class="form-control" ng-model="city.civility">
+                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_LName}}" type="text" class="form-control" ng-model="city.lName">
+                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_FName}}" type="text" class="form-control" ng-model="city.fName">
+                                    </div>
+
+                                </td>
+                                <td class="text-center">
+                                    <span ng-hide="city.inEditMode" class="fa {{city.paid ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                                    <span ng-show="city.inEditMode" class="check-box no-animate">
+                                        <input ng-disabled="city.saving" type="checkbox" value="None" id="cityPaid-{{city.id}}" name="cityPaid-{{city.id}}" ng-model="city.paid" />
+                                        <label class="lbl-chkb" for="cityPaid-{{city.id}}"></label>
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span ng-hide="city.inEditMode" class="fa {{city.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                                    <span ng-show="city.inEditMode" class="check-box">
+                                        <input ng-disabled="city.saving" type="checkbox" value="None" id="cityActive-{{city.id}}" name="cityActive-{{city.id}}" ng-model="city.active" />
+                                        <label class="lbl-chkb" for="cityActive-{{city.id}}"></label>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.cVm.isBusy">
+                    <tr>
+                        <td>
+                            <ul class="pagination">
+
+                                <li ng-repeat="pg in vm.cVm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                                    <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.cVm.gotoPage(pg, true)">
+                                        <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </uib-tab>
+
+        <uib-tab index="1">
+            <uib-tab-heading>
+                <b>{{vm.appProps.lbl_Rgns}}</b>
+            </uib-tab-heading>
+
+            <div class="regions">
+
+                <br />
+                <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.rVm.isBusy">
+                    <tr>
+                        <td class="findme-color-fc-pink">
+                            <span>{{vm.appProps.lbl_Pg}}: {{vm.rVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.rVm.totalPgs}}</span>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlClnts}}: {{vm.rVm.regionsCount}}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul class="pagination">
+
+                                <li ng-repeat="pg in vm.rVm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                                    <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.rVm.gotoPage(pg, true)">
+                                        <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <div class="main-table-container">
+                    <table class="table table-striped table-hover data">
+                        <thead>
+                            <tr>
+                                <td class="col-md-3">
+                                    <b>{{vm.appProps.lbl_Actns}}</b>
+                                </td>
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_ID}}</b>
+                                </td>
+                                <td class="col-md-7">
+                                    <b>{{vm.appProps.lbl_Name}}</b>
+                                </td>
+                                <td class="text-center col-md-1">
+                                    <b>{{vm.appProps.lbl_Actv}}</b>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="region in vm.rVm.regions" ng-class="region.inEditMode ? 'inEditMode' : ''">
+                                <td>
+                                    <div ng-hide="region.inEditMode" class="btn-toolbar no-animate">
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="region.inEditMode = true;"><span class="fa fa-edit"></span></button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.rVm.deleteModal(region)"><span class="fa fa-trash"></span></button>
+                                    </div>
+                                    <div ng-show="region.inEditMode && !region.saving" class="btn-toolbar no-animate">
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.rVm.save(region)"><span class="fa fa-save"></span></button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.rVm.revert(region)"><span class="fa fa-times-circle-o"></span></button>
+                                    </div>
+
+                                    <button ng-show="region.id > 0 && region.level == 0 && !region.saving && !region.inEditMode" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
+                                            title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="">
+                                        <span class="fa fa-arrow-right"></span>
+                                    </button>
+
+                                    <div ng-show="region.inEditMode && region.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                                </td>
+                                <td>
+                                    <b ng-show="region.id > 0" class="no-animate">{{region.id}}</b>
+                                </td>
+                                <td>
+                                    <b>EN:&nbsp;</b>
+                                    <span ng-hide="region.inEditMode" class="no-animate">{{region.name_en}}</span>
+                                    <input ng-disabled="region.saving" ng-show="region.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="region.name_en">
+                                    <br />
+                                    <b>FR:&nbsp;</b>
+                                    <span ng-hide="region.inEditMode" class="no-animate">{{region.name_fr}}</span>
+                                    <input ng-disabled="region.saving" ng-show="region.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="region.name_fr">
+                                </td>
+                                <td class="text-center">
+                                    <span ng-hide="region.inEditMode" class="fa {{region.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                                    <span ng-show="region.inEditMode" class="check-box">
+                                        <input ng-disabled="region.saving" type="checkbox" value="None" id="regionActive-{{region.id}}" name="regionActive-{{region.id}}" ng-model="region.active" />
+                                        <label class="lbl-chkb" for="regionActive-{{region.id}}"></label>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.rVm.isBusy">
+                    <tr>
+                        <td>
+                            <ul class="pagination">
+
+                                <li ng-repeat="pg in vm.rVm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                                    <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.rVm.gotoPage(pg, true)">
+                                        <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </uib-tab>
+
+        <uib-tab index="2">
+            <uib-tab-heading>
+                <b>{{vm.appProps.lbl_Dstrcts}}</b>
+            </uib-tab-heading>
+        </uib-tab>
+
+        <uib-tab index="3">
+            <uib-tab-heading>
+                <b>{{vm.appProps.lbl_Grps}}</b>
+            </uib-tab-heading>
+        </uib-tab>
+    </uib-tabset>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="modal-container">
+    </div>
+
+</div>

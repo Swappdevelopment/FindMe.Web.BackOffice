@@ -1,9 +1,12 @@
 ﻿
-#clientsVw {
+#clientsVw .main-table-container {
+    padding-top: 80px;
 }
 
-    #clientsVw table tbody {
-        height: 100px;
-        overflow-y: auto;
-        width: 100%;
+    #clientsVw .main-table-container .table .btn.action {
+        outline: none;
     }
+
+#clientsVw .modal-body .check-box {
+    transform: translate(10px, 40%);
+}

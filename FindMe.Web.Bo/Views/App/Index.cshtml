@@ -1,56 +1,28 @@
 ﻿@{
     ViewBag.Title = "App";
-
-
-    var obj = Html.ToJSonHtmlString(new
-    {
-        urlMngProfile = Url.Action("ManageProfile", "ApiAccount"),
-        urlCheckEmailToken = Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount"),
-        lbl_Name = Html.GetLabel("Lbl_Name"),
-        lbl_FullName = Html.GetLabel("Lbl_FullName"),
-        lbl_LglName = Html.GetLabel("Lbl_LglName"),
-        lbl_Actns = Html.GetLabel("Lbl_Actns"),
-        lbl_Actv = Html.GetLabel("Lbl_Actv"),
-        lbl_PdClnt = Html.GetLabel("Lbl_PdClnt"),
-        lbl_ID = Html.GetLabel("Lbl_ID"),
-        lbl_FName = Html.GetLabel("Lbl_FName"),
-        lbl_LName = Html.GetLabel("Lbl_LName"),
-        lbl_Email = Html.GetLabel("Lbl_Email"),
-        lbl_Usrnm = Html.GetLabel("Lbl_Usrnm"),
-        lbl_CntctNm = Html.GetLabel("Lbl_CntctNm"),
-        lbl_LckOut = Html.GetLabel("Lbl_LckOut"),
-        lbl_Prfl = Html.GetLabel("Lbl_Prfl"),
-        lbl_ReSnd = Html.GetLabel("Lbl_ReSnd"),
-        lbl_CnclCnfrmtn = Html.GetLabel("Lbl_CnclCnfrmtn"),
-        lbl_Clnts = Html.GetLabel("Lbl_Clnts"),
-
-        erMsg_InvldEmail = Html.GetMessage("ErMsg_InvldEmail"),
-        msg_RfrshPrfl = Html.GetMessage("Msg_RfrshPrfl"),
-        msg_SavePrfl = Html.GetMessage("Msg_SavePrfl"),
-        msg_WtngEmailCnfrmtn = Html.GetMessage("Msg_WtngEmailCnfrmtn"),
-        msg_AddClnts = Html.GetMessage("Msg_AddClnts"),
-        msg_RfrshClnts = Html.GetMessage("Msg_RfrshClnts"),
-        msg_SaveClnts = Html.GetMessage("Msg_SaveClnts")
-    });
 }
 
 
 @section css {
     <environment names="Development">
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/wrapper.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/side-bar.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/search-bar.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/home.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/admin/clients.css", (string)ViewBag.WebRootPath)" />
-        <link rel="stylesheet" href="@Url.GetResPath("~/css/app/account/profile.css", (string)ViewBag.WebRootPath)" />
+        <link rel="stylesheet" href="~/css/app/wrapper.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/side-bar.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/search-bar.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/pagination.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/categories.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true" />
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/css/app/wrapper.min.css" />
-        <link rel="stylesheet" href="~/css/app/side-bar.min.css" />
-        <link rel="stylesheet" href="~/css/app/search-bar.min.css" />
-        <link rel="stylesheet" href="~/css/app/home.min.css" />
-        <link rel="stylesheet" href="~/css/app/admin/clients.min.css" />
-        <link rel="stylesheet" href="~/css/app/account/profile.min.css" />
+        <link rel="stylesheet" href="~/css/app/wrapper.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/side-bar.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/search-bar.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/pagination.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/home.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/clients.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/categories.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/account/profile.min.css" swp-cache-version="true" />
     </environment>
 }
 
@@ -60,48 +32,118 @@
     <environment names="Development">
         <script src="~/lib/angular/angular.js"></script>
         <script src="~/lib/angular-route/angular-route.js"></script>
-        <script src="@Url.GetResPath("~/js/app/index.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/app-mainmenu.js", (string)ViewBag.WebRootPath)"></script>
-
-        <script>
-            angular.module('app-mainmenu')
-                   .value('appProps', JSON.parse('@obj'));
-        </script>
-
-        <script src="@Url.GetResPath("~/js/app/mainCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/homeCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/account/profileCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/usersCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/clientsCtrlr.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/app/admin/addressesCtrlr.js", (string)ViewBag.WebRootPath)"></script>
+        <script src="~/lib/angular-animate/angular-animate.js"></script>
+        <script src="~/lib/angular-touch/angular-touch.js"></script>
+        <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+        <script src="~/js/app/index.js" swp-cache-version="true"></script>
+        <script src="~/js/app/app-mainmenu.js" swp-cache-version="true"></script>
     </environment>
-
     <environment names="Staging,Production">
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular.min.js"
-                asp-fallback-src="~/lib/angular/angular.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular-route.min.js"
-                asp-fallback-src="~/lib/angular-route/angular-route.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-
-        <script src="~/js/app/index.js" asp-append-version="true"></script>
-        <script src="~/js/app/app-mainmenu.min.js" asp-append-version="true"></script>
-
-        <script>
-            angular.module('app-mainmenu')
-                   .value('appProps', JSON.parse('@obj'));
-        </script>
-
-        <script src="~/js/app/mainCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/homeCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/account/profileCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/usersCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/clientsCtrlr.min.js" asp-append-version="true"></script>
-        <script src="~/js/app/admin/addressesCtrlr.min.js" asp-append-version="true"></script>
+        <script src="~/lib/angular/angular.min.js"></script>
+        <script src="~/lib/angular-route/angular-route.min.js"></script>
+        <script src="~/lib/angular-animate/angular-animate.min.js"></script>
+        <script src="~/lib/angular-touch/angular-touch.min.js"></script>
+        <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
+        <script src="~/js/app/index.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/app-mainmenu.min.js" swp-cache-version="true"></script>
     </environment>
 
+    <script>
+        angular.module('app-mainmenu')
+               .value('appProps',
+                    {
+                        resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+                        currentLang: '@Html.GetCurrentLang()',
+
+                        urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
+                        urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
+                        urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
+                        urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
+                        urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
+                        urlSaveCatgs: '@Url.Action("SaveCatgs", "ApiCatg")',
+                        urlGetCitys: '@Url.Action("GetClients", "ApiAddress")',
+                        urlGetRegions: '@Url.Action("GetRegions", "ApiRegion")',
+                        urlSaveRegions: '@Url.Action("SaveRegions", "ApiRegion")',
+                        urlGetDistricts: '@Url.Action("GetClients", "ApiAddress")',
+                        urlGetCityGroups: '@Url.Action("GetClients", "ApiAddress")',
+
+                        lbl_Name: '@Html.GetLabel("lbl_Name")',
+                        lbl_FullName: '@Html.GetLabel("lbl_FullName")',
+                        lbl_LglName: '@Html.GetLabel("lbl_LglName")',
+                        lbl_Actns: '@Html.GetLabel("lbl_Actns")',
+                        lbl_Actv: '@Html.GetLabel("lbl_Actv")',
+                        lbl_PdClnt: '@Html.GetLabel("lbl_PdClnt")',
+                        lbl_ID: '@Html.GetLabel("lbl_ID")',
+                        lbl_FName: '@Html.GetLabel("lbl_FName")',
+                        lbl_LName: '@Html.GetLabel("lbl_LName")',
+                        lbl_Email: '@Html.GetLabel("lbl_Email")',
+                        lbl_Usrnm: '@Html.GetLabel("lbl_Usrnm")',
+                        lbl_CntctNm: '@Html.GetLabel("lbl_CntctNm")',
+                        lbl_LckOut: '@Html.GetLabel("lbl_LckOut")',
+                        lbl_Prfl: '@Html.GetLabel("lbl_Prfl")',
+                        lbl_ReSnd: '@Html.GetLabel("lbl_ReSnd")',
+                        lbl_CnclCnfrmtn: '@Html.GetLabel("lbl_CnclCnfrmtn")',
+                        lbl_Clnts: '@Html.GetLabel("lbl_Clnts")',
+                        lbl_Pgs: '@Html.GetLabel("lbl_Pgs")',
+                        lbl_Pg: '@Html.GetLabel("lbl_Pg")',
+                        lbl_of: '@Html.GetLabel("lbl_of")',
+                        lbl_TtlClnts: '@Html.GetLabel("lbl_TtlClnts")',
+                        lbl_Edit: '@Html.GetLabel("lbl_Edit")',
+                        lbl_Delete: '@Html.GetLabel("lbl_Delete")',
+                        lbl_Save: '@Html.GetLabel("lbl_Save")',
+                        lbl_Cancel: '@Html.GetLabel("lbl_Cancel")',
+                        lbl_Desc: '@Html.GetLabel("lbl_Desc")',
+                        lbl_Cvlty: '@Html.GetLabel("lbl_Cvlty")',
+                        lbl_Yes: '@Html.GetLabel("lbl_Yes")',
+                        lbl_No: '@Html.GetLabel("lbl_No")',
+                        lbl_Categories: '@Html.GetLabel("lbl_Categories")',
+                        lbl_Slug: '@Html.GetLabel("lbl_Slug")',
+                        lbl_SbCatgs: '@Html.GetLabel("lbl_SbCatgs")',
+                        lbl_ShwSbCatgs: '@Html.GetLabel("lbl_ShwSbCatgs")',
+                        lbl_Back: '@Html.GetLabel("lbl_Back")',
+                        lbl_Cities: '@Html.GetLabel("lbl_Cities")',
+                        lbl_Rgns: '@Html.GetLabel("lbl_Rgns")',
+                        lbl_Dstrcts: '@Html.GetLabel("lbl_Dstrcts")',
+                        lbl_Grps: '@Html.GetLabel("lbl_Grps")',
+                        lbl_CtsRgnsDstrctsGrps: '@Html.GetLabel("lbl_CtsRgnsDstrctsGrps")',
+
+                        erMsg_InvldEmail: '@Html.GetMessage("erMsg_InvldEmail")',
+
+                        msg_RfrshPrfl: '@Html.GetMessage("msg_RfrshPrfl")',
+                        msg_SavePrfl: '@Html.GetMessage("msg_SavePrfl")',
+                        msg_WtngEmailCnfrmtn: '@Html.GetMessage("msg_WtngEmailCnfrmtn")',
+                        msg_AddClnts: '@Html.GetMessage("msg_AddClnts")',
+                        msg_RfrshClnts: '@Html.GetMessage("msg_RfrshClnts")',
+                        msg_SaveClnts: '@Html.GetMessage("msg_SaveClnts")',
+                        msg_AddCatgs: '@Html.GetMessage("msg_AddCatgs")',
+                        msg_RfrshCatgs: '@Html.GetMessage("msg_RfrshCatgs")',
+                        msg_SaveCatgs: '@Html.GetMessage("msg_SaveCatgs")',
+                        msg_SHwRgnsCtys: '@Html.GetMessage("msg_SHwRgnsCtys")',
+                        msg_SHwDstrctsCtys: '@Html.GetMessage("msg_SHwDstrctsCtys")',
+                        msg_SHwGrpsCtys: '@Html.GetMessage("msg_SHwGrpsCtys")'
+        });
+    </script>
+
+    <environment names="Development">
+        <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/account/profileCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/usersCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/categoriesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/citiesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/account/profileCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/usersCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/categoriesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/citiesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
+    </environment>
 
 }
 
@@ -113,9 +155,11 @@
         <div id="sideBar">
             <div class="sb sb-lbls findme-color-bc-darker">
                 <ul>
-                    <li><a href="#!/users"><span>@Html.GetLabel("Lbl_Usrs")</span></a></li>
-                    <li><a href="#!/clients"><span>@Html.GetLabel("Lbl_Clnts")</span></a></li>
-                    <li><a href="#!/addresses"><span>@Html.GetLabel("Lbl_Addresses")</span></a></li>
+                    <li><a href="#!/users"><span>@Html.GetLabel("lbl_Usrs")</span></a></li>
+                    <li><a href="#!/clients"><span>@Html.GetLabel("lbl_Clnts")</span></a></li>
+                    <li><a href="#!/categories"><span>@Html.GetLabel("lbl_Categories")</span></a></li>
+                    <li><a href="#!/cities"><span>@Html.GetLabel("lbl_Cities")</span></a></li>
+                    <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
                 </ul>
             </div>
 
@@ -123,6 +167,8 @@
                 <ul>
                     <li><a href="#!/users"><div><span class="fa fa-users fa-2x"></span></div></a></li>
                     <li><a href="#!/clients"><div><span class="fa fa-vcard-o fa-2x"></span></div></a></li>
+                    <li><a href="#!/categories"><div><span class="fa fa-folder fa-2x"></span></div></a></li>
+                    <li><a href="#!/cities"><div><span class="fa fa-building-o fa-2x"></span></div></a></li>
                     <li><a href="#!/addresses"><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
                 </ul>
             </div>
@@ -133,13 +179,18 @@
 
             <div id="searchBar" class="findme-color-bc-lgray">
 
-                <div class="col-md-6 col-sm-12">
+                <div class="cont col-md-6 col-sm-12">
                     <button type="button" class="btn btn-burger findme-color-fc-white findme-color-bc-yellow">
                         <span class="fa fa-bars fa-2x"></span>
                     </button>
 
                     <span class="search-ctrl clsp hidden">
-                        <span class="input-bg"><input type="search" /></span>
+                        <span class="input-bg">
+                            <input type="search" class="input-search" />
+                            <button type="button" class="btn btn-xs clear findme-color-fc-pink hidden">
+                                <span class="fa fa-times fa-2x"></span>
+                            </button>
+                        </span>
 
                         <button type="button" class="btn btn-search findme-color-bc-pink findme-color-fc-white">
                             <span class="fa fa-search fa-2x"></span>
@@ -147,10 +198,10 @@
                     </span>
                 </div>
 
-                <div class="tb col-md-6 col-sm-12 clsp hidden">
-                    <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
-                    <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
+                <div class="tb col-md-6 col-sm-12 clsp hidden findme-color-bc-lgray">
+                    <button type="button" class="btn btn-tb refresh" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.refreshBtnTltp}}"><span class="fa fa-refresh fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb add" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.addBtnTltp}}"><span class="fa fa-plus-circle fa-2x"></span></button>
+                    <button type="button" class="btn btn-tb save" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{vm.headerConfig.saveBtnTltp}}"><span class="fa fa-save fa-2x"></span></button>
                 </div>
             </div>
 

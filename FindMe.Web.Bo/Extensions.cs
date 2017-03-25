@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,19 @@ namespace FindMe.Web.App
             catch
             {
                 return false;
+            }
+        }
+
+
+        public static string GetCacheVersion(this IConfigurationRoot obj)
+        {
+            try
+            {
+                return obj["App:CacheVersion"];
+            }
+            catch
+            {
+                return "";
             }
         }
 
@@ -80,7 +94,6 @@ namespace FindMe.Web.App
         }
 
 
-
         public static bool UserHasSignedInCookie(this IHtmlHelper htmlHelper)
         {
             string fullName;
@@ -100,6 +113,16 @@ namespace FindMe.Web.App
             fullName = htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.USER_FULL_NAME}"];
 
             return !string.IsNullOrEmpty(htmlHelper.ViewContext.HttpContext.Request.Cookies[$"{BaseController.TOKENS_KEY}:{BaseController.ACCESS_TOKEN_KEY}"]);
+        }
+
+
+        public static string GetCurrentLang(this IHtmlHelper htmlHelper)
+        {
+            return ResourceMngr.GetCurrentLang(htmlHelper == null || htmlHelper.ViewContext == null ? null : htmlHelper.ViewContext.HttpContext);
+        }
+        public static string GetCurrentLang(this HttpContext context)
+        {
+            return ResourceMngr.GetCurrentLang(context);
         }
 
 
@@ -140,7 +163,7 @@ namespace FindMe.Web.App
 
             if (result.Length > 1)
             {
-                if(result.StartsWith("\""))
+                if (result.StartsWith("\""))
                 {
                     result = result.Substring(1, result.Length - 1);
                 }

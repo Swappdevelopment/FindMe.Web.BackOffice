@@ -10,6 +10,9 @@ namespace FindMe.Web.App
 {
     public static class ResourceMngr
     {
+        private const string DEFAULT_LANGUAGE = "en-US";
+        private const string HEADER_LANGUAGE_KEY = "Accept-Language";
+
         private static _ResourceMngr _rscMngr = null;
 
         private static _ResourceMngr InitMngr(HttpContext context)
@@ -20,6 +23,43 @@ namespace FindMe.Web.App
             }
 
             return _rscMngr;
+        }
+
+
+        public static string GetCurrentLang(HttpContext context)
+        {
+            string lang = "";
+
+            if (context != null
+                && context.Request != null
+                && context.Request.Headers != null)
+            {
+                Microsoft.Extensions.Primitives.StringValues value;
+
+                if (context.Request.Headers.TryGetValue(HEADER_LANGUAGE_KEY, out value))
+                {
+                    if (value.Count > 0
+                        && !string.IsNullOrEmpty(value[0]))
+                    {
+                        var arr = value[0].Split(',', ';');
+
+                        if (arr != null
+                            && arr.Length > 0)
+                        {
+                            lang = arr[0].Trim();
+                        }
+
+                        arr = null;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(lang))
+            {
+                lang = DEFAULT_LANGUAGE;
+            }
+
+            return lang;
         }
 
 
@@ -60,11 +100,6 @@ namespace FindMe.Web.App
 
         private class _ResourceMngr : IDisposable
         {
-            private const string DEFAULT_LANGUAGE = "en-US";
-            private const string HEADER_LANGUAGE_KEY = "Accept-Language";
-
-
-
             private CultureInfo _culture;
 
             private Dictionary<string, string> _rscLbls;
@@ -135,38 +170,7 @@ namespace FindMe.Web.App
             }
             public static _ResourceMngr Create(HttpContext context)
             {
-                string lang = "";
-
-                if (context != null
-                    && context.Request != null
-                    && context.Request.Headers != null)
-                {
-                    Microsoft.Extensions.Primitives.StringValues value;
-
-                    if (context.Request.Headers.TryGetValue(HEADER_LANGUAGE_KEY, out value))
-                    {
-                        if (value.Count > 0
-                            && !string.IsNullOrEmpty(value[0]))
-                        {
-                            var arr = value[0].Split(',', ';');
-
-                            if (arr != null
-                                && arr.Length > 0)
-                            {
-                                lang = arr[0].Trim();
-                            }
-
-                            arr = null;
-                        }
-                    }
-                }
-
-                if (string.IsNullOrEmpty(lang))
-                {
-                    lang = DEFAULT_LANGUAGE;
-                }
-
-                return new _ResourceMngr(lang);
+                return new _ResourceMngr(ResourceMngr.GetCurrentLang(context));
             }
         }
     }

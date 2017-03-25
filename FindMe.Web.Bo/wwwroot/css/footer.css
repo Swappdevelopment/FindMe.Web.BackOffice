@@ -4,6 +4,7 @@
     width: 100%;
     bottom: 0;
     height: 35px;
+    z-index: 1010;
 }
 
     .footer span {

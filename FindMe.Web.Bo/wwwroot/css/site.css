@@ -38,14 +38,48 @@
     color: #424242;
 }
 
-.btn.btn-findme {
-    background-color: #E20E53 !important;
-    color: white !important;
+
+.btn {
+    text-transform: none !important;
 }
 
-    .btn.btn-findme:active {
-        background-color: #C00C48 !important;
+    .btn.btn-findme {
+        background-color: #E20E53 !important;
+        color: white !important;
+        border: solid 0.5px #E20E53;
+        -moz-transition: background-color color ease-in 200ms;
+        -o-transition: background-color color ease-in 200ms;
+        -webkit-transition: background-color color ease-in 200ms;
+        transition: background-color color ease-in 200ms;
     }
+
+        .btn.btn-findme.hollow {
+            background-color: white !important;
+            color: #E20E53 !important;
+            border: solid 0.5px #E20E53;
+            -moz-transition: background-color color ease-in 200ms;
+            -o-transition: background-color color ease-in 200ms;
+            -webkit-transition: background-color color ease-in 200ms;
+            transition: background-color color ease-in 200ms;
+        }
+
+        .btn.btn-findme:active {
+            background-color: #C00C48 !important;
+        }
+
+        .btn.btn-findme:hover {
+            border: solid 0.5px #FFCC00;
+            color: white !important;
+            background-color: #FFCC00 !important;
+            -moz-transition: border background-color color ease-in 200ms;
+            -o-transition: border background-color color ease-in 200ms;
+            -webkit-transition: border background-color color ease-in 200ms;
+            transition: border background-color color ease-in 200ms;
+        }
+
+.modal .btn.btn-findme {
+    min-width: 150px;
+}
 
 
 
@@ -83,7 +117,35 @@ textarea {
         color: #EDF1F8;
     }
 
+.crsr-pointer {
+    cursor: pointer;
+}
 
-.btn {
-    text-transform: none !important;
+
+.modal-container .modal {
+    z-index: 1320 !important;
+}
+
+.modal-container .modal-backdrop {
+    z-index: 1310 !important;
+}
+
+.table.data tr.inEditMode {
+    background-color: #e5fff9;
+}
+
+.inline-element {
+    display: inline;
+}
+
+
+.ng-animate.no-animate {
+    -moz-transition: 0s none;
+    -o-transition: 0s none;
+    transition: 0s none;
+    -webkit-transition: 0s none;
+    -moz-animation: 0s none;
+    -o-animation: 0s none;
+    animation: 0s none;
+    -webkit-animation: 0s none;
 }

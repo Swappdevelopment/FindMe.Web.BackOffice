@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FindMe.Web.App
 {
     public class BaseController : Controller
-    { 
+    {
         public const string TOKENS_KEY = "APP_TOKENS";
         public const string REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
         public const string ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
@@ -21,6 +21,9 @@ namespace FindMe.Web.App
         public const string INVLD_PASSWORD_FORMAT_TOKEN_KEY = "INVLD_PASSWORD_FORMAT_TOKEN";
         public const string REMEMBER_USER = "REMEMBER_USER";
         public const string USER_FULL_NAME = "USER_FULL_NAME";
+
+
+        public const int SEARCH_RESULT_ITEMS_PER_PAGE = 20;
 
 
 
@@ -136,7 +139,7 @@ namespace FindMe.Web.App
             }
         }
 
-        protected BadRequestObjectResult BadRequestEx(Exception ex, string message = null)
+        protected BadRequestObjectResult BadRequestEx(Exception ex)
         {
             if (ex == null) return BadRequest(null);
 
@@ -153,8 +156,15 @@ namespace FindMe.Web.App
                 this.LogCritical(ex);
             }
 
-            message = string.IsNullOrEmpty(message) ? this.GetMessage("ErMsg_SmthngWntWrng") : message;
 
+            string message = (_env != null && _env.IsDevelopment()) ? ex.MergeMsgInnerExMsgs() : this.GetMessage("erMsg_SmthngWntWrng");
+
+
+            return BadRequestEx(message, id);
+        }
+
+        protected BadRequestObjectResult BadRequestEx(string message, int id = -1)
+        {
             return BadRequest(
                         new
                         {

@@ -4,48 +4,62 @@
     'use strict';
 
     //Creating the module
-    angular.module('app-mainmenu', ['ngRoute'])
-           .config(function ($routeProvider, $locationProvider) {
+    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate'])
 
-               $routeProvider.when('/', {
-                   controller: 'homeCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Home.html',
-               });
-               $routeProvider.when('/home', {
-                   controller: 'homeCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Home.html',
-               });
+        .config(function ($routeProvider, $locationProvider) {
 
-               $routeProvider.when('/profile', {
-                   controller: 'profileCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Account/Profile.html',
-               });
+            $routeProvider.when('/', {
+                controller: 'homeCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Home.html',
+            });
+            $routeProvider.when('/home', {
+                controller: 'homeCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Home.html',
+            });
 
-               $routeProvider.when('/users', {
-                   controller: 'usersCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Admin/Users.html',
-               });
+            $routeProvider.when('/profile', {
+                controller: 'profileCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Account/Profile.html',
+            });
 
-               $routeProvider.when('/clients', {
-                   controller: 'clientsCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Admin/Clients.html',
-               });
+            $routeProvider.when('/users', {
+                controller: 'usersCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/Users.html',
+            });
 
-               $routeProvider.when('/addresses', {
-                   controller: 'addressesCtrlr',
-                   controllerAs: 'vm',
-                   templateUrl: '/Views/App/Admin/Addresses.html',
-               });
+            $routeProvider.when('/clients', {
+                controller: 'clientsCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/Clients.html',
+            });
 
-               $routeProvider.otherwise({ redirecTo: '/' });
+            $routeProvider.when('/categories', {
+                controller: 'categoriesCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/Categories.html',
+            });
 
-               //$locationProvider.html5Mode(true);
-           })
+            $routeProvider.when('/cities', {
+                controller: 'citiesCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/cities.html',
+            });
+
+            $routeProvider.when('/addresses', {
+                controller: 'addressesCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/Addresses.html',
+            });
+
+            $routeProvider.otherwise({ redirecTo: '/' });
+
+            //$locationProvider.html5Mode(true);
+        })
+
         .service('headerConfigService', function () {
 
             var optns = {};
@@ -79,5 +93,42 @@
             };
 
             return optns;
-        });
+        })
+
+        .directive('elastic', ['$timeout', function ($timeout) {
+
+            return {
+                restrict: 'A',
+                link: function ($scope, element) {
+
+                    var target = element[0];
+
+                    //$scope.initialHeight = $scope.initialHeight || target.style.height;
+
+                    $scope.initialHeight = $(target).height();
+
+                    var resize = function () {
+
+                        if (target.scrollHeight && target.scrollHeight > 0 && $(target).val()) {
+
+                            target.style.height = '' + target.scrollHeight + 'px';
+                        }
+                        else {
+
+                            target.style.height = '' + $scope.initialHeight + 'px';
+                        }
+                    };
+
+                    $(target).on('input change load ready', resize);
+
+                    $timeout(resize, 0);
+                }
+            };
+        }
+        ]);
+
+        //.run(function ($animate) {
+
+        //    $animate.enabled(true);
+        //});
 })();

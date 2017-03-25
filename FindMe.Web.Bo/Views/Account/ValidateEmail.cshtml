@@ -7,18 +7,18 @@
     <h2>
         @if (Model)
         {
-            @Html.GetMessage("Msg_EmailSccssValtd")
+            @Html.GetMessage("msg_EmailSccssValtd")
         }
         else
         {
-            @Html.GetMessage("Msg_InvldResend")
+            @Html.GetMessage("msg_InvldResend")
         }
     </h2>
 
 
     @if (Model)
     {
-        <a asp-controller="App" asp-action="Index" class="btn btn-findme btn-lg"><span class="fa fa-chevron-left"></span>&nbsp;&nbsp;@Html.GetLabel("Lbl_BckOffc")</a>
+        <a asp-controller="App" asp-action="Index" class="btn btn-findme btn-lg"><span class="fa fa-chevron-left"></span>&nbsp;&nbsp;@Html.GetLabel("lbl_BckOffc")</a>
     }
 
 </div>

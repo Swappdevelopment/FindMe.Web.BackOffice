@@ -1,3 +1,6 @@
 {
-  "projects": [ "../Api.BackEnd", "../FindMe.Api.BackEnd", "../../Swapp.Frameworks.Core", "../BackEnd" ]
+  "projects": [ "../Api.BackEnd", "../FindMe.Api.BackEnd", "../../Swapp.Frameworks.Core", "../BackEnd" ],
+  "sdk": {
+    "version": "1.0.0-preview2-1-003177"
+  }
 }
