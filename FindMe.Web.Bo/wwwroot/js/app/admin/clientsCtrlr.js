@@ -77,29 +77,6 @@
         };
 
 
-        vm.openModal = function (client) {
-
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'clientModal.html',
-                controller: 'clientInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#clientsVw .modal-container'),
-                resolve: {
-                    client: function () {
-
-                        var copy = jQuery.extend(true, {}, client);
-
-                        return copy;
-                    }
-                }
-            });
-        };
-
-
         var setupPages = function () {
 
             vm.pgsCollection.length = 0;
