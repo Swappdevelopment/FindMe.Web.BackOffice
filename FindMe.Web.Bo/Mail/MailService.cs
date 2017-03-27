@@ -1,12 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
     public class MailService : BaseMailService
     {
-        public MailService()
+        public MailService(IConfigurationRoot config)
             : base()
         {
+            if (config != null)
+            {
+                _baseEmailServerName = config["ManagerEmailAccount:ServerName"];
+                _baseEmail = config["ManagerEmailAccount:Email"];
+                _baseEmailPassword = config["ManagerEmailAccount:EmailPassword"];
+            }
         }
 
 
