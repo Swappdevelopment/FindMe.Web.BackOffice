@@ -56,10 +56,30 @@
 
                     case 2:
 
+                        if (vm.dVm) {
+
+                            if (!vm.dVm.districts || vm.dVm.districts.length == 0) {
+
+                                if (vm.dVm.populateDistricts) {
+
+                                    vm.dVm.populateDistricts();
+                                }
+                            }
+                        }
                         break;
 
                     case 3:
 
+                        if (vm.gVm) {
+
+                            if (!vm.gVm.cityGroups || vm.gVm.cityGroups.length == 0) {
+
+                                if (vm.gVm.populateCityGroups) {
+
+                                    vm.gVm.populateCityGroups();
+                                }
+                            }
+                        }
                         break;
                 }
             }
@@ -103,10 +123,18 @@
 
                     case 2:
 
+                        if (vm.dVm && vm.dVm.populateDistricts) {
+
+                            vm.dVm.populateDistricts();
+                        }
                         break;
 
                     case 3:
 
+                        if (vm.gVm && vm.gVm.populateCityGroups) {
+
+                            vm.gVm.populateCityGroups();
+                        }
                         break;
                 }
             }
@@ -134,10 +162,18 @@
 
                         case 2:
 
+                            if (vm.dVm && vm.dVm.addDistrict) {
+
+                                vm.dVm.addDistrict();
+                            }
                             break;
 
                         case 3:
 
+                            if (vm.gVm && vm.gVm.addCityGroup) {
+
+                                vm.gVm.addCityGroup();
+                            }
                             break;
                     }
                 });
@@ -166,7 +202,6 @@
             });
         });
     }
-
 
 
     function tabIndex0CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, viewModel) {
@@ -720,11 +755,8 @@
 
                         region.recordState = 30;
                     }
-                    else if (region.legalName !== compRegion.legalName
-                            || region.civility !== compRegion.civility
-                            || region.lName !== compRegion.lName
-                            || region.fName !== compRegion.fName
-                            || region.paid !== compRegion.paid
+                    else if (region.name_en !== compRegion.name_en
+                            || region.name_fr !== compRegion.name_fr
                             || region.active !== compRegion.active) {
 
                         region.recordState = 20;
@@ -1017,6 +1049,7 @@
         vm.districtsCount = 0;
 
         vm.districts = [];
+        vm.defCountry = null;
 
         vm.gotoPage = function (pg, scrollToTop) {
 
@@ -1044,41 +1077,19 @@
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteDistrictModal.html',
-                controller: 'deleteDistrictInstanceCtrlr',
+                templateUrl: 'deleteObjectModal.html',
+                controller: 'deleteObjectInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#districtsVw .modal-container'),
+                appendTo: $('#citiesVw .modal-container'),
                 resolve: {
                     param: function () {
 
                         return {
-                            district: district,
+                            target: district,
+                            targetName: district.name,
                             save: vm.save
                         };
-                    }
-                }
-            });
-        };
-
-
-        vm.openModal = function (district) {
-
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'districtModal.html',
-                controller: 'districtInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#districtsVw .modal-container'),
-                resolve: {
-                    district: function () {
-
-                        var copy = jQuery.extend(true, {}, district);
-
-                        return copy;
                     }
                 }
             });
@@ -1145,7 +1156,6 @@
         };
 
 
-
         var checkRecordState = function (district, compDistrict, toBeDeleted) {
 
             if (district
@@ -1157,11 +1167,7 @@
 
                         district.recordState = 30;
                     }
-                    else if (district.legalName !== compDistrict.legalName
-                            || district.civility !== compDistrict.civility
-                            || district.lName !== compDistrict.lName
-                            || district.fName !== compDistrict.fName
-                            || district.paid !== compDistrict.paid
+                    else if (district.name !== compDistrict.name
                             || district.active !== compDistrict.active) {
 
                         district.recordState = 20;
@@ -1180,16 +1186,16 @@
 
 
         var prevAllNames = '';
-        vm.populateDistricts = function (limit, offset, allNames) {
+        vm.populateDistricts = function (limit, offset, name) {
 
             var forceGetCount = false;
 
-            if (allNames || prevAllNames) {
+            if (name || prevAllNames) {
 
-                forceGetCount = (allNames != prevAllNames);
+                forceGetCount = (name != prevAllNames);
             }
 
-            prevAllNames = allNames;
+            prevAllNames = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -1198,13 +1204,15 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            allNames = !allNames ? vm.searchValue : allNames;
+            name = !name ? vm.searchValue : name;
 
             var successFunc = function (resp) {
 
                 vm.districts.length = 0;
 
                 if (resp.data) {
+
+                    vm.defCountry = resp.data.defCountry;
 
                     if (resp.data.count > 0
                         || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
@@ -1256,7 +1264,7 @@
 
             toggleGlblWaitVisibility(true);
 
-            $http.post(appProps.urlGetDistricts, { limit: limit, offset: offset, getTotalClients: (vm.districtsCount <= 0 || forceGetCount), allNames: (allNames ? allNames : null) })
+            $http.post(appProps.urlGetDistricts, { limit: limit, offset: offset, getTotalDistricts: (vm.districtsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
@@ -1271,11 +1279,7 @@
 
                     var org = district.__comp;
 
-                    district.legalName = org.legalName;
-                    district.civility = org.civility;
-                    district.lName = org.lName;
-                    district.fName = org.fName;
-                    district.paid = org.paid;
+                    district.name = org.name;
                     district.active = org.active;
 
                     district.inEditMode = false;
@@ -1285,6 +1289,25 @@
                     vm.districts.remove(district);
                 }
             }
+        };
+
+
+        vm.addDistrict = function () {
+
+            var newItem = {
+                id: 0,
+                country_Id: vm.defCountry ? vm.defCountry.id : 0,
+                name: '',
+                seqn: 0,
+                active: true
+            };
+
+            newItem.__comp = jQuery.extend(true, {}, newItem);
+
+            newItem.inEditMode = true;
+            newItem.saving = false;
+
+            vm.districts.insert(0, newItem);
         };
 
 
@@ -1344,11 +1367,9 @@
                                     if (value) {
 
                                         tempValue.id = value.id;
-                                        tempValue.legalName = value.legalName;
-                                        tempValue.civility = value.civility;
-                                        tempValue.lName = value.lName;
-                                        tempValue.fName = value.fName;
-                                        tempValue.paid = value.paid;
+                                        tempValue.seqn = value.seqn;
+                                        tempValue.name = value.name;
+                                        tempValue.country_Id = value.country_Id;
                                         tempValue.active = value.active;
 
                                         if (toBeSavedDistricts[index].recordState == 10) {
@@ -1419,40 +1440,6 @@
                 }
             }
         };
-
-
-        var buttonClick = function (e) {
-
-            var $btn = $(this);
-
-            if ($btn.hasClass('refresh')) {
-
-                //$('#searchBar input.input-search').val('');
-                vm.populateDistricts();
-            }
-            else if ($btn.hasClass('add')) {
-
-                $scope.$apply(function () {
-
-                    var newItem = {
-                        id: 0,
-                        legalName: '',
-                        civility: '',
-                        lName: '',
-                        fName: '',
-                        paid: false,
-                        active: true
-                    };
-
-                    newItem.__comp = jQuery.extend(true, {}, newItem);
-
-                    newItem.inEditMode = true;
-                    newItem.saving = false;
-
-                    vm.districts.insert(0, newItem);
-                });
-            }
-        };
     }
 
     function tabIndex3CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, viewModel) {
@@ -1465,9 +1452,10 @@
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
-        vm.groupsCount = 0;
+        vm.cityGroupsCount = 0;
 
-        vm.groups = [];
+        vm.cityGroups = [];
+        vm.defCountry = null;
 
         vm.gotoPage = function (pg, scrollToTop) {
 
@@ -1484,52 +1472,30 @@
 
                 vm.currentPgNmbr = pg.index;
 
-                vm.populateGroups(appProps.resultItemsPerPg, offset);
+                vm.populateCityGroups(appProps.resultItemsPerPg, offset);
             }
         };
 
 
-        vm.deleteModal = function (group) {
+        vm.deleteModal = function (cityGroup) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteGroupModal.html',
-                controller: 'deleteGroupInstanceCtrlr',
+                templateUrl: 'deleteObjectModal.html',
+                controller: 'deleteObjectInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#groupsVw .modal-container'),
+                appendTo: $('#citiesVw .modal-container'),
                 resolve: {
                     param: function () {
 
                         return {
-                            group: group,
+                            target: cityGroup,
+                            targetName: cityGroup.name,
                             save: vm.save
                         };
-                    }
-                }
-            });
-        };
-
-
-        vm.openModal = function (group) {
-
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'groupModal.html',
-                controller: 'groupInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#groupsVw .modal-container'),
-                resolve: {
-                    group: function () {
-
-                        var copy = jQuery.extend(true, {}, group);
-
-                        return copy;
                     }
                 }
             });
@@ -1596,51 +1562,46 @@
         };
 
 
+        var checkRecordState = function (cityGroup, compCityGroup, toBeDeleted) {
 
-        var checkRecordState = function (group, compGroup, toBeDeleted) {
+            if (cityGroup
+                && compCityGroup) {
 
-            if (group
-                && compGroup) {
-
-                if (group.id > 0) {
+                if (cityGroup.id > 0) {
 
                     if (toBeDeleted) {
 
-                        group.recordState = 30;
+                        cityGroup.recordState = 30;
                     }
-                    else if (group.legalName !== compGroup.legalName
-                            || group.civility !== compGroup.civility
-                            || group.lName !== compGroup.lName
-                            || group.fName !== compGroup.fName
-                            || group.paid !== compGroup.paid
-                            || group.active !== compGroup.active) {
+                    else if (cityGroup.name !== compCityGroup.name
+                            || cityGroup.active !== compCityGroup.active) {
 
-                        group.recordState = 20;
+                        cityGroup.recordState = 20;
                     }
                     else {
 
-                        group.recordState = 0;
+                        cityGroup.recordState = 0;
                     }
                 }
                 else {
 
-                    group.recordState = 10;
+                    cityGroup.recordState = 10;
                 }
             }
         };
 
 
         var prevAllNames = '';
-        vm.populateGroups = function (limit, offset, allNames) {
+        vm.populateCityGroups = function (limit, offset, name) {
 
             var forceGetCount = false;
 
-            if (allNames || prevAllNames) {
+            if (name || prevAllNames) {
 
-                forceGetCount = (allNames != prevAllNames);
+                forceGetCount = (name != prevAllNames);
             }
 
-            prevAllNames = allNames;
+            prevAllNames = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -1649,22 +1610,24 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            allNames = !allNames ? vm.searchValue : allNames;
+            name = !name ? vm.searchValue : name;
 
             var successFunc = function (resp) {
 
-                vm.groups.length = 0;
+                vm.cityGroups.length = 0;
 
                 if (resp.data) {
+
+                    vm.defCountry = resp.data.defCountry;
 
                     if (resp.data.count > 0
                         || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
 
-                        vm.groupsCount = resp.data.count;
+                        vm.cityGroupsCount = resp.data.count;
 
-                        var ttlPgs = parseInt(vm.groupsCount / appProps.resultItemsPerPg);
+                        var ttlPgs = parseInt(vm.cityGroupsCount / appProps.resultItemsPerPg);
 
-                        ttlPgs += ((vm.groupsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+                        ttlPgs += ((vm.cityGroupsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
 
                         vm.totalPgs = ttlPgs;
                     }
@@ -1675,14 +1638,14 @@
 
                         for (var i = 0; i < resp.data.result.length; i++) {
 
-                            var group = resp.data.result[i];
+                            var cityGroup = resp.data.result[i];
 
-                            group.__comp = jQuery.extend(true, {}, group);
+                            cityGroup.__comp = jQuery.extend(true, {}, cityGroup);
 
-                            vm.groups.push(group);
+                            vm.cityGroups.push(cityGroup);
 
-                            group.inEditMode = false;
-                            group.saving = false;
+                            cityGroup.inEditMode = false;
+                            cityGroup.saving = false;
                         }
                     }
                 }
@@ -1707,45 +1670,60 @@
 
             toggleGlblWaitVisibility(true);
 
-            $http.post(appProps.urlGetCityGroups, { limit: limit, offset: offset, getTotalClients: (vm.groupsCount <= 0 || forceGetCount), allNames: (allNames ? allNames : null) })
+            $http.post(appProps.urlGetCityGroups, { limit: limit, offset: offset, getTotalCityGroups: (vm.cityGroupsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
 
-        vm.revert = function (group) {
+        vm.revert = function (cityGroup) {
 
-            if (group
-                && group.__comp) {
+            if (cityGroup
+                && cityGroup.__comp) {
 
-                if (group.id > 0) {
+                if (cityGroup.id > 0) {
 
-                    var org = group.__comp;
+                    var org = cityGroup.__comp;
 
-                    group.legalName = org.legalName;
-                    group.civility = org.civility;
-                    group.lName = org.lName;
-                    group.fName = org.fName;
-                    group.paid = org.paid;
-                    group.active = org.active;
+                    cityGroup.name = org.name;
+                    cityGroup.active = org.active;
 
-                    group.inEditMode = false;
+                    cityGroup.inEditMode = false;
                 }
                 else {
 
-                    vm.groups.remove(group);
+                    vm.cityGroups.remove(cityGroup);
                 }
             }
         };
 
 
-        vm.save = function (groups, finallyCallback, deleteFlags) {
+        vm.addCityGroup = function () {
 
-            if (groups) {
+            var newItem = {
+                id: 0,
+                country_Id: vm.defCountry ? vm.defCountry.id : 0,
+                name: '',
+                seqn: 0,
+                active: true
+            };
 
-                if (!Array.isArray(groups)) {
+            newItem.__comp = jQuery.extend(true, {}, newItem);
 
-                    groups = [groups];
+            newItem.inEditMode = true;
+            newItem.saving = false;
+
+            vm.cityGroups.insert(0, newItem);
+        };
+
+
+        vm.save = function (cityGroups, finallyCallback, deleteFlags) {
+
+            if (cityGroups) {
+
+                if (!Array.isArray(cityGroups)) {
+
+                    cityGroups = [cityGroups];
                 }
 
                 if (deleteFlags && !Array.isArray(deleteFlags)) {
@@ -1753,32 +1731,32 @@
                     deleteFlags = [deleteFlags];
                 }
 
-                var validGroups = [];
-                var toBeSavedGroups = [];
+                var validCityGroups = [];
+                var toBeSavedCityGroups = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == groups.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length == cityGroups.length);
 
-                for (var i = 0; i < groups.length; i++) {
+                for (var i = 0; i < cityGroups.length; i++) {
 
-                    var group = groups[i];
+                    var cityGroup = cityGroups[i];
 
-                    if (group
-                        && group.__comp) {
+                    if (cityGroup
+                        && cityGroup.__comp) {
 
-                        var toBeSaved = jQuery.extend(true, {}, group);
+                        var toBeSaved = jQuery.extend(true, {}, cityGroup);
                         delete toBeSaved.__comp;
 
                         toBeSaved.status = toBeSaved.active ? 1 : 0;
 
-                        checkRecordState(toBeSaved, group.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedGroups.push(toBeSaved);
+                        checkRecordState(toBeSaved, cityGroup.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+                        toBeSavedCityGroups.push(toBeSaved);
 
-                        group.saving = true;
-                        validGroups.push(group);
+                        cityGroup.saving = true;
+                        validCityGroups.push(cityGroup);
                     }
                 }
 
-                if (validGroups.length > 0) {
+                if (validCityGroups.length > 0) {
 
                     var successFunc = function (resp) {
 
@@ -1786,25 +1764,23 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validGroups.length == resp.data.result.length) {
+                            if (validCityGroups.length == resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
-                                    var tempValue = validGroups[index];
+                                    var tempValue = validCityGroups[index];
 
                                     if (value) {
 
                                         tempValue.id = value.id;
-                                        tempValue.legalName = value.legalName;
-                                        tempValue.civility = value.civility;
-                                        tempValue.lName = value.lName;
-                                        tempValue.fName = value.fName;
-                                        tempValue.paid = value.paid;
+                                        tempValue.seqn = value.seqn;
+                                        tempValue.name = value.name;
+                                        tempValue.country_Id = value.country_Id;
                                         tempValue.active = value.active;
 
-                                        if (toBeSavedGroups[index].recordState == 10) {
+                                        if (toBeSavedCityGroups[index].recordState == 10) {
 
-                                            vm.groupsCount += 1;
+                                            vm.cityGroupsCount += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -1819,11 +1795,11 @@
                                     }
                                     else {
 
-                                        vm.groups.remove(tempValue);
+                                        vm.cityGroups.remove(tempValue);
 
-                                        vm.groupsCount -= 1;
+                                        vm.cityGroupsCount -= 1;
 
-                                        if (vm.groupsCount <= 0) {
+                                        if (vm.cityGroupsCount <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
@@ -1847,10 +1823,10 @@
 
                     var finallyFunc = function () {
 
-                        for (var i = 0; i < validGroups.length; i++) {
+                        for (var i = 0; i < validCityGroups.length; i++) {
 
-                            validGroups[i].saving = false;
-                            validGroups[i].inEditMode = false;
+                            validCityGroups[i].saving = false;
+                            validCityGroups[i].inEditMode = false;
                         }
 
                         if (finallyCallback) {
@@ -1864,48 +1840,13 @@
                     viewModel.errormsg = '';
                     viewModel.errorid = 0;
 
-                    $http.post(appProps.urlSaveGroups, { groups: toBeSavedGroups })
+                    $http.post(appProps.urlSaveCityGroups, { cityGroups: toBeSavedCityGroups })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
             }
         };
-
-
-        var buttonClick = function (e) {
-
-            var $btn = $(this);
-
-            if ($btn.hasClass('refresh')) {
-
-                //$('#searchBar input.input-search').val('');
-                vm.populateGroups();
-            }
-            else if ($btn.hasClass('add')) {
-
-                $scope.$apply(function () {
-
-                    var newItem = {
-                        id: 0,
-                        legalName: '',
-                        civility: '',
-                        lName: '',
-                        fName: '',
-                        paid: false,
-                        active: true
-                    };
-
-                    newItem.__comp = jQuery.extend(true, {}, newItem);
-
-                    newItem.inEditMode = true;
-                    newItem.saving = false;
-
-                    vm.groups.insert(0, newItem);
-                });
-            }
-        };
     }
-
 
 
     angular.module('app-mainmenu')

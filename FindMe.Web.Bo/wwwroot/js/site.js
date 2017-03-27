@@ -110,6 +110,11 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.split(search).join(replacement);
 };
 
+String.prototype.encodeHtml = function () {
+
+    return String($('<textarea>' + this + '</textarea>').text());
+};
+
 
 Array.prototype.insert = function (index, item) {
 
