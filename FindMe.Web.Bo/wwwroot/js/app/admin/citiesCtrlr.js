@@ -29,6 +29,18 @@
         vm.tabIndex = 0;
 
 
+        vm.clearParentFilter = function () {
+
+            if (vm.cVm && vm.cVm.parentFilter) {
+
+                vm.cVm.parentFilter.id = 0;
+                vm.cVm.parentFilter.text = null;
+                vm.cVm.parentFilter.type = null;
+
+                vm.cVm.populateCityDetails();
+            }
+        };
+
 
         var tabIndexChanged = function (newIndex, oldIndex) {
 
@@ -38,6 +50,16 @@
 
                     case 0:
 
+                        if (vm.cVm) {
+
+                            if (!vm.cVm.cityDetails || vm.cVm.cityDetails.length == 0) {
+
+                                if (vm.cVm.populateCityDetails) {
+
+                                    vm.cVm.populateCityDetails();
+                                }
+                            }
+                        }
                         break;
 
                     case 1:
@@ -93,8 +115,49 @@
         tabIndex2CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, vm);
         tabIndex3CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, vm);
 
+        var populateAll = function () {
+
+            vm.showError = false;
+            vm.errorstatus = '';
+            vm.errormsg = '';
+            vm.errorid = 0;
 
 
+            var successFunc = function (resp) {
+
+                if (resp && resp.data) {
+
+                    vm.rVm.populateSuccessFunc({ data: resp.data.regionsData });
+                    vm.dVm.populateSuccessFunc({ data: resp.data.districtsData });
+                    vm.gVm.populateSuccessFunc({ data: resp.data.cityGroupsData });
+
+                    vm.cVm.populateSuccessFunc({ data: resp.data.cityDetailsData });
+                }
+            };
+
+            var errorFunc = function (error) {
+
+                if (error.data
+                    && checkRedirectForSignIn(error.data)) {
+
+                    vm.errorstatus = error.status + ' - ' + error.statusText;
+                    vm.errormsg = error.data.msg;
+                    vm.errorid = error.data.id;
+                    vm.showError = true;
+                }
+            };
+
+            var finallyFunc = function () {
+
+                toggleGlblWaitVisibility(false);
+            };
+
+            toggleGlblWaitVisibility(true);
+
+            $http.post(appProps.urlGetAllCityStuff)
+                 .then(successFunc, errorFunc)
+                 .finally(finallyFunc);
+        };
 
 
         var buttonClick = function (e) {
@@ -103,40 +166,43 @@
 
             if ($btn.hasClass('refresh')) {
 
-                switch (vm.tabIndex) {
+                $scope.$apply(function () {
 
-                    case 0:
+                    switch (vm.tabIndex) {
 
-                        if (vm.cVm && vm.cVm.populateRegions) {
+                        case 0:
 
-                            vm.cVm.populateCitys();
-                        }
-                        break;
+                            if (vm.cVm && vm.cVm.populateCityDetails) {
 
-                    case 1:
+                                vm.cVm.populateCityDetails();
+                            }
+                            break;
 
-                        if (vm.rVm && vm.rVm.populateRegions) {
+                        case 1:
 
-                            vm.rVm.populateRegions();
-                        }
-                        break;
+                            if (vm.rVm && vm.rVm.populateRegions) {
 
-                    case 2:
+                                vm.rVm.populateRegions();
+                            }
+                            break;
 
-                        if (vm.dVm && vm.dVm.populateDistricts) {
+                        case 2:
 
-                            vm.dVm.populateDistricts();
-                        }
-                        break;
+                            if (vm.dVm && vm.dVm.populateDistricts) {
 
-                    case 3:
+                                vm.dVm.populateDistricts();
+                            }
+                            break;
 
-                        if (vm.gVm && vm.gVm.populateCityGroups) {
+                        case 3:
 
-                            vm.gVm.populateCityGroups();
-                        }
-                        break;
-                }
+                            if (vm.gVm && vm.gVm.populateCityGroups) {
+
+                                vm.gVm.populateCityGroups();
+                            }
+                            break;
+                    }
+                });
             }
             else if ($btn.hasClass('add')) {
 
@@ -146,9 +212,9 @@
 
                         case 0:
 
-                            if (vm.cVm && vm.cVm.addCity) {
+                            if (vm.cVm && vm.cVm.addCityDetail) {
 
-                                vm.cVm.addCity();
+                                vm.cVm.addCityDetail();
                             }
                             break;
 
@@ -201,6 +267,9 @@
                 vm.populateCitys(appProps.resultItemsPerPg, 0);
             });
         });
+
+
+        populateAll();
     }
 
 
@@ -210,13 +279,21 @@
 
         var vm = viewModel.cVm;
 
+        vm.parentFilter = {
+            id: 0,
+            text: null,
+            type: null
+        };
+
         vm.pgsCollection = [];
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
-        vm.citysCount = 0;
+        vm.cityDetailsCount = 0;
+        vm.cityDetailsCountMod = 0;
 
-        vm.citys = [];
+        vm.cityDetails = [];
+        vm.defCountry = null;
 
         vm.gotoPage = function (pg, scrollToTop) {
 
@@ -233,52 +310,30 @@
 
                 vm.currentPgNmbr = pg.index;
 
-                vm.populateCitys(appProps.resultItemsPerPg, offset);
+                vm.populateCityDetails(appProps.resultItemsPerPg, offset);
             }
         };
 
 
-        vm.deleteModal = function (city) {
+        vm.deleteModal = function (cityDetail) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteCityModal.html',
-                controller: 'deleteCityInstanceCtrlr',
+                templateUrl: 'deleteObjectModal.html',
+                controller: 'deleteObjectInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#citysVw .modal-container'),
+                appendTo: $('#citiesVw .modal-container'),
                 resolve: {
                     param: function () {
 
                         return {
-                            city: city,
+                            target: cityDetail,
+                            targetName: cityDetail.name,
                             save: vm.save
                         };
-                    }
-                }
-            });
-        };
-
-
-        vm.openModal = function (city) {
-
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'cityModal.html',
-                controller: 'cityInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#citysVw .modal-container'),
-                resolve: {
-                    city: function () {
-
-                        var copy = jQuery.extend(true, {}, city);
-
-                        return copy;
                     }
                 }
             });
@@ -345,51 +400,129 @@
         };
 
 
+        var checkRecordState = function (cityDetail, compCityDetail, toBeDeleted) {
 
-        var checkRecordState = function (city, compCity, toBeDeleted) {
+            if (cityDetail
+                && compCityDetail) {
 
-            if (city
-                && compCity) {
-
-                if (city.id > 0) {
+                if (cityDetail.id > 0) {
 
                     if (toBeDeleted) {
 
-                        city.recordState = 30;
+                        cityDetail.recordState = 30;
                     }
-                    else if (city.legalName !== compCity.legalName
-                            || city.civility !== compCity.civility
-                            || city.lName !== compCity.lName
-                            || city.fName !== compCity.fName
-                            || city.paid !== compCity.paid
-                            || city.active !== compCity.active) {
+                    else if (cityDetail.name !== compCityDetail.name
+                            || cityDetail.latitude !== compCityDetail.latitude
+                            || cityDetail.longitude !== compCityDetail.longitude
+                            || cityDetail.active !== compCityDetail.active) {
 
-                        city.recordState = 20;
+                        cityDetail.recordState = 20;
                     }
                     else {
 
-                        city.recordState = 0;
+                        cityDetail.recordState = 0;
                     }
                 }
                 else {
 
-                    city.recordState = 10;
+                    cityDetail.recordState = 10;
                 }
             }
         };
 
+        vm.populateSuccessFunc = function (resp) {
+
+            vm.cityDetails.length = 0;
+
+            if (resp.data) {
+
+                vm.defCountry = resp.data.defCountry;
+
+                if (resp.data.count > 0
+                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+
+                    vm.cityDetailsCountMod = 0;
+                    vm.cityDetailsCount = resp.data.count;
+
+                    var ttlPgs = parseInt(vm.cityDetailsCount / appProps.resultItemsPerPg);
+
+                    ttlPgs += ((vm.cityDetailsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+
+                    vm.totalPgs = ttlPgs;
+                }
+
+                setupPages();
+
+                if (resp.data.result) {
+
+                    for (var i = 0; i < resp.data.result.length; i++) {
+
+                        var cityDetail = resp.data.result[i];
+
+                        cityDetail.active = (cityDetail.status === 1);
+
+                        cityDetail.__comp = jQuery.extend(true, {}, cityDetail);
+
+                        if (viewModel.rVm && viewModel.rVm.regions && viewModel.rVm.regions.length > 0) {
+
+                            var tempName = $.grep(viewModel.rVm.regions, function (v) {
+                                return v.id === cityDetail.region_Id;
+                            });
+
+                            if (tempName && tempName.length > 0) {
+
+                                cityDetail.region = tempName[0];
+                            }
+                        }
+
+                        if (viewModel.dVm && viewModel.dVm.districts && viewModel.dVm.districts.length > 0) {
+
+                            var tempName = $.grep(viewModel.dVm.districts, function (v) {
+
+                                return v.id === cityDetail.district_Id;
+                            });
+
+                            if (tempName && tempName.length > 0) {
+
+                                cityDetail.district = tempName[0];
+                            }
+                        }
+
+                        if (viewModel.gVm && viewModel.gVm.cityGroups && viewModel.gVm.cityGroups.length > 0) {
+
+                            var tempName = $.grep(viewModel.gVm.cityGroups, function (v) {
+
+                                return v.id === cityDetail.group_Id;
+                            });
+
+                            if (tempName && tempName.length > 0) {
+
+                                cityDetail.group = tempName[0];
+                            }
+                        }
+
+
+                        vm.cityDetails.push(cityDetail);
+
+                        cityDetail.inEditMode = false;
+                        cityDetail.saving = false;
+                    }
+                }
+            }
+        };
 
         var prevAllNames = '';
-        vm.populateCitys = function (limit, offset, allNames) {
+        var prevParentFilter = '';
+        vm.populateCityDetails = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
-            if (allNames || prevAllNames) {
+            if (name || prevAllNames) {
 
-                forceGetCount = (allNames != prevAllNames);
+                forceGetCount = (name != prevAllNames);
             }
 
-            prevAllNames = allNames;
+            prevAllNames = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -398,44 +531,9 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            allNames = !allNames ? vm.searchValue : allNames;
+            name = !name ? vm.searchValue : name;
 
-            var successFunc = function (resp) {
 
-                vm.citys.length = 0;
-
-                if (resp.data) {
-
-                    if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
-
-                        vm.citysCount = resp.data.count;
-
-                        var ttlPgs = parseInt(vm.citysCount / appProps.resultItemsPerPg);
-
-                        ttlPgs += ((vm.citysCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
-
-                        vm.totalPgs = ttlPgs;
-                    }
-
-                    setupPages();
-
-                    if (resp.data.result) {
-
-                        for (var i = 0; i < resp.data.result.length; i++) {
-
-                            var city = resp.data.result[i];
-
-                            city.__comp = jQuery.extend(true, {}, city);
-
-                            vm.citys.push(city);
-
-                            city.inEditMode = false;
-                            city.saving = false;
-                        }
-                    }
-                }
-            };
 
             var errorFunc = function (error) {
 
@@ -451,50 +549,124 @@
 
             var finallyFunc = function () {
 
-                toggleGlblWaitVisibility(false);
+                if (callback) {
+
+                    callback();
+                }
+                else {
+
+                    toggleGlblWaitVisibility(false);
+                }
             };
 
-            toggleGlblWaitVisibility(true);
+            if (!callback) {
 
-            $http.post(appProps.urlGetCitys, { limit: limit, offset: offset, getTotalClients: (vm.citysCount <= 0 || forceGetCount), allNames: (allNames ? allNames : null) })
-                 .then(successFunc, errorFunc)
+                toggleGlblWaitVisibility(true);
+            }
+
+            forceGetCount = (vm.cityDetailsCountMod !== 0);
+
+            var regionId = 0;
+            var districtId = 0;
+            var cityGroupId = 0;
+
+
+            var actualParentFilter = '';
+
+            if (vm.parentFilter && vm.parentFilter.id && vm.parentFilter.id > 0) {
+
+                actualParentFilter = '' + vm.parentFilter.type + '-' + vm.parentFilter.id + '';
+
+                switch (vm.parentFilter.type) {
+
+                    case 'r':
+                        regionId = vm.parentFilter.id;
+                        break;
+
+                    case 'd':
+                        districtId = vm.parentFilter.id;
+                        forceGetCount = true;
+                        break;
+
+                    case 'g':
+                        cityGroupId = vm.parentFilter.id;
+                        forceGetCount = true;
+                        break;
+                }
+            }
+
+            forceGetCount = actualParentFilter != prevParentFilter;
+
+            prevParentFilter = actualParentFilter;
+
+            $http.post(
+                    appProps.urlGetCityDetails,
+                    {
+                        limit: limit,
+                        offset: offset,
+                        regionId: regionId,
+                        districtId: districtId,
+                        cityGroupId: cityGroupId,
+                        getTotalCityDetails: (vm.cityDetailsCount <= 0 || forceGetCount),
+                        name: (name ? name : null)
+                    })
+                 .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
 
-        vm.revert = function (city) {
+        vm.revert = function (cityDetail) {
 
-            if (city
-                && city.__comp) {
+            if (cityDetail
+                && cityDetail.__comp) {
 
-                if (city.id > 0) {
+                if (cityDetail.id > 0) {
 
-                    var org = city.__comp;
+                    var org = cityDetail.__comp;
 
-                    city.legalName = org.legalName;
-                    city.civility = org.civility;
-                    city.lName = org.lName;
-                    city.fName = org.fName;
-                    city.paid = org.paid;
-                    city.active = org.active;
+                    cityDetail.name = org.name;
+                    cityDetail.latitude = org.latitude;
+                    cityDetail.longitude = org.longitude;
+                    cityDetail.active = org.active;
 
-                    city.inEditMode = false;
+                    cityDetail.inEditMode = false;
                 }
                 else {
 
-                    vm.citys.remove(city);
+                    vm.cityDetails.remove(cityDetail);
                 }
             }
         };
 
 
-        vm.save = function (citys, finallyCallback, deleteFlags) {
+        vm.addCityDetail = function () {
 
-            if (citys) {
+            var newItem = {
+                id: 0,
+                country_Id: vm.defCountry ? vm.defCountry.id : 0,
+                name: '',
+                seqn: 0,
+                latitude: 0,
+                longitude: 0,
+                active: true
+            };
 
-                if (!Array.isArray(citys)) {
+            newItem.__comp = jQuery.extend(true, {}, newItem);
 
-                    citys = [citys];
+            newItem.inEditMode = true;
+            newItem.saving = false;
+
+            vm.cityDetails.insert(0, newItem);
+        };
+
+
+        vm.save = function (cityDetails, finallyCallback, deleteFlags) {
+
+            if (cityDetails) {
+
+                if (!Array.isArray(cityDetails)) {
+
+                    cityDetails = [cityDetails];
                 }
 
                 if (deleteFlags && !Array.isArray(deleteFlags)) {
@@ -502,32 +674,50 @@
                     deleteFlags = [deleteFlags];
                 }
 
-                var validCitys = [];
-                var toBeSavedCitys = [];
+                var validCityDetails = [];
+                var toBeSavedCityDetails = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == citys.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length == cityDetails.length);
 
-                for (var i = 0; i < citys.length; i++) {
+                for (var i = 0; i < cityDetails.length; i++) {
 
-                    var city = citys[i];
+                    var cityDetail = cityDetails[i];
 
-                    if (city
-                        && city.__comp) {
+                    if (cityDetail
+                        && cityDetail.__comp) {
 
-                        var toBeSaved = jQuery.extend(true, {}, city);
+                        var toBeSaved = jQuery.extend(true, {}, cityDetail);
                         delete toBeSaved.__comp;
 
                         toBeSaved.status = toBeSaved.active ? 1 : 0;
 
-                        checkRecordState(toBeSaved, city.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedCitys.push(toBeSaved);
+                        if (toBeSaved.region) {
 
-                        city.saving = true;
-                        validCitys.push(city);
+                            toBeSaved.region_Id = toBeSaved.region.id;
+                            delete toBeSaved.region;
+                        }
+
+                        if (toBeSaved.district) {
+
+                            toBeSaved.district_Id = toBeSaved.district.id;
+                            delete toBeSaved.district;
+                        }
+
+                        if (toBeSaved.group) {
+
+                            toBeSaved.group_Id = toBeSaved.group.id;
+                            delete toBeSaved.group;
+                        }
+
+                        checkRecordState(toBeSaved, cityDetail.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+                        toBeSavedCityDetails.push(toBeSaved);
+
+                        cityDetail.saving = true;
+                        validCityDetails.push(cityDetail);
                     }
                 }
 
-                if (validCitys.length > 0) {
+                if (validCityDetails.length > 0) {
 
                     var successFunc = function (resp) {
 
@@ -535,25 +725,23 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validCitys.length == resp.data.result.length) {
+                            if (validCityDetails.length == resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
-                                    var tempValue = validCitys[index];
+                                    var tempValue = validCityDetails[index];
 
                                     if (value) {
 
                                         tempValue.id = value.id;
-                                        tempValue.legalName = value.legalName;
-                                        tempValue.civility = value.civility;
-                                        tempValue.lName = value.lName;
-                                        tempValue.fName = value.fName;
-                                        tempValue.paid = value.paid;
-                                        tempValue.active = value.active;
+                                        tempValue.seqn = value.seqn;
+                                        tempValue.name = value.name;
+                                        tempValue.country_Id = value.country_Id;
+                                        tempValue.active = value.status == 1;
 
-                                        if (toBeSavedCitys[index].recordState == 10) {
+                                        if (toBeSavedCityDetails[index].recordState == 10) {
 
-                                            vm.citysCount += 1;
+                                            vm.cityDetailsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -568,15 +756,17 @@
                                     }
                                     else {
 
-                                        vm.citys.remove(tempValue);
+                                        vm.cityDetails.remove(tempValue);
 
-                                        vm.citysCount -= 1;
+                                        vm.cityDetailsCountMod -= 1;
 
-                                        if (vm.citysCount <= 0) {
+                                        if ((vm.cityDetailsCount + vm.cityDetailsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -596,10 +786,10 @@
 
                     var finallyFunc = function () {
 
-                        for (var i = 0; i < validCitys.length; i++) {
+                        for (var i = 0; i < validCityDetails.length; i++) {
 
-                            validCitys[i].saving = false;
-                            validCitys[i].inEditMode = false;
+                            validCityDetails[i].saving = false;
+                            validCityDetails[i].inEditMode = false;
                         }
 
                         if (finallyCallback) {
@@ -613,15 +803,12 @@
                     viewModel.errormsg = '';
                     viewModel.errorid = 0;
 
-                    $http.post(appProps.urlSaveCitys, { citys: toBeSavedCitys })
+                    $http.post(appProps.urlSaveCityDetails, { cityDetails: toBeSavedCityDetails })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
             }
         };
-
-
-        vm.populateCitys();
     }
 
     function tabIndex1CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, viewModel) {
@@ -635,6 +822,7 @@
         vm.totalPgs = 0;
 
         vm.regionsCount = 0;
+        vm.regionsCountMod = 0;
 
         vm.regions = [];
         vm.defCountry = null;
@@ -774,8 +962,50 @@
         };
 
 
+        vm.populateSuccessFunc = function (resp) {
+
+            vm.regions.length = 0;
+
+            if (resp.data) {
+
+                vm.defCountry = resp.data.defCountry;
+
+                if (resp.data.count > 0
+                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+
+                    vm.regionsCountMod = 0;
+                    vm.regionsCount = resp.data.count;
+
+                    var ttlPgs = parseInt(vm.regionsCount / appProps.resultItemsPerPg);
+
+                    ttlPgs += ((vm.regionsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+
+                    vm.totalPgs = ttlPgs;
+                }
+
+                setupPages();
+
+                if (resp.data.result) {
+
+                    for (var i = 0; i < resp.data.result.length; i++) {
+
+                        var region = resp.data.result[i];
+
+                        region.name = appProps.currentLang.startsWith('en') ? region.name_en : region.name_fr;
+
+                        region.__comp = jQuery.extend(true, {}, region);
+
+                        vm.regions.push(region);
+
+                        region.inEditMode = false;
+                        region.saving = false;
+                    }
+                }
+            }
+        };
+
         var prevAllNames = '';
-        vm.populateRegions = function (limit, offset, name) {
+        vm.populateRegions = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
@@ -795,45 +1025,6 @@
             offset = !offset ? 0 : offset;
             name = !name ? vm.searchValue : name;
 
-            var successFunc = function (resp) {
-
-                vm.regions.length = 0;
-
-                if (resp.data) {
-
-                    vm.defCountry = resp.data.defCountry;
-
-                    if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
-
-                        vm.regionsCount = resp.data.count;
-
-                        var ttlPgs = parseInt(vm.regionsCount / appProps.resultItemsPerPg);
-
-                        ttlPgs += ((vm.regionsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
-
-                        vm.totalPgs = ttlPgs;
-                    }
-
-                    setupPages();
-
-                    if (resp.data.result) {
-
-                        for (var i = 0; i < resp.data.result.length; i++) {
-
-                            var region = resp.data.result[i];
-
-                            region.__comp = jQuery.extend(true, {}, region);
-
-                            vm.regions.push(region);
-
-                            region.inEditMode = false;
-                            region.saving = false;
-                        }
-                    }
-                }
-            };
-
             var errorFunc = function (error) {
 
                 if (error.data
@@ -848,13 +1039,25 @@
 
             var finallyFunc = function () {
 
-                toggleGlblWaitVisibility(false);
+                if (callback) {
+
+                    callback();
+                }
+                else {
+
+                    toggleGlblWaitVisibility(false);
+                }
             };
 
-            toggleGlblWaitVisibility(true);
+            if (!callback) {
 
-            $http.post(appProps.urlGetRegions, { limit: limit, offset: offset, getTotalCatgs: (vm.regionsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
-                 .then(successFunc, errorFunc)
+                toggleGlblWaitVisibility(true);
+            }
+
+            forceGetCount = (vm.regionsCountMod !== 0);
+
+            $http.post(appProps.urlGetRegions, { limit: limit, offset: offset, getTotalRegions: (vm.regionsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
+                 .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
@@ -968,7 +1171,7 @@
 
                                         if (toBeSavedRegions[index].recordState == 10) {
 
-                                            vm.regionsCount += 1;
+                                            vm.regionsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -985,13 +1188,15 @@
 
                                         vm.regions.remove(tempValue);
 
-                                        vm.regionsCount -= 1;
+                                        vm.regionsCountMod -= 1;
 
-                                        if (vm.regionsCount <= 0) {
+                                        if ((vm.regionsCount + vm.regionsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -1034,6 +1239,21 @@
                 }
             }
         };
+
+
+        vm.filterOnParent = function (parent) {
+
+            if (parent && viewModel.cVm.parentFilter) {
+
+                viewModel.cVm.parentFilter.id = parent.id;
+                viewModel.cVm.parentFilter.text = viewModel.appProps.lbl_CityFrRgn + ' ' + parent.name;
+                viewModel.cVm.parentFilter.type = 'r';
+
+                viewModel.tabIndex = 0;
+
+                viewModel.cVm.populateCityDetails();
+            }
+        };
     }
 
     function tabIndex2CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, viewModel) {
@@ -1047,6 +1267,7 @@
         vm.totalPgs = 0;
 
         vm.districtsCount = 0;
+        vm.districtsCountMod = 0;
 
         vm.districts = [];
         vm.defCountry = null;
@@ -1168,6 +1389,8 @@
                         district.recordState = 30;
                     }
                     else if (district.name !== compDistrict.name
+                            || district.latitude !== compDistrict.latitude
+                            || district.longitude !== compDistrict.longitude
                             || district.active !== compDistrict.active) {
 
                         district.recordState = 20;
@@ -1185,8 +1408,50 @@
         };
 
 
+        vm.populateSuccessFunc = function (resp) {
+
+            vm.districts.length = 0;
+
+            if (resp.data) {
+
+                vm.defCountry = resp.data.defCountry;
+
+                if (resp.data.count > 0
+                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+
+                    vm.districtsCountMod = 0;
+                    vm.districtsCount = resp.data.count;
+
+                    var ttlPgs = parseInt(vm.districtsCount / appProps.resultItemsPerPg);
+
+                    ttlPgs += ((vm.districtsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+
+                    vm.totalPgs = ttlPgs;
+                }
+
+                setupPages();
+
+                if (resp.data.result) {
+
+                    for (var i = 0; i < resp.data.result.length; i++) {
+
+                        var district = resp.data.result[i];
+
+                        district.active = (district.status === 1);
+
+                        district.__comp = jQuery.extend(true, {}, district);
+
+                        vm.districts.push(district);
+
+                        district.inEditMode = false;
+                        district.saving = false;
+                    }
+                }
+            }
+        };
+
         var prevAllNames = '';
-        vm.populateDistricts = function (limit, offset, name) {
+        vm.populateDistricts = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
@@ -1206,45 +1471,6 @@
             offset = !offset ? 0 : offset;
             name = !name ? vm.searchValue : name;
 
-            var successFunc = function (resp) {
-
-                vm.districts.length = 0;
-
-                if (resp.data) {
-
-                    vm.defCountry = resp.data.defCountry;
-
-                    if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
-
-                        vm.districtsCount = resp.data.count;
-
-                        var ttlPgs = parseInt(vm.districtsCount / appProps.resultItemsPerPg);
-
-                        ttlPgs += ((vm.districtsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
-
-                        vm.totalPgs = ttlPgs;
-                    }
-
-                    setupPages();
-
-                    if (resp.data.result) {
-
-                        for (var i = 0; i < resp.data.result.length; i++) {
-
-                            var district = resp.data.result[i];
-
-                            district.__comp = jQuery.extend(true, {}, district);
-
-                            vm.districts.push(district);
-
-                            district.inEditMode = false;
-                            district.saving = false;
-                        }
-                    }
-                }
-            };
-
             var errorFunc = function (error) {
 
                 if (error.data
@@ -1259,13 +1485,26 @@
 
             var finallyFunc = function () {
 
-                toggleGlblWaitVisibility(false);
+                if (callback) {
+
+                    callback();
+                }
+                else {
+
+                    toggleGlblWaitVisibility(false);
+                }
             };
 
-            toggleGlblWaitVisibility(true);
+
+            if (!callback) {
+
+                toggleGlblWaitVisibility(true);
+            }
+
+            forceGetCount = (vm.districtsCountMod !== 0);
 
             $http.post(appProps.urlGetDistricts, { limit: limit, offset: offset, getTotalDistricts: (vm.districtsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
-                 .then(successFunc, errorFunc)
+                 .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
@@ -1280,6 +1519,8 @@
                     var org = district.__comp;
 
                     district.name = org.name;
+                    district.latitude = org.latitude;
+                    district.longitude = org.longitude;
                     district.active = org.active;
 
                     district.inEditMode = false;
@@ -1299,6 +1540,8 @@
                 country_Id: vm.defCountry ? vm.defCountry.id : 0,
                 name: '',
                 seqn: 0,
+                latitude: 0,
+                longitude: 0,
                 active: true
             };
 
@@ -1370,11 +1613,11 @@
                                         tempValue.seqn = value.seqn;
                                         tempValue.name = value.name;
                                         tempValue.country_Id = value.country_Id;
-                                        tempValue.active = value.active;
+                                        tempValue.active = value.status == 1;
 
                                         if (toBeSavedDistricts[index].recordState == 10) {
 
-                                            vm.districtsCount += 1;
+                                            vm.districtsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -1391,13 +1634,15 @@
 
                                         vm.districts.remove(tempValue);
 
-                                        vm.districtsCount -= 1;
+                                        vm.districtsCountMod -= 1;
 
-                                        if (vm.districtsCount <= 0) {
+                                        if ((vm.districtsCount + vm.districtsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -1440,6 +1685,21 @@
                 }
             }
         };
+
+
+        vm.filterOnParent = function (parent) {
+
+            if (parent && viewModel.cVm.parentFilter) {
+
+                viewModel.cVm.parentFilter.id = parent.id;
+                viewModel.cVm.parentFilter.text = viewModel.appProps.lbl_CityFrDst + ' ' + parent.name;
+                viewModel.cVm.parentFilter.type = 'd';
+
+                viewModel.tabIndex = 0;
+
+                viewModel.cVm.populateCityDetails();
+            }
+        };
     }
 
     function tabIndex3CtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, viewModel) {
@@ -1453,6 +1713,7 @@
         vm.totalPgs = 0;
 
         vm.cityGroupsCount = 0;
+        vm.cityGroupsCountMod = 0;
 
         vm.cityGroups = [];
         vm.defCountry = null;
@@ -1574,6 +1835,8 @@
                         cityGroup.recordState = 30;
                     }
                     else if (cityGroup.name !== compCityGroup.name
+                            || cityGroup.latitude !== compCityGroup.latitude
+                            || cityGroup.longitude !== compCityGroup.longitude
                             || cityGroup.active !== compCityGroup.active) {
 
                         cityGroup.recordState = 20;
@@ -1591,8 +1854,51 @@
         };
 
 
+        vm.populateSuccessFunc = function (resp) {
+
+            vm.cityGroups.length = 0;
+
+            if (resp.data) {
+
+                vm.defCountry = resp.data.defCountry;
+
+                if (resp.data.count > 0
+                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+
+                    vm.cityGroupsCountMod = 0;
+
+                    vm.cityGroupsCount = resp.data.count;
+
+                    var ttlPgs = parseInt(vm.cityGroupsCount / appProps.resultItemsPerPg);
+
+                    ttlPgs += ((vm.cityGroupsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+
+                    vm.totalPgs = ttlPgs;
+                }
+
+                setupPages();
+
+                if (resp.data.result) {
+
+                    for (var i = 0; i < resp.data.result.length; i++) {
+
+                        var cityGroup = resp.data.result[i];
+
+                        cityGroup.active = (cityGroup.status === 1);
+
+                        cityGroup.__comp = jQuery.extend(true, {}, cityGroup);
+
+                        vm.cityGroups.push(cityGroup);
+
+                        cityGroup.inEditMode = false;
+                        cityGroup.saving = false;
+                    }
+                }
+            }
+        };
+
         var prevAllNames = '';
-        vm.populateCityGroups = function (limit, offset, name) {
+        vm.populateCityGroups = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
@@ -1612,45 +1918,6 @@
             offset = !offset ? 0 : offset;
             name = !name ? vm.searchValue : name;
 
-            var successFunc = function (resp) {
-
-                vm.cityGroups.length = 0;
-
-                if (resp.data) {
-
-                    vm.defCountry = resp.data.defCountry;
-
-                    if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
-
-                        vm.cityGroupsCount = resp.data.count;
-
-                        var ttlPgs = parseInt(vm.cityGroupsCount / appProps.resultItemsPerPg);
-
-                        ttlPgs += ((vm.cityGroupsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
-
-                        vm.totalPgs = ttlPgs;
-                    }
-
-                    setupPages();
-
-                    if (resp.data.result) {
-
-                        for (var i = 0; i < resp.data.result.length; i++) {
-
-                            var cityGroup = resp.data.result[i];
-
-                            cityGroup.__comp = jQuery.extend(true, {}, cityGroup);
-
-                            vm.cityGroups.push(cityGroup);
-
-                            cityGroup.inEditMode = false;
-                            cityGroup.saving = false;
-                        }
-                    }
-                }
-            };
-
             var errorFunc = function (error) {
 
                 if (error.data
@@ -1665,13 +1932,26 @@
 
             var finallyFunc = function () {
 
-                toggleGlblWaitVisibility(false);
+                if (callback) {
+
+                    callback();
+                }
+                else {
+
+                    toggleGlblWaitVisibility(false);
+                }
             };
 
-            toggleGlblWaitVisibility(true);
+
+            if (!callback) {
+
+                toggleGlblWaitVisibility(true);
+            }
+
+            forceGetCount = (vm.cityGroupsCountMod !== 0);
 
             $http.post(appProps.urlGetCityGroups, { limit: limit, offset: offset, getTotalCityGroups: (vm.cityGroupsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
-                 .then(successFunc, errorFunc)
+                 .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
@@ -1686,6 +1966,8 @@
                     var org = cityGroup.__comp;
 
                     cityGroup.name = org.name;
+                    cityGroup.latitude = org.latitude;
+                    cityGroup.longitude = org.longitude;
                     cityGroup.active = org.active;
 
                     cityGroup.inEditMode = false;
@@ -1705,6 +1987,8 @@
                 country_Id: vm.defCountry ? vm.defCountry.id : 0,
                 name: '',
                 seqn: 0,
+                latitude: 0,
+                longitude: 0,
                 active: true
             };
 
@@ -1751,6 +2035,8 @@
                         checkRecordState(toBeSaved, cityGroup.__comp, hasDeleteFlags ? deleteFlags[i] : false);
                         toBeSavedCityGroups.push(toBeSaved);
 
+
+
                         cityGroup.saving = true;
                         validCityGroups.push(cityGroup);
                     }
@@ -1776,11 +2062,11 @@
                                         tempValue.seqn = value.seqn;
                                         tempValue.name = value.name;
                                         tempValue.country_Id = value.country_Id;
-                                        tempValue.active = value.active;
+                                        tempValue.active = value.status == 1;
 
                                         if (toBeSavedCityGroups[index].recordState == 10) {
 
-                                            vm.cityGroupsCount += 1;
+                                            vm.cityGroupsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -1797,13 +2083,15 @@
 
                                         vm.cityGroups.remove(tempValue);
 
-                                        vm.cityGroupsCount -= 1;
+                                        vm.cityGroupsCountMod -= 1;
 
-                                        if (vm.cityGroupsCount <= 0) {
+                                        if ((vm.cityGroupsCount + vm.cityGroupsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -1844,6 +2132,21 @@
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
+            }
+        };
+
+
+        vm.filterOnParent = function (parent) {
+
+            if (parent && viewModel.cVm.parentFilter) {
+
+                viewModel.cVm.parentFilter.id = parent.id;
+                viewModel.cVm.parentFilter.text = viewModel.appProps.lbl_CityFrGrp + ' ' + parent.name;
+                viewModel.cVm.parentFilter.type = 'g';
+
+                viewModel.tabIndex = 0;
+
+                viewModel.cVm.populateCityDetails();
             }
         };
     }

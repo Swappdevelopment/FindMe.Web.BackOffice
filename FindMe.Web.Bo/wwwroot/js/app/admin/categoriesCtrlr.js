@@ -31,6 +31,7 @@
         vm.totalPgs = 0;
 
         vm.categorysCount = 0;
+        vm.categorysCountMod = 0;
 
         vm.categorys = [];
 
@@ -255,7 +256,7 @@
                 forceGetCount = (name !== prevName);
             }
 
-            forceGetCount = (forceGetCount || prevParentIdFilter !== vm.parentIdFilter);
+            forceGetCount = (forceGetCount || prevParentIdFilter !== vm.parentIdFilter || vm.categorysCountMod !== 0);
 
             prevParentIdFilter = vm.parentIdFilter;
 
@@ -279,6 +280,7 @@
                     if (resp.data.count > 0
                         || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
+                        vm.categorysCountMod = 0;
                         vm.categorysCount = resp.data.count;
 
                         var ttlPgs = parseInt(vm.categorysCount / appProps.resultItemsPerPg);
@@ -427,7 +429,7 @@
 
                                         if (toBeSavedCategorys[index].recordState === 10) {
 
-                                            vm.categorysCount += 1;
+                                            vm.categorysCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -444,13 +446,15 @@
 
                                         vm.categorys.remove(tempValue);
 
-                                        vm.categorysCount -= 1;
+                                        vm.categorysCountMod -= 1;
 
-                                        if (vm.categorysCount <= 0) {
+                                        if ((vm.categorysCount + vm.categorysCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -502,8 +506,10 @@
 
             if ($btn.hasClass('refresh')) {
 
-                //$('#searchBar input.input-search').val('');
-                vm.populateCategorys();
+                $scope.$apply(function () {
+
+                    vm.populateCategorys();
+                });
             }
             else if ($btn.hasClass('add')) {
 

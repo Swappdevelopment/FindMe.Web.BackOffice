@@ -53,7 +53,17 @@ namespace FindMe.Web.App
             if (_repo != null)
             {
                 _repo.ChangeAccessToken += Reader_ChangeAccessToken;
-                _repo.RequestPropertiesInit += _repo_RequestPropertiesInit;
+
+                _repo.SetTokenFunctions(
+                    () =>
+                    {
+                        return GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}");
+                    },
+                    () =>
+                    {
+                        return GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}");
+                    });
+                //_repo.RequestPropertiesInit += _repo_RequestPropertiesInit;
             }
 
             _checkedAccessToken = null;
@@ -74,20 +84,23 @@ namespace FindMe.Web.App
                 fullName);
         }
 
-        private void _repo_RequestPropertiesInit(object sender, EventArgs e)
-        {
-            GetClientIpAddressV4ASync().ContinueWith(task =>
-            {
-                if (_repo != null)
-                {
-                    _repo.SetClientIpAddress(task.Result);
-                }
-            });
+        //private async void _repo_RequestPropertiesInit(object sender, EventArgs e)
+        //{
+        //    string ipaddress = await GetClientIpAddressV4ASync();
+        //    //    .ContinueWith(task =>
+        //    //{
+        //    //    if (_repo != null)
+        //    //    {
+        //    //        _repo.SetClientIpAddress(task.Result);
+        //    //    }
+        //    //});
 
-            _repo.SetTokenValues(
-                        GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}"),
-                        GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}"));
-        }
+        //    _repo.SetClientIpAddress(ipaddress);
+
+        //    _repo.SetTokenValues(
+        //                GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}"),
+        //                GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}"));
+        //}
 
 
 
@@ -265,12 +278,19 @@ namespace FindMe.Web.App
 
         protected string GetCookieValue(string key)
         {
-            if (Request == null
-                || Request.Cookies == null
-                || string.IsNullOrEmpty(key)) return string.Empty;
+            try
+            {
+                if (Request == null
+                    || Request.Cookies == null
+                    || string.IsNullOrEmpty(key)) return string.Empty;
 
 
-            return Request.Cookies[key];
+                return Request.Cookies[key];
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         protected KeyValuePair<string, string>[] GetCookies(string[] keys)
         {

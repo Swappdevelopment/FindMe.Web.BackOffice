@@ -10,13 +10,16 @@ namespace FindMe.Web.App
     public class WebDbRepository : IDisposable
     {
         public event EventHandler<ValuePairEventArgs<string, bool>> ChangeAccessToken;
-        public event EventHandler RequestPropertiesInit;
+        //public event EventHandler RequestPropertiesInit;
 
 
         private PrjAPICmdReader _reader;
 
         private string _refreshTokenValue;
         private string _accessTokenValue;
+
+        private Func<string> _getRefreshTokenValue;
+        private Func<string> _getAccessTokenValue;
 
         public WebDbRepository(AppDbContext context)
         {
@@ -26,14 +29,23 @@ namespace FindMe.Web.App
             _reader = new PrjAPICmdReader(new DbInteractor(context));
         }
 
-
-        public WebDbRepository SetTokenValues(string refreshTokenValue, string accessTokenValue)
+        public WebDbRepository SetTokenFunctions(Func<string> getRefreshTokenValue, Func<string> getAccessTokenValue)
         {
-            _refreshTokenValue = refreshTokenValue;
-            _accessTokenValue = accessTokenValue;
+
+            _getRefreshTokenValue = getRefreshTokenValue;
+            _getAccessTokenValue = getAccessTokenValue;
 
             return this;
         }
+
+
+        //public WebDbRepository SetTokenValues(string refreshTokenValue, string accessTokenValue)
+        //{
+        //    _refreshTokenValue = refreshTokenValue;
+        //    _accessTokenValue = accessTokenValue;
+
+        //    return this;
+        //}
 
 
         private void OnChangeAccessToken(string accessTokenValue, bool invalidPsswrdFormat)
@@ -69,7 +81,10 @@ namespace FindMe.Web.App
 
             try
             {
-                RequestPropertiesInit?.Invoke(this, EventArgs.Empty);
+                //RequestPropertiesInit?.Invoke(this, EventArgs.Empty);
+
+                _refreshTokenValue = _getRefreshTokenValue == null ? null : _getRefreshTokenValue();
+                _accessTokenValue = _getAccessTokenValue == null ? null : _getAccessTokenValue();
 
                 webParameters.AccessValue = _accessTokenValue;
 

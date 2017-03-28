@@ -30,6 +30,7 @@
         vm.totalPgs = 0;
 
         vm.clientsCount = 0;
+        vm.clientsCountMod = 0;
 
         vm.clients = [];
 
@@ -186,7 +187,7 @@
 
             if (allNames || prevAllNames) {
 
-                forceGetCount = (allNames != prevAllNames);
+                forceGetCount = (allNames != prevAllNames || vm.clientsCountMod !== 0);
             }
 
             prevAllNames = allNames;
@@ -209,6 +210,7 @@
                     if (resp.data.count > 0
                         || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
 
+                        vm.clientsCountMod = 0;
                         vm.clientsCount = resp.data.count;
 
                         var ttlPgs = parseInt(vm.clientsCount / appProps.resultItemsPerPg);
@@ -357,7 +359,7 @@
 
                                         if (toBeSavedClients[index].recordState == 10) {
 
-                                            vm.clientsCount += 1;
+                                            vm.clientsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -376,13 +378,15 @@
 
                                         vm.clients.remove(tempValue);
 
-                                        vm.clientsCount -= 1;
+                                        vm.clientsCountMod -= 1;
 
-                                        if (vm.clientsCount <= 0) {
+                                        if ((vm.clientsCount + vm.clientsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
                                     }
+
+                                    $scope.$apply();
                                 });
                             }
                         }
@@ -433,8 +437,10 @@
 
             if ($btn.hasClass('refresh')) {
 
-                //$('#searchBar input.input-search').val('');
-                vm.populateClients();
+                $scope.$apply(function () {
+
+                    vm.populateClients();
+                });
             }
             else if ($btn.hasClass('add')) {
 
