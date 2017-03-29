@@ -10,7 +10,6 @@ namespace FindMe.Web.App
     public class WebDbRepository : IDisposable
     {
         public event EventHandler<ValuePairEventArgs<string, bool>> ChangeAccessToken;
-        //public event EventHandler RequestPropertiesInit;
 
 
         private PrjAPICmdReader _reader;
@@ -20,6 +19,7 @@ namespace FindMe.Web.App
 
         private Func<string> _getRefreshTokenValue;
         private Func<string> _getAccessTokenValue;
+        private Func<string> _getLanguageCode;
 
         public WebDbRepository(AppDbContext context)
         {
@@ -38,14 +38,13 @@ namespace FindMe.Web.App
             return this;
         }
 
+        public WebDbRepository SetLanguageFunction(Func<string> getLanguageCode)
+        {
 
-        //public WebDbRepository SetTokenValues(string refreshTokenValue, string accessTokenValue)
-        //{
-        //    _refreshTokenValue = refreshTokenValue;
-        //    _accessTokenValue = accessTokenValue;
+            _getLanguageCode = getLanguageCode;
 
-        //    return this;
-        //}
+            return this;
+        }
 
 
         private void OnChangeAccessToken(string accessTokenValue, bool invalidPsswrdFormat)
@@ -81,12 +80,14 @@ namespace FindMe.Web.App
 
             try
             {
-                //RequestPropertiesInit?.Invoke(this, EventArgs.Empty);
-
                 _refreshTokenValue = _getRefreshTokenValue == null ? null : _getRefreshTokenValue();
                 _accessTokenValue = _getAccessTokenValue == null ? null : _getAccessTokenValue();
 
                 webParameters.AccessValue = _accessTokenValue;
+
+                webParameters.LangCode = _getLanguageCode == null ? "" : _getLanguageCode();
+
+                webParameters.LangCode = string.IsNullOrEmpty(webParameters.LangCode) ? "en" : webParameters.LangCode;
 
                 resp = await _reader.Execute(webParameters);
 
@@ -173,6 +174,10 @@ namespace FindMe.Web.App
         }
 
 
+        public async Task VerifyLoginToken()
+        {
+            await Execute();
+        }
 
         public async Task<T> Execute<T>(string methodName)
         {

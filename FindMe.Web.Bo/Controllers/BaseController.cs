@@ -35,6 +35,9 @@ namespace FindMe.Web.App
 
         protected string _checkedAccessToken;
 
+        protected string _changedAccessToken;
+        protected string _changedRefreshToken;
+
         public BaseController(
             IConfigurationRoot config
             , WebDbRepository repo
@@ -43,6 +46,9 @@ namespace FindMe.Web.App
             , IMailService mailService)
             : base()
         {
+            _changedAccessToken = null;
+            _changedRefreshToken = null;
+
             _config = config;
             _repo = repo;
             _env = env;
@@ -57,11 +63,11 @@ namespace FindMe.Web.App
                 _repo.SetTokenFunctions(
                     () =>
                     {
-                        return GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}");
+                        return string.IsNullOrEmpty(_changedRefreshToken) ? GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}") : _changedRefreshToken;
                     },
                     () =>
                     {
-                        return GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}");
+                        return string.IsNullOrEmpty(_changedAccessToken) ? GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}") : _changedAccessToken;
                     });
                 //_repo.RequestPropertiesInit += _repo_RequestPropertiesInit;
             }
@@ -82,6 +88,9 @@ namespace FindMe.Web.App
                 e.Value2,
                 (!string.IsNullOrEmpty(rememberToken) && rememberToken.ToLower() == "true"),
                 fullName);
+
+            _changedRefreshToken = refreshToken;
+            _changedAccessToken = e.Value1;
         }
 
         //private async void _repo_RequestPropertiesInit(object sender, EventArgs e)

@@ -52,7 +52,7 @@
 
                         if (vm.cVm) {
 
-                            if (!vm.cVm.cityDetails || vm.cVm.cityDetails.length == 0) {
+                            if (!vm.cVm.cityDetails || vm.cVm.cityDetails.length === 0) {
 
                                 if (vm.cVm.populateCityDetails) {
 
@@ -66,7 +66,7 @@
 
                         if (vm.rVm) {
 
-                            if (!vm.rVm.regions || vm.rVm.regions.length == 0) {
+                            if (!vm.rVm.regions || vm.rVm.regions.length === 0) {
 
                                 if (vm.rVm.populateRegions) {
 
@@ -80,7 +80,7 @@
 
                         if (vm.dVm) {
 
-                            if (!vm.dVm.districts || vm.dVm.districts.length == 0) {
+                            if (!vm.dVm.districts || vm.dVm.districts.length === 0) {
 
                                 if (vm.dVm.populateDistricts) {
 
@@ -94,7 +94,7 @@
 
                         if (vm.gVm) {
 
-                            if (!vm.gVm.cityGroups || vm.gVm.cityGroups.length == 0) {
+                            if (!vm.gVm.cityGroups || vm.gVm.cityGroups.length === 0) {
 
                                 if (vm.gVm.populateCityGroups) {
 
@@ -439,7 +439,7 @@
                 vm.defCountry = resp.data.defCountry;
 
                 if (resp.data.count > 0
-                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                    || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                     vm.cityDetailsCountMod = 0;
                     vm.cityDetailsCount = resp.data.count;
@@ -463,9 +463,12 @@
 
                         cityDetail.__comp = jQuery.extend(true, {}, cityDetail);
 
+
+                        var tempName;
+
                         if (viewModel.rVm && viewModel.rVm.regions && viewModel.rVm.regions.length > 0) {
 
-                            var tempName = $.grep(viewModel.rVm.regions, function (v) {
+                            tempName = $.grep(viewModel.rVm.regions, function (v) {
                                 return v.id === cityDetail.region_Id;
                             });
 
@@ -477,7 +480,7 @@
 
                         if (viewModel.dVm && viewModel.dVm.districts && viewModel.dVm.districts.length > 0) {
 
-                            var tempName = $.grep(viewModel.dVm.districts, function (v) {
+                            tempName = $.grep(viewModel.dVm.districts, function (v) {
 
                                 return v.id === cityDetail.district_Id;
                             });
@@ -490,7 +493,7 @@
 
                         if (viewModel.gVm && viewModel.gVm.cityGroups && viewModel.gVm.cityGroups.length > 0) {
 
-                            var tempName = $.grep(viewModel.gVm.cityGroups, function (v) {
+                            tempName = $.grep(viewModel.gVm.cityGroups, function (v) {
 
                                 return v.id === cityDetail.group_Id;
                             });
@@ -519,7 +522,7 @@
 
             if (name || prevAllNames) {
 
-                forceGetCount = (name != prevAllNames);
+                forceGetCount = (name !== prevAllNames);
             }
 
             prevAllNames = name;
@@ -595,7 +598,7 @@
                 }
             }
 
-            forceGetCount = actualParentFilter != prevParentFilter;
+            forceGetCount = actualParentFilter !== prevParentFilter;
 
             prevParentFilter = actualParentFilter;
 
@@ -677,7 +680,7 @@
                 var validCityDetails = [];
                 var toBeSavedCityDetails = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == cityDetails.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === cityDetails.length);
 
                 for (var i = 0; i < cityDetails.length; i++) {
 
@@ -725,7 +728,7 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validCityDetails.length == resp.data.result.length) {
+                            if (validCityDetails.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -737,9 +740,9 @@
                                         tempValue.seqn = value.seqn;
                                         tempValue.name = value.name;
                                         tempValue.country_Id = value.country_Id;
-                                        tempValue.active = value.status == 1;
+                                        tempValue.active = value.status === 1;
 
-                                        if (toBeSavedCityDetails[index].recordState == 10) {
+                                        if (toBeSavedCityDetails[index].recordState === 10) {
 
                                             vm.cityDetailsCountMod += 1;
 
@@ -971,7 +974,7 @@
                 vm.defCountry = resp.data.defCountry;
 
                 if (resp.data.count > 0
-                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                    || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                     vm.regionsCountMod = 0;
                     vm.regionsCount = resp.data.count;
@@ -1011,7 +1014,7 @@
 
             if (name || prevAllNames) {
 
-                forceGetCount = (name != prevAllNames);
+                forceGetCount = (name !== prevAllNames);
             }
 
             prevAllNames = name;
@@ -1123,7 +1126,7 @@
                 var validRegions = [];
                 var toBeSavedRegions = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == regions.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === regions.length);
 
                 for (var i = 0; i < regions.length; i++) {
 
@@ -1153,7 +1156,7 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validRegions.length == resp.data.result.length) {
+                            if (validRegions.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -1169,7 +1172,7 @@
                                         tempValue.paid = value.paid;
                                         tempValue.active = value.active;
 
-                                        if (toBeSavedRegions[index].recordState == 10) {
+                                        if (toBeSavedRegions[index].recordState === 10) {
 
                                             vm.regionsCountMod += 1;
 
@@ -1417,7 +1420,7 @@
                 vm.defCountry = resp.data.defCountry;
 
                 if (resp.data.count > 0
-                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                    || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                     vm.districtsCountMod = 0;
                     vm.districtsCount = resp.data.count;
@@ -1457,7 +1460,7 @@
 
             if (name || prevAllNames) {
 
-                forceGetCount = (name != prevAllNames);
+                forceGetCount = (name !== prevAllNames);
             }
 
             prevAllNames = name;
@@ -1571,7 +1574,7 @@
                 var validDistricts = [];
                 var toBeSavedDistricts = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == districts.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === districts.length);
 
                 for (var i = 0; i < districts.length; i++) {
 
@@ -1601,7 +1604,7 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validDistricts.length == resp.data.result.length) {
+                            if (validDistricts.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -1613,9 +1616,9 @@
                                         tempValue.seqn = value.seqn;
                                         tempValue.name = value.name;
                                         tempValue.country_Id = value.country_Id;
-                                        tempValue.active = value.status == 1;
+                                        tempValue.active = value.status === 1;
 
-                                        if (toBeSavedDistricts[index].recordState == 10) {
+                                        if (toBeSavedDistricts[index].recordState === 10) {
 
                                             vm.districtsCountMod += 1;
 
@@ -1863,7 +1866,7 @@
                 vm.defCountry = resp.data.defCountry;
 
                 if (resp.data.count > 0
-                    || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                    || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                     vm.cityGroupsCountMod = 0;
 
@@ -1904,7 +1907,7 @@
 
             if (name || prevAllNames) {
 
-                forceGetCount = (name != prevAllNames);
+                forceGetCount = (name !== prevAllNames);
             }
 
             prevAllNames = name;
@@ -2018,7 +2021,7 @@
                 var validCityGroups = [];
                 var toBeSavedCityGroups = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == cityGroups.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === cityGroups.length);
 
                 for (var i = 0; i < cityGroups.length; i++) {
 
@@ -2050,7 +2053,7 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validCityGroups.length == resp.data.result.length) {
+                            if (validCityGroups.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -2062,9 +2065,9 @@
                                         tempValue.seqn = value.seqn;
                                         tempValue.name = value.name;
                                         tempValue.country_Id = value.country_Id;
-                                        tempValue.active = value.status == 1;
+                                        tempValue.active = value.status === 1;
 
-                                        if (toBeSavedCityGroups[index].recordState == 10) {
+                                        if (toBeSavedCityGroups[index].recordState === 10) {
 
                                             vm.cityGroupsCountMod += 1;
 

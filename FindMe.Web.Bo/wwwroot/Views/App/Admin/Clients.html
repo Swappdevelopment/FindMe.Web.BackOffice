@@ -109,6 +109,12 @@
                         <span ng-hide="client.inEditMode" class="no-animate">{{client.dispName}}</span>
 
                         <div ng-show="client.inEditMode" class="no-animate">
+                            <select class="form-control" ng-model="client.civility">
+                                <option value="{{vm.appProps.lbl_CvltMme}}">{{vm.appProps.lbl_CvltMme}}</option>
+                                <option value="{{vm.appProps.lbl_CvltMiss}}">{{vm.appProps.lbl_CvltMiss}}</option>
+                                <option value="{{vm.appProps.lbl_CvltMr}}">{{vm.appProps.lbl_CvltMr}}</option>
+                            </select>
+
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_Cvlty}}" type="text" class="form-control" ng-model="client.civility">
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_LName}}" type="text" class="form-control" ng-model="client.lName">
                             <input ng-disabled="client.saving" placeholder="{{vm.appProps.lbl_FName}}" type="text" class="form-control" ng-model="client.fName">

@@ -187,7 +187,11 @@
 
             if (allNames || prevAllNames) {
 
-                forceGetCount = (allNames != prevAllNames || vm.clientsCountMod !== 0);
+                forceGetCount = (allNames !== prevAllNames || vm.clientsCountMod !== 0);
+            }
+            else {
+
+                forceGetCount = (vm.clientsCountMod !== 0);
             }
 
             prevAllNames = allNames;
@@ -208,7 +212,7 @@
                 if (resp.data) {
 
                     if (resp.data.count > 0
-                        || (resp.data.count == 0 && resp.data.result && resp.data.result.length == 0)) {
+                        || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
                         vm.clientsCountMod = 0;
                         vm.clientsCount = resp.data.count;
@@ -311,7 +315,7 @@
                 var validClients = [];
                 var toBeSavedClients = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length == clients.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === clients.length);
 
                 for (var i = 0; i < clients.length; i++) {
 
@@ -341,7 +345,7 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validClients.length == resp.data.result.length) {
+                            if (validClients.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
@@ -357,7 +361,7 @@
                                         tempValue.paid = value.paid;
                                         tempValue.active = value.active;
 
-                                        if (toBeSavedClients[index].recordState == 10) {
+                                        if (toBeSavedClients[index].recordState === 10) {
 
                                             vm.clientsCountMod += 1;
 

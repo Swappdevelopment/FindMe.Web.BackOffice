@@ -149,3 +149,23 @@ textarea {
     animation: 0s none;
     -webkit-animation: 0s none;
 }
+
+input.half {
+    width: 50%;
+    min-width: 40px;
+}
+
+input.one-third {
+    width: 33%;
+    min-width: 40px;
+}
+
+input.two-third {
+    width: 66%;
+    min-width: 40px;
+}
+
+input.three-quarter {
+    width: 75%;
+    min-width: 40px;
+}

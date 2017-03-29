@@ -2,6 +2,230 @@
 
 <div id="addressesVw">
 
-    <h4 class="findme-color-fc-pink"><i>Addresses</i></h4>
-    
+    <script type="text/ng-template" id="deleteAddressModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{(vm.address.legalName || vm.address.dispName ? (vm.address.legalName ? vm.address.legalName : vm.address.dispName) : 'New Address')}}?</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.yes()">
+                <b>{{vm.appProps.lbl_Yes}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.no()">
+                <b>{{vm.appProps.lbl_No}}</b>
+            </button>
+        </div>
+    </script>
+
+
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td class="findme-color-fc-pink">
+                <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
+                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.addressesCount + vm.addressesCountMod}}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="main-table-container">
+        <table class="table table-striped table-hover data" ng-init="vm.populateAddresses()">
+            <thead>
+                <tr>
+                    <td class="col-md-1">
+                        <b>{{vm.appProps.lbl_Actns}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_ID}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Name}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Slug}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Clnt}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Category}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_City}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Lat}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Lon}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Rating}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Ovrd}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_RatingCount}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Ovrd}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_FbFans}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Actv}}</b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="address in vm.addresses" ng-class="address.inEditMode ? 'inEditMode' : ''">
+                    <td>
+                        <div ng-hide="address.inEditMode" class="btn-toolbar no-animate">
+                            <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="address.inEditMode = true;"><span class="fa fa-edit"></span></button>
+                            <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(address)"><span class="fa fa-trash"></span></button>
+                        </div>
+                        <div ng-show="address.inEditMode && !address.saving" class="btn-toolbar no-animate">
+                            <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(address)"><span class="fa fa-save"></span></button>
+                            <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.revert(address)"><span class="fa fa-times-circle-o"></span></button>
+                        </div>
+
+                        <div ng-show="address.inEditMode && address.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                    </td>
+                    <td>
+                        <b ng-show="address.id > 0" class="no-animate">{{address.id}}</b>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.name}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="address.name">
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.slug}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="address.slug">
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.client.name}}</span>
+
+                        <select class="form-control"
+                                ng-disabled="address.saving" ng-show="address.inEditMode"
+                                ng-model="address.client"
+                                ng-options="client.name for client in vm.clients | orderBy:'name'"></select>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.category.name}}</span>
+
+                        <select class="form-control"
+                                ng-disabled="address.saving" ng-show="address.inEditMode"
+                                ng-model="address.category"
+                                ng-options="category.name for category in vm.categorys"></select>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.cityDetail.name}}</span>
+
+                        <select class="form-control"
+                                ng-disabled="address.saving" ng-show="address.inEditMode"
+                                ng-model="address.cityDetail"
+                                ng-options="cityDetail.name for cityDetail in vm.cityDetails | orderBy:'name'"></select>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.latitude}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Lat}}" type="number" class="form-control three-quarter no-animate" ng-model="address.latitude">
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.longitude}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Lon}}" type="number" class="form-control three-quarter no-animate" ng-model="address.longitude">
+                    </td>
+
+                    <td>
+                        <span class="no-animate">{{address.rate}}</span>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.rateOverride}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.rateCount}}</span>
+                    </td>
+                    <td>
+                        <span ng-hide="address.inEditMode" class="no-animate">{{address.rateOverrideCount}}</span>
+                        <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">
+                    </td>
+
+                    <td class="text-center">
+                        <span ng-hide="address.inEditMode" class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                        <span ng-show="address.inEditMode" class="check-box no-animate">
+                            <input ng-disabled="address.saving" type="checkbox" value="None" id="addressFbFans-{{address.id}}" name="addressFbFans-{{address.id}}" ng-model="address.flgRecByFbFans" />
+                            <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span ng-hide="address.inEditMode" class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                        <span ng-show="address.inEditMode" class="check-box">
+                            <input ng-disabled="address.saving" type="checkbox" value="None" id="addressActive-{{address.id}}" name="addressActive-{{address.id}}" ng-model="address.active" />
+                            <label class="lbl-chkb" for="addressActive-{{address.id}}"></label>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="modal-container">
+
+    </div>
+
 </div>

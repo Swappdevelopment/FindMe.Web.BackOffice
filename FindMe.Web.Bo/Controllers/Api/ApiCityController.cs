@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace FindMe.Web.App
 
         private async Task<object> GetCityDetails(int limit, int offset, string name, long regionId, long districtId, long cityGroupId, bool getTotal)
         {
-            Task[] tArr;
+            List<Func<Task>> lstFuncs = null;
 
             object[] collection = null;
 
@@ -36,25 +37,31 @@ namespace FindMe.Web.App
 
             try
             {
-                tArr = new Task[]
+                lstFuncs = new List<Func<Task>>()
                 {
-                    Task.Run( async () =>
+                    async () =>
                     {
                         collection = (await _repo.Execute<CityDetail[]>("GetCityDetails", 0, "", name, regionId, districtId, cityGroupId, false, false, limit, offset))
                                         .Select(l => l.Simplify()).ToArray();
-                    })
+                    }
                 };
 
                 if (getTotal)
                 {
-                    tArr = tArr.ConcatSingle(
-                                    Task.Run(async () =>
-                                    {
-                                        count = await _repo.Execute<int>("GetCityDetailsCount", 0, "", name, regionId, districtId, cityGroupId, false);
-                                    })).ToArray();
+                    lstFuncs.Add(async () =>
+                                {
+                                    count = await _repo.Execute<int>("GetCityDetailsCount", 0, "", name, regionId, districtId, cityGroupId, false);
+                                });
                 }
 
-                await Task.WhenAll(tArr);
+
+
+                if (lstFuncs.Count > 1)
+                {
+                    await _repo.VerifyLoginToken();
+                }
+
+                await Task.WhenAll(lstFuncs.Select(l => l()).ToArray());
 
                 return new
                 {
@@ -68,14 +75,19 @@ namespace FindMe.Web.App
             }
             finally
             {
-                tArr = null;
+                if (lstFuncs != null)
+                {
+                    lstFuncs.Clear();
+                    lstFuncs = null;
+                }
+
                 collection = null;
             }
         }
 
         private async Task<object> GetRegions(int limit, int offset, string name, bool getTotal)
         {
-            Task[] tArr;
+            List<Func<Task>> lstFuncs = null;
 
             object[] collection = null;
 
@@ -83,24 +95,30 @@ namespace FindMe.Web.App
 
             try
             {
-                tArr = new Task[]
+                lstFuncs = new List<Func<Task>>()
                 {
-                    Task.Run(async () =>
+                    async () =>
                     {
                         collection =  await _repo.Execute<object[]>("GetPivotRegions", 0, "", name, false, true, limit, offset);
-                    })
+                    }
                 };
 
                 if (getTotal)
                 {
-                    tArr = tArr.ConcatSingle(
-                                    Task.Run(async () =>
-                                    {
-                                        count = await _repo.Execute<int>("GetRegionsCount", 0, "", name, false);
-                                    })).ToArray();
+                    lstFuncs.Add(async () =>
+                                {
+                                    count = await _repo.Execute<int>("GetRegionsCount", 0, "", name, false);
+                                });
                 }
 
-                await Task.WhenAll(tArr);
+
+
+                if (lstFuncs.Count > 1)
+                {
+                    await _repo.VerifyLoginToken();
+                }
+
+                await Task.WhenAll(lstFuncs.Select(l => l()).ToArray());
 
                 return new
                 {
@@ -114,14 +132,19 @@ namespace FindMe.Web.App
             }
             finally
             {
-                tArr = null;
+                if (lstFuncs != null)
+                {
+                    lstFuncs.Clear();
+                    lstFuncs = null;
+                }
+
                 collection = null;
             }
         }
 
         private async Task<object> GetDistricts(int limit, int offset, string name, bool getTotal)
         {
-            Task[] tArr;
+            List<Func<Task>> lstFuncs = null;
 
             object[] collection = null;
 
@@ -129,24 +152,30 @@ namespace FindMe.Web.App
 
             try
             {
-                tArr = new Task[]
+                lstFuncs = new List<Func<Task>>()
                 {
-                    Task.Run(async () =>
+                    async () =>
                     {
                         collection = (await _repo.Execute<CityDistrict[]>("GetCityDistricts", 0, "", name, false, limit, offset)).Select(l => l.Simplify()).ToArray();
-                    })
+                    }
                 };
 
                 if (getTotal)
                 {
-                    tArr = tArr.ConcatSingle(
-                                    Task.Run(async () =>
-                                    {
-                                        count = await _repo.Execute<int>("GetCityDistrictsCount", 0, "", name, false);
-                                    })).ToArray();
+                    lstFuncs.Add(async () =>
+                                {
+                                    count = await _repo.Execute<int>("GetCityDistrictsCount", 0, "", name, false);
+                                });
                 }
 
-                await Task.WhenAll(tArr);
+
+
+                if (lstFuncs.Count > 1)
+                {
+                    await _repo.VerifyLoginToken();
+                }
+
+                await Task.WhenAll(lstFuncs.Select(l => l()).ToArray());
 
                 return new
                 {
@@ -160,14 +189,19 @@ namespace FindMe.Web.App
             }
             finally
             {
-                tArr = null;
+                if (lstFuncs != null)
+                {
+                    lstFuncs.Clear();
+                    lstFuncs = null;
+                }
+
                 collection = null;
             }
         }
 
         private async Task<object> GetCityGroups(int limit, int offset, string name, bool getTotal)
         {
-            Task[] tArr;
+            List<Func<Task>> lstFuncs = null;
 
             object[] collection = null;
 
@@ -175,24 +209,28 @@ namespace FindMe.Web.App
 
             try
             {
-                tArr = new Task[]
+                lstFuncs = new List<Func<Task>>()
                 {
-                    Task.Run(async () =>
+                    async () =>
                     {
                         collection = (await _repo.Execute<CityGroup[]>("GetCityGroups", 0, "", name, false, limit, offset)).Select(l => l.Simplify()).ToArray();
-                    })
+                    }
                 };
 
                 if (getTotal)
                 {
-                    tArr = tArr.ConcatSingle(
-                                    Task.Run(async () =>
+                    lstFuncs.Add(async () =>
                                     {
                                         count = await _repo.Execute<int>("GetCityGroupsCount", 0, "", name, false);
-                                    })).ToArray();
+                                    });
                 }
 
-                await Task.WhenAll(tArr);
+                if (lstFuncs.Count > 1)
+                {
+                    await _repo.VerifyLoginToken();
+                }
+
+                await Task.WhenAll(lstFuncs.Select(l => l()).ToArray());
 
                 return new
                 {
@@ -206,7 +244,12 @@ namespace FindMe.Web.App
             }
             finally
             {
-                tArr = null;
+                if (lstFuncs != null)
+                {
+                    lstFuncs.Clear();
+                    lstFuncs = null;
+                }
+
                 collection = null;
             }
         }
@@ -217,6 +260,8 @@ namespace FindMe.Web.App
         [HttpPost]
         public async Task<IActionResult> GetAllCityStuff()
         {
+            List<Func<Task>> lstFuncs = null;
+
             object country = null;
 
             object cityDetailsData = null;
@@ -233,23 +278,28 @@ namespace FindMe.Web.App
 
                 bool getTotals = true;
 
-                await Task.WhenAll(
-                    Task.Run(async () =>
+                lstFuncs = new List<Func<Task>>()
+                {
+                    async () =>
                     {
                         cityDetailsData = await GetCityDetails(limit, offset, null, 0, 0, 0, getTotals);
-                    }),
-                    Task.Run(async () =>
+                    },
+                    async () =>
                     {
                         regionsData = await GetRegions(limit, offset, null, getTotals);
-                    }),
-                    Task.Run(async () =>
+                    },
+                    async () =>
                     {
                         districtsData = await GetDistricts(limit, offset, null, getTotals);
-                    }),
-                    Task.Run(async () =>
+                    },
+                    async () =>
                     {
                         cityGroupsData = await GetCityGroups(limit, offset, null, getTotals);
-                    }));
+                    }
+                };
+
+                await _repo.VerifyLoginToken();
+                await Task.WhenAll(lstFuncs.Select(l => l()).ToArray());
             }
             catch (ExceptionID ex)
             {
@@ -262,6 +312,14 @@ namespace FindMe.Web.App
             catch (Exception ex)
             {
                 return BadRequestEx(ex);
+            }
+            finally
+            {
+                if (lstFuncs != null)
+                {
+                    lstFuncs.Clear();
+                    lstFuncs = null;
+                }
             }
 
             return Ok(
