@@ -12,6 +12,7 @@
         <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/categories.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/addresses.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true" />
     </environment>
     <environment names="Staging,Production">
@@ -22,6 +23,7 @@
         <link rel="stylesheet" href="~/css/app/home.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/clients.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/admin/categories.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/admin/addresses.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.min.css" swp-cache-version="true" />
     </environment>
 }
@@ -72,6 +74,7 @@
                         urlGetAllCityStuff: '@Url.Action("GetAllCityStuff", "ApiCity")',
                         urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
                         urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
+                        urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
 
                         lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
                         lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
@@ -145,7 +148,24 @@
                         msg_SaveCatgs: ('@Html.GetMessage("msg_SaveCatgs")').encodeHtml(),
                         msg_SHwRgnsCtys: ('@Html.GetMessage("msg_SHwRgnsCtys")').encodeHtml(),
                         msg_SHwDstrctsCtys: ('@Html.GetMessage("msg_SHwDstrctsCtys")').encodeHtml(),
-                        msg_SHwGrpsCtys: ('@Html.GetMessage("msg_SHwGrpsCtys")').encodeHtml()
+                        msg_SHwGrpsCtys: ('@Html.GetMessage("msg_SHwGrpsCtys")').encodeHtml(),
+
+                        msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
+                        msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
+                        msg_SaveCtys: ('@Html.GetMessage("msg_SaveCtys")').encodeHtml(),
+                        msg_AddRgn: ('@Html.GetMessage("msg_AddRgn")').encodeHtml(),
+                        msg_RfrshRgns: ('@Html.GetMessage("msg_RfrshRgns")').encodeHtml(),
+                        msg_SaveRgns: ('@Html.GetMessage("msg_SaveRgns")').encodeHtml(),
+                        msg_AddDstrct: ('@Html.GetMessage("msg_AddDstrct")').encodeHtml(),
+                        msg_RfrshDstrcts: ('@Html.GetMessage("msg_RfrshDstrcts")').encodeHtml(),
+                        msg_SaveDstrcts: ('@Html.GetMessage("msg_SaveDstrcts")').encodeHtml(),
+                        msg_AddCtyGrp: ('@Html.GetMessage("msg_AddCtyGrp")').encodeHtml(),
+                        msg_RfrshCtyGrps: ('@Html.GetMessage("msg_RfrshCtyGrps")').encodeHtml(),
+                        msg_SaveCtyGrps: ('@Html.GetMessage("msg_SaveCtyGrps")').encodeHtml(),
+                        msg_AddAddr: ('@Html.GetMessage("msg_AddAddr")').encodeHtml(),
+                        msg_RfrshAddrs: ('@Html.GetMessage("msg_RfrshAddrs")').encodeHtml(),
+                        msg_SaveAddrs: ('@Html.GetMessage("msg_SaveAddrs")').encodeHtml()
+
         });
     </script>
 

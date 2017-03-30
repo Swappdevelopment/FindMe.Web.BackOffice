@@ -17,9 +17,9 @@
         headerConfigService.showToolBar = true;
         headerConfigService.showSearchCtrl = true;
         headerConfigService.showSaveBtn = false;
-        headerConfigService.addBtnTltp = appProps.msg_AddClnts;
-        headerConfigService.refreshBtnTltp = appProps.msg_RfrshClnts;
-        headerConfigService.saveBtnTltp = appProps.msg_SaveClnts;
+        headerConfigService.addBtnTltp = appProps.msg_AddCty;
+        headerConfigService.refreshBtnTltp = appProps.msg_RfrshCtys;
+        headerConfigService.saveBtnTltp = appProps.msg_SaveCtys;
 
 
         var vm = this;
@@ -50,7 +50,13 @@
 
                     case 0:
 
+                        headerConfigService.addBtnTltp = appProps.msg_AddCty;
+                        headerConfigService.refreshBtnTltp = appProps.msg_RfrshCtys;
+                        headerConfigService.saveBtnTltp = appProps.msg_SaveCtys;
+
                         if (vm.cVm) {
+
+                            setSearchBarValue(vm.cVm.searchValue);
 
                             if (!vm.cVm.cityDetails || vm.cVm.cityDetails.length === 0) {
 
@@ -64,7 +70,13 @@
 
                     case 1:
 
+                        headerConfigService.addBtnTltp = appProps.msg_AddRgn;
+                        headerConfigService.refreshBtnTltp = appProps.msg_RfrshRgns;
+                        headerConfigService.saveBtnTltp = appProps.msg_SaveRgns;
+
                         if (vm.rVm) {
+
+                            setSearchBarValue(vm.rVm.searchValue);
 
                             if (!vm.rVm.regions || vm.rVm.regions.length === 0) {
 
@@ -78,7 +90,13 @@
 
                     case 2:
 
+                        headerConfigService.addBtnTltp = appProps.msg_AddDstrct;
+                        headerConfigService.refreshBtnTltp = appProps.msg_RfrshDstrcts;
+                        headerConfigService.saveBtnTltp = appProps.msg_SaveDstrcts;
+
                         if (vm.dVm) {
+
+                            setSearchBarValue(vm.dVm.searchValue);
 
                             if (!vm.dVm.districts || vm.dVm.districts.length === 0) {
 
@@ -92,7 +110,13 @@
 
                     case 3:
 
+                        headerConfigService.addBtnTltp = appProps.msg_AddCtyGrp;
+                        headerConfigService.refreshBtnTltp = appProps.msg_RfrshCtyGrps;
+                        headerConfigService.saveBtnTltp = appProps.msg_SaveCtyGrps;
+
                         if (vm.gVm) {
+
+                            setSearchBarValue(vm.gVm.searchValue);
 
                             if (!vm.gVm.cityGroups || vm.gVm.cityGroups.length === 0) {
 
@@ -248,28 +272,72 @@
 
         $('#searchBar .btn.btn-tb').on('click', buttonClick);
 
-        $('#searchBar').on('searchGo', function (e, arg) {
 
-            if (arg && arg.searchValue) {
+        var searchFunc = function (e, arg) {
 
-                $scope.$apply(function () {
+            if (arg) {
 
-                    vm.searchValue = arg.searchValue;
-                    vm.populateCitys(appProps.resultItemsPerPg, 0, arg.searchValue);
-                });
+                arg.searchValue = arg.searchValue ? arg.searchValue : null;
+
+                switch (vm.tabIndex) {
+
+                    case 0:
+
+                        if (vm.cVm && vm.cVm.populateCityDetails
+                            && (vm.cVm.searchValue || arg.searchValue)
+                            && vm.cVm.searchValue != arg.searchValue) {
+
+                            vm.cVm.searchValue = arg.searchValue;
+                            vm.cVm.populateCityDetails(appProps.resultItemsPerPg, 0, arg.searchValue);
+                        }
+                        break;
+
+                    case 1:
+
+                        if (vm.rVm && vm.rVm.populateRegions
+                            && (vm.rVm.searchValue || arg.searchValue)
+                            && vm.rVm.searchValue != arg.searchValue) {
+
+                            vm.rVm.searchValue = arg.searchValue;
+                            vm.rVm.populateRegions(appProps.resultItemsPerPg, 0, arg.searchValue);
+                        }
+                        break;
+
+                    case 2:
+
+                        if (vm.dVm && vm.dVm.populateDistricts
+                            && (vm.dVm.searchValue || arg.searchValue)
+                            && vm.dVm.searchValue != arg.searchValue) {
+
+                            vm.dVm.searchValue = arg.searchValue;
+                            vm.dVm.populateDistricts(appProps.resultItemsPerPg, 0, arg.searchValue);
+                        }
+                        break;
+
+                    case 3:
+
+                        if (vm.gVm && vm.gVm.populateCityGroups
+                            && (vm.gVm.searchValue || arg.searchValue)
+                            && vm.gVm.searchValue != arg.searchValue) {
+
+                            vm.gVm.searchValue = arg.searchValue;
+                            vm.gVm.populateCityGroups(appProps.resultItemsPerPg, 0, arg.searchValue);
+                        }
+                        break;
+                }
             }
-        });
+        };
+
+        $('#searchBar').on('searchGo', searchFunc);
         $('#searchBar').on('searchClear', function (e, arg) {
 
-            $scope.$apply(function () {
-
-                vm.searchValue = '';
-                vm.populateCitys(appProps.resultItemsPerPg, 0);
-            });
+            searchFunc(e, {});
         });
 
 
-        populateAll();
+        //populateAll();
+
+        vm.cVm.populateCityDetails();
     }
 
 
@@ -293,6 +361,11 @@
         vm.cityDetailsCountMod = 0;
 
         vm.cityDetails = [];
+
+        vm.refRegions = [];
+        vm.refDistricts = [];
+        vm.refCityGroups = [];
+
         vm.defCountry = null;
 
         vm.gotoPage = function (pg, scrollToTop) {
@@ -453,6 +526,33 @@
 
                 setupPages();
 
+                if (resp.data.regions) {
+
+                    for (var i = 0; i < resp.data.regions.length; i++) {
+
+                        var refRgn = resp.data.regions[i];
+                        refRgn.name = appProps.currentLang.startsWith('en') ? refRgn.name_en : refRgn.name_fr;
+
+                        vm.refRegions.push(refRgn);
+                    }
+                }
+
+                if (resp.data.districts) {
+
+                    for (var i = 0; i < resp.data.districts.length; i++) {
+
+                        vm.refDistricts.push(resp.data.districts[i]);
+                    }
+                }
+
+                if (resp.data.cityGroups) {
+
+                    for (var i = 0; i < resp.data.cityGroups.length; i++) {
+
+                        vm.refCityGroups.push(resp.data.cityGroups[i]);
+                    }
+                }
+
                 if (resp.data.result) {
 
                     for (var i = 0; i < resp.data.result.length; i++) {
@@ -466,9 +566,9 @@
 
                         var tempName;
 
-                        if (viewModel.rVm && viewModel.rVm.regions && viewModel.rVm.regions.length > 0) {
+                        if (vm.refRegions.length > 0) {
 
-                            tempName = $.grep(viewModel.rVm.regions, function (v) {
+                            tempName = $.grep(vm.refRegions, function (v) {
                                 return v.id === cityDetail.region_Id;
                             });
 
@@ -478,9 +578,9 @@
                             }
                         }
 
-                        if (viewModel.dVm && viewModel.dVm.districts && viewModel.dVm.districts.length > 0) {
+                        if (vm.refDistricts.length > 0) {
 
-                            tempName = $.grep(viewModel.dVm.districts, function (v) {
+                            tempName = $.grep(vm.refDistricts, function (v) {
 
                                 return v.id === cityDetail.district_Id;
                             });
@@ -491,9 +591,9 @@
                             }
                         }
 
-                        if (viewModel.gVm && viewModel.gVm.cityGroups && viewModel.gVm.cityGroups.length > 0) {
+                        if (vm.refCityGroups.length > 0) {
 
-                            tempName = $.grep(viewModel.gVm.cityGroups, function (v) {
+                            tempName = $.grep(vm.refCityGroups, function (v) {
 
                                 return v.id === cityDetail.group_Id;
                             });
@@ -514,18 +614,18 @@
             }
         };
 
-        var prevAllNames = '';
+        var prevName = '';
         var prevParentFilter = '';
         vm.populateCityDetails = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
-            if (name || prevAllNames) {
+            if (name || prevName) {
 
-                forceGetCount = (name !== prevAllNames);
+                forceGetCount = (name !== prevName);
             }
 
-            prevAllNames = name;
+            prevName = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -610,6 +710,9 @@
                         regionId: regionId,
                         districtId: districtId,
                         cityGroupId: cityGroupId,
+                        getRefRegions: (vm.refRegions && vm.refRegions.length == 0),
+                        getRefDistricts: (vm.refDistricts && vm.refDistricts.length == 0),
+                        getRefCityGroups: (vm.refCityGroups && vm.refCityGroups.length == 0),
                         getTotalCityDetails: (vm.cityDetailsCount <= 0 || forceGetCount),
                         name: (name ? name : null)
                     })
@@ -1007,17 +1110,17 @@
             }
         };
 
-        var prevAllNames = '';
+        var prevName = '';
         vm.populateRegions = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
-            if (name || prevAllNames) {
+            if (name || prevName) {
 
-                forceGetCount = (name !== prevAllNames);
+                forceGetCount = (name !== prevName);
             }
 
-            prevAllNames = name;
+            prevName = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -1059,7 +1162,7 @@
 
             forceGetCount = (vm.regionsCountMod !== 0);
 
-            $http.post(appProps.urlGetRegions, { limit: limit, offset: offset, getTotalRegions: (vm.regionsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
+            $http.post(appProps.urlGetRegions, { limit: limit, offset: offset, getTotalRegions: (vm.regionsCount <= 0 || forceGetCount), name: (name ? name : null) })
                  .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
@@ -1453,17 +1556,17 @@
             }
         };
 
-        var prevAllNames = '';
+        var prevName = '';
         vm.populateDistricts = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
-            if (name || prevAllNames) {
+            if (name || prevName) {
 
-                forceGetCount = (name !== prevAllNames);
+                forceGetCount = (name !== prevName);
             }
 
-            prevAllNames = name;
+            prevName = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -1506,7 +1609,7 @@
 
             forceGetCount = (vm.districtsCountMod !== 0);
 
-            $http.post(appProps.urlGetDistricts, { limit: limit, offset: offset, getTotalDistricts: (vm.districtsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
+            $http.post(appProps.urlGetDistricts, { limit: limit, offset: offset, getTotalDistricts: (vm.districtsCount <= 0 || forceGetCount), name: (name ? name : null) })
                  .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };
@@ -1900,17 +2003,17 @@
             }
         };
 
-        var prevAllNames = '';
+        var prevName = '';
         vm.populateCityGroups = function (limit, offset, name, callback) {
 
             var forceGetCount = false;
 
-            if (name || prevAllNames) {
+            if (name || prevName) {
 
-                forceGetCount = (name !== prevAllNames);
+                forceGetCount = (name !== prevName);
             }
 
-            prevAllNames = name;
+            prevName = name;
 
             viewModel.showError = false;
             viewModel.errorstatus = '';
@@ -1953,7 +2056,7 @@
 
             forceGetCount = (vm.cityGroupsCountMod !== 0);
 
-            $http.post(appProps.urlGetCityGroups, { limit: limit, offset: offset, getTotalCityGroups: (vm.cityGroupsCount <= 0 || forceGetCount), allNames: (name ? name : null) })
+            $http.post(appProps.urlGetCityGroups, { limit: limit, offset: offset, getTotalCityGroups: (vm.cityGroupsCount <= 0 || forceGetCount), name: (name ? name : null) })
                  .then(vm.populateSuccessFunc, errorFunc)
                  .finally(finallyFunc);
         };

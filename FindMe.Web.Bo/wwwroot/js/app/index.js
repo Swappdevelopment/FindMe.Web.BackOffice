@@ -154,6 +154,8 @@
 
         var $sBar = $('#searchBar');
 
+        $sBar.data('searchvalue', value);
+
         var prevValue = $sBar.data('prev-search');
 
         if (!value && prevValue) {
@@ -179,4 +181,13 @@
     //$('#profile').on('click', btnProfileClick);
 
 })();
+
+
+
+
+function setSearchBarValue(value) {
+
+    $('#searchBar input.input-search').val(value);
+    $('#searchBar input.input-search').trigger('input');
+}
 

@@ -27,11 +27,24 @@ namespace FindMe.Web.App
 
 
 
-        private async Task<object> GetCityDetails(int limit, int offset, string name, long regionId, long districtId, long cityGroupId, bool getTotal)
+        private async Task<object> GetCityDetails(
+            int limit,
+            int offset,
+            string name,
+            long regionId,
+            long districtId,
+            long cityGroupId,
+            bool getRefRegions,
+            bool getRefDistricts,
+            bool getRefCityGroups,
+            bool getTotal)
         {
             List<Func<Task>> lstFuncs = null;
 
             object[] collection = null;
+            object[] regions = null;
+            object[] districts = null;
+            object[] cityGroups = null;
 
             int count = 0;
 
@@ -54,6 +67,29 @@ namespace FindMe.Web.App
                                 });
                 }
 
+                if (getRefRegions)
+                {
+                    lstFuncs.Add(async () =>
+                    {
+                        regions = await _repo.Execute<object[]>("GetRefRegions");
+                    });
+                }
+
+                if (getRefDistricts)
+                {
+                    lstFuncs.Add(async () =>
+                    {
+                        districts = await _repo.Execute<object[]>("GetRefDistricts");
+                    });
+                }
+
+                if (getRefCityGroups)
+                {
+                    lstFuncs.Add(async () =>
+                    {
+                        cityGroups = await _repo.Execute<object[]>("GetRefCityGroups");
+                    });
+                }
 
 
                 if (lstFuncs.Count > 1)
@@ -66,6 +102,9 @@ namespace FindMe.Web.App
                 return new
                 {
                     result = collection,
+                    regions = regions,
+                    districts = districts,
+                    cityGroups = cityGroups,
                     count = count
                 };
             }
@@ -282,7 +321,7 @@ namespace FindMe.Web.App
                 {
                     async () =>
                     {
-                        cityDetailsData = await GetCityDetails(limit, offset, null, 0, 0, 0, getTotals);
+                        cityDetailsData = await GetCityDetails(limit, offset, null, 0, 0, 0, false, false, false, getTotals);
                     },
                     async () =>
                     {
@@ -337,6 +376,9 @@ namespace FindMe.Web.App
         public async Task<IActionResult> GetCityDetails([FromBody]JObject param)
         {
             object result = null;
+            object regions = null;
+            object districts = null;
+            object cityGroups = null;
             object error = null;
 
             int count = 0;
@@ -352,6 +394,10 @@ namespace FindMe.Web.App
                 long districtId = 0;
                 long cityGroupId = 0;
 
+                bool getRefRegions = false;
+                bool getRefDistricts = false;
+                bool getRefCityGroups = false;
+
                 bool getTotalCityDetails = false;
 
                 if (param != null)
@@ -365,15 +411,23 @@ namespace FindMe.Web.App
 
                     name = param.GetPropVal<string>("name");
 
+                    getRefRegions = param.GetPropVal<bool>("getRefRegions");
+                    getRefDistricts = param.GetPropVal<bool>("getRefDistricts");
+                    getRefCityGroups = param.GetPropVal<bool>("getRefCityGroups");
+
                     getTotalCityDetails = param.GetPropVal<bool>("getTotalCityDetails");
                 }
 
 
-                result = await GetCityDetails(limit, offset, name, regionId, districtId, cityGroupId, getTotalCityDetails);
+                result = await GetCityDetails(limit, offset, name, regionId, districtId, cityGroupId, getRefRegions, getRefDistricts, getRefCityGroups, getTotalCityDetails);
+
 
                 if (result != null)
                 {
                     count = result.GetPropVal<int>("count");
+                    regions = result.GetPropVal("regions");
+                    districts = result.GetPropVal("districts");
+                    cityGroups = result.GetPropVal("cityGroups");
                     result = result.GetPropVal("result");
                 }
             }
@@ -394,6 +448,9 @@ namespace FindMe.Web.App
                     new
                     {
                         result = result,
+                        regions = regions,
+                        districts = districts,
+                        cityGroups = cityGroups,
                         count = count,
                         error = error
                     });

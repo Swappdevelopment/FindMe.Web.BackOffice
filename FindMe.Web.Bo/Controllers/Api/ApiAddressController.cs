@@ -270,6 +270,39 @@ namespace FindMe.Web.App
             return Ok(new { result = result, count = count, clients = clients, categorys = categorys, cityDetails = cityDetails, error = error });
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> GetAddressContent([FromBody]JObject param)
+        {
+            object result = null;
+
+            try
+            {
+                long addrID = 0;
+
+                if (param != null)
+                {
+                    addrID = param.GetPropVal<long>("addrID");
+
+                    result = await _repo.Execute<object>("GetAddressContent", addrID);
+                }
+            }
+            catch (ExceptionID ex)
+            {
+                switch (ex.ErrorID)
+                {
+                    default:
+                        return BadRequestEx(ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+
+            return Ok(new { result = result });
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveAddresses([FromBody]JObject param)
         {

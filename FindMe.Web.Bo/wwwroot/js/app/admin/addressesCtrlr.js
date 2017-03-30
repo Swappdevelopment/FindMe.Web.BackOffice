@@ -17,9 +17,9 @@
         headerConfigService.showToolBar = true;
         headerConfigService.showSearchCtrl = true;
         headerConfigService.showSaveBtn = false;
-        headerConfigService.addBtnTltp = appProps.msg_AddClnts;
-        headerConfigService.refreshBtnTltp = appProps.msg_RfrshClnts;
-        headerConfigService.saveBtnTltp = appProps.msg_SaveClnts;
+        headerConfigService.addBtnTltp = appProps.msg_AddAddr;
+        headerConfigService.refreshBtnTltp = appProps.msg_RfrshAddrs;
+        headerConfigService.saveBtnTltp = appProps.msg_SaveAddrs;
 
         var vm = this;
 
@@ -181,6 +181,43 @@
         };
 
 
+        vm.goInEditMode = function (addr) {
+
+            if (addr) {
+
+                addr.inEditMode = true;
+
+                if (!addr.contentLoaded) {
+
+                    var successFunc = function (resp) {
+
+                        if (resp && resp.data && resp.data.result) {
+
+                            jQuery.extend(addr, resp.data.result);
+
+                            addr.contentLoaded = true;
+                        }
+                    };
+
+                    var errorFunc = function (error) {
+
+                    };
+
+                    var finallyFunc = function () {
+
+                    };
+
+                    $http.post(appProps.urlGetAddressContent, { addrID: addr.id })
+                            //{
+                            //    addrID: addr.id
+                            //})
+                         .then(successFunc, errorFunc)
+                         .finally(finallyFunc);
+                }
+            }
+        };
+
+
         var prevAllNames = '';
         vm.populateAddresses = function (limit, offset, allNames) {
 
@@ -328,6 +365,7 @@
                             address.__comp = jQuery.extend(false, {}, address);
 
                             vm.addresses.push(address);
+                            vm.addresses.push({ link: address });
 
                             address.inEditMode = false;
                             address.saving = false;

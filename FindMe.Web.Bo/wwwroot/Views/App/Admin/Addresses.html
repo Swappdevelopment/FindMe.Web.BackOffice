@@ -112,9 +112,9 @@
             </thead>
             <tbody>
                 <tr ng-repeat="address in vm.addresses" ng-class="address.inEditMode ? 'inEditMode' : ''">
-                    <td>
+                    <td ng-if="!address.link">
                         <div ng-hide="address.inEditMode" class="btn-toolbar no-animate">
-                            <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="address.inEditMode = true;"><span class="fa fa-edit"></span></button>
+                            <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="vm.goInEditMode(address)"><span class="fa fa-edit"></span></button>
                             <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(address)"><span class="fa fa-trash"></span></button>
                         </div>
                         <div ng-show="address.inEditMode && !address.saving" class="btn-toolbar no-animate">
@@ -125,18 +125,18 @@
                         <div ng-show="address.inEditMode && address.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
 
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <b ng-show="address.id > 0" class="no-animate">{{address.id}}</b>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.name}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="address.name">
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.slug}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="address.slug">
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.client.name}}</span>
 
                         <select class="form-control"
@@ -144,7 +144,7 @@
                                 ng-model="address.client"
                                 ng-options="client.name for client in vm.clients | orderBy:'name'"></select>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.category.name}}</span>
 
                         <select class="form-control"
@@ -152,7 +152,7 @@
                                 ng-model="address.category"
                                 ng-options="category.name for category in vm.categorys"></select>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.cityDetail.name}}</span>
 
                         <select class="form-control"
@@ -160,31 +160,31 @@
                                 ng-model="address.cityDetail"
                                 ng-options="cityDetail.name for cityDetail in vm.cityDetails | orderBy:'name'"></select>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.latitude}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Lat}}" type="number" class="form-control three-quarter no-animate" ng-model="address.latitude">
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.longitude}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Lon}}" type="number" class="form-control three-quarter no-animate" ng-model="address.longitude">
                     </td>
 
-                    <td>
+                    <td ng-if="!address.link">
                         <span class="no-animate">{{address.rate}}</span>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.rateOverride}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span class="no-animate">{{address.rateCount}}</span>
                     </td>
-                    <td>
+                    <td ng-if="!address.link">
                         <span ng-hide="address.inEditMode" class="no-animate">{{address.rateOverrideCount}}</span>
                         <input ng-disabled="address.saving" ng-show="address.inEditMode" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">
                     </td>
 
-                    <td class="text-center">
+                    <td ng-if="!address.link" class="text-center">
                         <span ng-hide="address.inEditMode" class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
                         <span ng-show="address.inEditMode" class="check-box no-animate">
@@ -192,13 +192,27 @@
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
                         </span>
                     </td>
-                    <td class="text-center">
+                    <td ng-if="!address.link" class="text-center">
                         <span ng-hide="address.inEditMode" class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
                         <span ng-show="address.inEditMode" class="check-box">
                             <input ng-disabled="address.saving" type="checkbox" value="None" id="addressActive-{{address.id}}" name="addressActive-{{address.id}}" ng-model="address.active" />
                             <label class="lbl-chkb" for="addressActive-{{address.id}}"></label>
                         </span>
+                    </td>
+
+                    <td colspan="15" ng-if="address.link" ng-show="address.link.inEditMode">
+
+                        <div ng-hide="address.link.contentLoaded" class="wait-ctrl-container">
+                            <div class="wait-ctrl">
+                                <span class="fa fa-spinner fa-spin fa-3x findme-color-fc-pink no-animate"></span>
+                            </div>
+                        </div>
+
+                        <div ng-show="address.link.contentLoaded">
+
+                        </div>
+
                     </td>
                 </tr>
             </tbody>

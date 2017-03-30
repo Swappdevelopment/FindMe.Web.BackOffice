@@ -144,7 +144,7 @@
                                     <select class="form-control"
                                             ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
                                             ng-model="cityDetail.region"
-                                            ng-options="region.name for region in vm.rVm.regions">
+                                            ng-options="region.name for region in vm.cVm.refRegions">
                                     </select>
                                 </td>
                                 <td>
@@ -152,7 +152,7 @@
                                     <select class="form-control"
                                             ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
                                             ng-model="cityDetail.district"
-                                            ng-options="district.name for district in vm.dVm.districts">
+                                            ng-options="district.name for district in vm.cVm.refDistricts">
                                     </select>
                                 </td>
                                 <td>
@@ -160,7 +160,7 @@
                                     <select class="form-control"
                                             ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
                                             ng-model="cityDetail.group"
-                                            ng-options="cityGroup.name for cityGroup in vm.gVm.cityGroups">
+                                            ng-options="cityGroup.name for cityGroup in vm.cVm.refCityGroups">
                                     </select>
                                 </td>
                                 <td>
