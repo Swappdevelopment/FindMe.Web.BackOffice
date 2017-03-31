@@ -77,7 +77,7 @@
             transition: border background-color color ease-in 200ms;
         }
 
-.modal .btn.btn-findme {
+.modal .modal-footer .btn.btn-findme {
     min-width: 150px;
 }
 

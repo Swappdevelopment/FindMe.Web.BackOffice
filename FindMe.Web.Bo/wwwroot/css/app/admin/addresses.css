@@ -8,8 +8,22 @@
         width: 60px;
         height: 60px;
         margin: 30px auto 0 auto;
-        /*position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);*/
     }
+
+#addressesVw .modal-editor .modal-dialog {
+    width: 70%;
+}
+
+    #addressesVw .modal-editor .modal-dialog .modal-content {
+        overflow: hidden;
+    }
+
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body {
+            height: auto !important;
+            max-height: calc(100vh - 340px) !important;
+            overflow-y: auto;
+        }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .form-control {
+                margin-left: 5px;
+            }

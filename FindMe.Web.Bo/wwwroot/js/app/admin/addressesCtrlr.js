@@ -58,30 +58,6 @@
         };
 
 
-        vm.deleteModal = function (address) {
-
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteAddressModal.html',
-                controller: 'deleteAddressInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#addressesVw .modal-container'),
-                resolve: {
-                    param: function () {
-
-                        return {
-                            address: address,
-                            save: vm.save
-                        };
-                    }
-                }
-            });
-        };
-
-
         var setupPages = function () {
 
             vm.pgsCollection.length = 0;
@@ -181,40 +157,119 @@
         };
 
 
-        vm.goInEditMode = function (addr) {
 
-            if (addr) {
 
-                addr.inEditMode = true;
+        var editModal = function (address) {
 
-                if (!addr.contentLoaded) {
+            $('body').attr('style', 'overflow: hidden; position: fixed;');
+
+            $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'addressEditorModal.html',
+                controller: 'addressEditorInstanceCtrlr',
+                controllerAs: 'vm',
+                size: 'lg',
+                appendTo: $('#addressesVw .modal-editor'),
+                resolve: {
+                    param: function () {
+
+                        return {
+                            address: address,
+                            save: vm.save,
+                            checkRecordState: checkRecordState,
+                            clients: vm.clients,
+                            categorys: vm.categorys,
+                            cityDetails: vm.cityDetails
+                        };
+                    }
+                }
+            });
+        };
+
+        vm.goInEditMode = function (address) {
+
+            if (address) {
+
+                if (address.hasContent) {
+
+                    editModal(address);
+                }
+                else {
 
                     var successFunc = function (resp) {
 
-                        if (resp && resp.data && resp.data.result) {
+                        if (resp.data && resp.data.result) {
 
-                            jQuery.extend(addr, resp.data.result);
+                            jQuery.extend(address, resp.data.result);
 
-                            addr.contentLoaded = true;
+                            address.hasContent = true;
+
+
+                            if (address.ratingOverrides) {
+
+                                $.each(address.ratingOverrides, function (i, v) {
+
+                                    v.fromDate = new Date(v.fromUtc);
+                                });
+                            }
+
+
+                            editModal(address);
                         }
                     };
 
                     var errorFunc = function (error) {
 
+                        if (error.data
+                            && checkRedirectForSignIn(error.data)) {
+
+                            vm.errorstatus = error.status + ' - ' + error.statusText;
+                            vm.errormsg = error.data.msg;
+                            vm.errorid = error.data.id;
+                            vm.showError = true;
+                        }
                     };
 
                     var finallyFunc = function () {
 
+                        address.gettingContent = false;
                     };
 
-                    $http.post(appProps.urlGetAddressContent, { addrID: addr.id })
-                            //{
-                            //    addrID: addr.id
-                            //})
+
+                    address.gettingContent = true;
+
+
+                    $http.post(appProps.urlGetAddressContent, { addrID: address.id })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
             }
+        };
+
+
+        vm.deleteModal = function (address) {
+
+            $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'deleteAddressModal.html',
+                controller: 'deleteAddressInstanceCtrlr',
+                controllerAs: 'vm',
+                size: 'lg',
+                appendTo: $('#addressesVw .modal-container'),
+                resolve: {
+                    param: function () {
+
+                        return {
+                            address: address,
+                            save: vm.save
+                        };
+                    }
+                }
+            });
         };
 
 
@@ -365,7 +420,6 @@
                             address.__comp = jQuery.extend(false, {}, address);
 
                             vm.addresses.push(address);
-                            vm.addresses.push({ link: address });
 
                             address.inEditMode = false;
                             address.saving = false;
@@ -494,6 +548,8 @@
 
                 if (validAddresses.length > 0) {
 
+                    var saveSuccess = false;
+
                     var successFunc = function (resp) {
 
                         if (resp.data
@@ -554,6 +610,8 @@
                                     $scope.$apply();
                                 });
                             }
+
+                            saveSuccess = true;
                         }
                     };
 
@@ -579,7 +637,7 @@
 
                         if (finallyCallback) {
 
-                            finallyCallback();
+                            finallyCallback(saveSuccess);
                         }
                     };
 
@@ -660,6 +718,52 @@
                 vm.populateAddresses(appProps.resultItemsPerPg, 0);
             });
         });
+    }
+
+
+    angular.module('app-mainmenu')
+        .controller('addressEditorInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
+
+    function addressEditorInstanceCtrlrFunc($uibModalInstance, appProps, param) {
+
+        var vm = this;
+        vm.appProps = appProps;
+
+        vm.address = param.address;
+
+        vm.clients = param.clients;
+        vm.categorys = param.categorys;
+        vm.cityDetails = param.cityDetails;
+
+        vm.save = function () {
+
+            //$uibModalInstance.close(vm.address);
+
+            param.checkRecordState(vm.address);
+
+            toggleGlblWaitVisibility(true);
+
+            param.save(vm.address, function (success) {
+
+                toggleGlblWaitVisibility(false);
+
+                if (success) {
+
+                    vm.cancel();
+                }
+            });
+        };
+
+        vm.cancel = function () {
+
+            $uibModalInstance.close();
+        };
+
+        $uibModalInstance.closed.then(function () {
+
+            $('body').attr('style', '');
+        })
+
     }
 
 

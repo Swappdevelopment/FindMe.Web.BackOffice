@@ -75,6 +75,8 @@
                         urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
                         urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
                         urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
+                        urlGetTags: '@Url.Action("GetTags", "ApiTag")',
+                        urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
 
                         lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
                         lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
@@ -131,9 +133,16 @@
                         lbl_Rating: ('@Html.GetLabel("lbl_Rating")').encodeHtml(),
                         lbl_RatingCount: ('@Html.GetLabel("lbl_RatingCount")').encodeHtml(),
                         lbl_Ovrd: ('@Html.GetLabel("lbl_Ovrd")').encodeHtml(),
+                        lbl_Ovrds: ('@Html.GetLabel("lbl_Ovrds")').encodeHtml(),
                         lbl_CvltMr: ('@Html.GetLabel("lbl_CvltMr")').encodeHtml(),
                         lbl_CvltMiss: ('@Html.GetLabel("lbl_CvltMiss")').encodeHtml(),
                         lbl_CvltMme: ('@Html.GetLabel("lbl_CvltMme")').encodeHtml(),
+                        lbl_Tags: ('@Html.GetLabel("lbl_Tags")').encodeHtml(),
+                        lbl_NwAddr: ('@Html.GetLabel("lbl_NwAddr")').encodeHtml(),
+                        lbl_Rate: ('@Html.GetLabel("lbl_Rate")').encodeHtml(),
+                        lbl_ClickCount: ('@Html.GetLabel("lbl_ClickCount")').encodeHtml(),
+                        lbl_From: ('@Html.GetLabel("lbl_From")').encodeHtml(),
+                        lbl_To: ('@Html.GetLabel("lbl_To")').encodeHtml(),
 
                         erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
 
@@ -164,7 +173,10 @@
                         msg_SaveCtyGrps: ('@Html.GetMessage("msg_SaveCtyGrps")').encodeHtml(),
                         msg_AddAddr: ('@Html.GetMessage("msg_AddAddr")').encodeHtml(),
                         msg_RfrshAddrs: ('@Html.GetMessage("msg_RfrshAddrs")').encodeHtml(),
-                        msg_SaveAddrs: ('@Html.GetMessage("msg_SaveAddrs")').encodeHtml()
+                        msg_SaveAddrs: ('@Html.GetMessage("msg_SaveAddrs")').encodeHtml(),
+                        msg_AddTag: ('@Html.GetMessage("msg_AddTag")').encodeHtml(),
+                        msg_RfrshTags: ('@Html.GetMessage("msg_RfrshTags")').encodeHtml(),
+                        msg_SaveTags: ('@Html.GetMessage("msg_SaveTags")').encodeHtml()
 
         });
     </script>
@@ -177,6 +189,7 @@
         <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/categoriesCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/citiesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/tagsCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -187,6 +200,7 @@
         <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/categoriesCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/citiesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/tagsCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 
@@ -203,6 +217,7 @@
                     <li><a href="#!/users"><span>@Html.GetLabel("lbl_Usrs")</span></a></li>
                     <li><a href="#!/clients"><span>@Html.GetLabel("lbl_Clnts")</span></a></li>
                     <li><a href="#!/categories"><span>@Html.GetLabel("lbl_Categories")</span></a></li>
+                    <li><a href="#!/tags"><span>@Html.GetLabel("lbl_Tags")</span></a></li>
                     <li><a href="#!/cities"><span>@Html.GetLabel("lbl_Cities")</span></a></li>
                     <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
                 </ul>
@@ -213,6 +228,7 @@
                     <li><a href="#!/users"><div><span class="fa fa-users fa-2x"></span></div></a></li>
                     <li><a href="#!/clients"><div><span class="fa fa-vcard-o fa-2x"></span></div></a></li>
                     <li><a href="#!/categories"><div><span class="fa fa-folder fa-2x"></span></div></a></li>
+                    <li><a href="#!/tags"><div><span class="fa fa-hashtag fa-2x"></span></div></a></li>
                     <li><a href="#!/cities"><div><span class="fa fa-building-o fa-2x"></span></div></a></li>
                     <li><a href="#!/addresses"><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
                 </ul>

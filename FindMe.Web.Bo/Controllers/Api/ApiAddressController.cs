@@ -202,7 +202,7 @@ namespace FindMe.Web.App
                 {
                     async () =>
                     {
-                        result = (await _repo.Execute<Address[]>("GetAddresses", 0, "", name, addressId, categoryId, cityId, false, false, false, limit, offset))
+                        result = (await _repo.Execute<Address[]>("GetAddresses", 0, "", name, addressId, categoryId, cityId, false, false, false, false, limit, offset))
                                                 .Select(l => l.Simplify(withCollections: false)).ToArray();
                     }
                 };

@@ -49,6 +49,12 @@
                 templateUrl: '/Views/App/Admin/cities.html',
             });
 
+            $routeProvider.when('/tags', {
+                controller: 'tagsCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/tags.html',
+            });
+
             $routeProvider.when('/addresses', {
                 controller: 'addressesCtrlr',
                 controllerAs: 'vm',

@@ -5,21 +5,21 @@
 
 
     angular.module('app-mainmenu')
-           .controller('categoriesCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', categoriesCtrlrFunc]);
+           .controller('tagsCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', tagsCtrlrFunc]);
 
-    function categoriesCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function tagsCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
 
         headerConfigService.reset();
-        headerConfigService.title = appProps.lbl_Categories;
+        headerConfigService.title = appProps.lbl_Tags;
         headerConfigService.showToolBar = true;
         headerConfigService.showSearchCtrl = true;
         headerConfigService.showSaveBtn = false;
-        headerConfigService.addBtnTltp = appProps.msg_AddCatgs;
-        headerConfigService.refreshBtnTltp = appProps.msg_RfrshCatgs;
-        headerConfigService.saveBtnTltp = appProps.msg_SaveCatgs;
+        headerConfigService.addBtnTltp = appProps.msg_AddTag;
+        headerConfigService.refreshBtnTltp = appProps.msg_RfrshTags;
+        headerConfigService.saveBtnTltp = appProps.msg_SaveTags;
 
 
         var vm = this;
@@ -30,10 +30,10 @@
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
-        vm.categorysCount = 0;
-        vm.categorysCountMod = 0;
+        vm.tagsCount = 0;
+        vm.tagsCountMod = 0;
 
-        vm.categorys = [];
+        vm.tags = [];
 
         vm.gotoPage = function (pg, scrollToTop) {
 
@@ -50,27 +50,27 @@
 
                 vm.currentPgNmbr = pg.index;
 
-                vm.populateCategorys(appProps.resultItemsPerPg, offset);
+                vm.populateTags(appProps.resultItemsPerPg, offset);
             }
         };
 
 
-        vm.deleteModal = function (category) {
+        vm.deleteModal = function (tag) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteCategoryModal.html',
-                controller: 'deleteCategoryInstanceCtrlr',
+                templateUrl: 'deleteTagModal.html',
+                controller: 'deleteTagInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#categorysVw .modal-container'),
+                appendTo: $('#tagsVw .modal-container'),
                 resolve: {
                     param: function () {
 
                         return {
-                            category: category,
+                            tag: tag,
                             save: vm.save
                         };
                     }
@@ -79,21 +79,21 @@
         };
 
 
-        vm.openModal = function (category) {
+        vm.openModal = function (tag) {
 
             $uibModal.open({
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: 'categoryModal.html',
-                controller: 'categoryInstanceCtrlr',
+                templateUrl: 'tagModal.html',
+                controller: 'tagInstanceCtrlr',
                 controllerAs: 'vm',
                 size: 'lg',
-                appendTo: $('#categorysVw .modal-container'),
+                appendTo: $('#tagsVw .modal-container'),
                 resolve: {
-                    category: function () {
+                    tag: function () {
 
-                        var copy = jQuery.extend(true, {}, category);
+                        var copy = jQuery.extend(true, {}, tag);
 
                         return copy;
                     }
@@ -101,11 +101,11 @@
             });
         };
 
-        vm.goInEditMode = function (e, category) {
+        vm.goInEditMode = function (e, tag) {
 
-            if (category) {
+            if (tag) {
 
-                category.inEditMode = true;
+                tag.inEditMode = true;
 
                 if (e && e.currentTarget) {
 
@@ -180,87 +180,53 @@
         };
 
 
-        var checkRecordState = function (category, compCategory, toBeDeleted) {
+        var checkRecordState = function (tag, compTag, toBeDeleted) {
 
-            if (category
-                && compCategory) {
+            if (tag
+                && compTag) {
 
-                if (category.id > 0) {
+                if (tag.id > 0) {
 
                     if (toBeDeleted) {
 
-                        category.recordState = 30;
+                        tag.recordState = 30;
                     }
-                    else if (category.name_en !== compCategory.name_en
-                            || category.name_fr !== compCategory.name_fr
-                            || category.slug_en !== compCategory.slug_en
-                            || category.slug_fr !== compCategory.slug_fr
-                            || category.desc_en !== compCategory.desc_en
-                            || category.desc_fr !== compCategory.desc_fr
-                            || category.active !== compCategory.active) {
+                    else if (tag.name_en !== compTag.name_en
+                            || tag.name_fr !== compTag.name_fr
+                            || tag.slug_en !== compTag.slug_en
+                            || tag.slug_fr !== compTag.slug_fr
+                            || tag.active !== compTag.active) {
 
-                        category.recordState = 20;
+                        tag.recordState = 20;
                     }
                     else {
 
-                        category.recordState = 0;
+                        tag.recordState = 0;
                     }
                 }
                 else {
 
-                    category.recordState = 10;
+                    tag.recordState = 10;
                 }
             }
-        };
-
-
-        vm.parentIdFilter = 0;
-        vm.parentNameFilter = '';
-        vm.setParentCatg = function (catg) {
-
-            if (catg && catg.id > 0) {
-
-                vm.parentIdFilter = catg.id;
-
-                if (String(appProps.currentLang).toLowerCase().startsWith('en')) {
-
-                    vm.parentNameFilter = catg.name_en;
-                }
-                else {
-
-                    vm.parentNameFilter = catg.name_fr;
-                }
-
-                vm.searchValue = '';
-                vm.populateCategorys(appProps.resultItemsPerPg, 0);
-            }
-        };
-
-        vm.clearParentFilters = function () {
-
-            vm.parentIdFilter = 0;
-            vm.parentNameFilter = '';
-            vm.searchValue = $('#searchBar input.input-search').val();
-            vm.populateCategorys(appProps.resultItemsPerPg, 0);
         };
 
 
         var prevName = '';
-        var prevParentIdFilter = 0;
-        vm.populateCategorys = function (limit, offset, name) {
+        vm.populateTags = function (limit, offset, name) {
 
             var forceGetCount = false;
+
+            name = !name ? vm.searchValue : name;
 
             if (name || prevName) {
 
                 forceGetCount = (name !== prevName);
             }
 
-            forceGetCount = (forceGetCount || prevParentIdFilter !== vm.parentIdFilter || vm.categorysCountMod !== 0);
-
-            prevParentIdFilter = vm.parentIdFilter;
-
             prevName = name;
+
+            forceGetCount = (forceGetCount || vm.tagsCountMod !== 0);
 
             vm.showError = false;
             vm.errorstatus = '';
@@ -269,23 +235,23 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            name = !name ? vm.searchValue : name;
+
 
             var successFunc = function (resp) {
 
-                vm.categorys.length = 0;
+                vm.tags.length = 0;
 
                 if (resp.data) {
 
                     if (resp.data.count > 0
                         || (resp.data.count === 0 && resp.data.result && resp.data.result.length === 0)) {
 
-                        vm.categorysCountMod = 0;
-                        vm.categorysCount = resp.data.count;
+                        vm.tagsCountMod = 0;
+                        vm.tagsCount = resp.data.count;
 
-                        var ttlPgs = parseInt(vm.categorysCount / appProps.resultItemsPerPg);
+                        var ttlPgs = parseInt(vm.tagsCount / appProps.resultItemsPerPg);
 
-                        ttlPgs += ((vm.categorysCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+                        ttlPgs += ((vm.tagsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
 
                         vm.totalPgs = ttlPgs;
                     }
@@ -296,16 +262,16 @@
 
                         for (var i = 0; i < resp.data.result.length; i++) {
 
-                            var category = resp.data.result[i];
+                            var tag = resp.data.result[i];
 
-                            category.name = appProps.currentLang.startsWith('en') ? category.name_en : category.name_fr;
+                            tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
 
-                            category.__comp = jQuery.extend(true, {}, category);
+                            tag.__comp = jQuery.extend(true, {}, tag);
 
-                            vm.categorys.push(category);
+                            vm.tags.push(tag);
 
-                            category.inEditMode = false;
-                            category.saving = false;
+                            tag.inEditMode = false;
+                            tag.saving = false;
                         }
                     }
                 }
@@ -331,46 +297,44 @@
 
             toggleGlblWaitVisibility(true);
 
-            $http.post(appProps.urlGetCatgs, { parentID: vm.parentIdFilter, limit: limit, offset: offset, getTotalCatgs: (vm.categorysCount <= 0 || forceGetCount), name: (name ? name : null) })
+            $http.post(appProps.urlGetTags, { limit: limit, offset: offset, getTotalTags: (vm.tagsCount <= 0 || forceGetCount), name: (name ? name : null) })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
 
 
-        vm.revert = function (category) {
+        vm.revert = function (tag) {
 
-            if (category
-                && category.__comp) {
+            if (tag
+                && tag.__comp) {
 
-                if (category.id > 0) {
+                if (tag.id > 0) {
 
-                    var org = category.__comp;
+                    var org = tag.__comp;
 
-                    category.name_en = org.name_en;
-                    category.name_fr = org.name_fr;
-                    category.slug_en = org.slug_en;
-                    category.slug_fr = org.slug_fr;
-                    category.desc_en = org.desc_en;
-                    category.desc_fr = org.desc_fr;
-                    category.active = org.active;
+                    tag.name_en = org.name_en;
+                    tag.name_fr = org.name_fr;
+                    tag.slug_en = org.slug_en;
+                    tag.slug_fr = org.slug_fr;
+                    tag.active = org.active;
 
-                    category.inEditMode = false;
+                    tag.inEditMode = false;
                 }
                 else {
 
-                    vm.categorys.remove(category);
+                    vm.tags.remove(tag);
                 }
             }
         };
 
 
-        vm.save = function (categorys, finallyCallback, deleteFlags) {
+        vm.save = function (tags, finallyCallback, deleteFlags) {
 
-            if (categorys) {
+            if (tags) {
 
-                if (!Array.isArray(categorys)) {
+                if (!Array.isArray(tags)) {
 
-                    categorys = [categorys];
+                    tags = [tags];
                 }
 
                 if (deleteFlags && !Array.isArray(deleteFlags)) {
@@ -378,30 +342,30 @@
                     deleteFlags = [deleteFlags];
                 }
 
-                var validCategorys = [];
-                var toBeSavedCategorys = [];
+                var validTags = [];
+                var toBeSavedTags = [];
 
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length === categorys.length);
+                var hasDeleteFlags = (deleteFlags && deleteFlags.length === tags.length);
 
-                for (var i = 0; i < categorys.length; i++) {
+                for (var i = 0; i < tags.length; i++) {
 
-                    var category = categorys[i];
+                    var tag = tags[i];
 
-                    if (category
-                        && category.__comp) {
+                    if (tag
+                        && tag.__comp) {
 
-                        var toBeSaved = jQuery.extend(true, {}, category);
+                        var toBeSaved = jQuery.extend(true, {}, tag);
                         delete toBeSaved.__comp;
 
-                        checkRecordState(toBeSaved, category.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedCategorys.push(toBeSaved);
+                        checkRecordState(toBeSaved, tag.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+                        toBeSavedTags.push(toBeSaved);
 
-                        category.saving = true;
-                        validCategorys.push(category);
+                        tag.saving = true;
+                        validTags.push(tag);
                     }
                 }
 
-                if (validCategorys.length > 0) {
+                if (validTags.length > 0) {
 
                     var successFunc = function (resp) {
 
@@ -409,29 +373,26 @@
                             && resp.data.result
                             && resp.data.result.length > 0) {
 
-                            if (validCategorys.length === resp.data.result.length) {
+                            if (validTags.length === resp.data.result.length) {
 
                                 $.each(resp.data.result, function (index, value) {
 
-                                    var tempValue = validCategorys[index];
+                                    var tempValue = validTags[index];
 
                                     if (value) {
 
                                         tempValue.id = value.id;
-                                        tempValue.level = value.level;
-                                        tempValue.path = value.path;
-                                        tempValue.parent_Id = value.parent_Id;
                                         tempValue.name_en = value.name_en;
                                         tempValue.name_fr = value.name_fr;
                                         tempValue.slug_en = value.slug_en;
                                         tempValue.slug_fr = value.slug_fr;
-                                        tempValue.desc_en = value.desc_en;
-                                        tempValue.desc_fr = value.desc_fr;
                                         tempValue.active = value.active;
 
-                                        if (toBeSavedCategorys[index].recordState === 10) {
+                                        tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
 
-                                            vm.categorysCountMod += 1;
+                                        if (toBeSavedTags[index].recordState === 10) {
+
+                                            vm.tagsCountMod += 1;
 
                                             if (!vm.totalPgs || vm.totalPgs <= 0) {
 
@@ -446,11 +407,11 @@
                                     }
                                     else {
 
-                                        vm.categorys.remove(tempValue);
+                                        vm.tags.remove(tempValue);
 
-                                        vm.categorysCountMod -= 1;
+                                        vm.tagsCountMod -= 1;
 
-                                        if ((vm.categorysCount + vm.categorysCountMod) <= 0) {
+                                        if ((vm.tagsCount + vm.tagsCountMod) <= 0) {
 
                                             vm.totalPgs = 0;
                                         }
@@ -476,10 +437,10 @@
 
                     var finallyFunc = function () {
 
-                        for (var i = 0; i < validCategorys.length; i++) {
+                        for (var i = 0; i < validTags.length; i++) {
 
-                            validCategorys[i].saving = false;
-                            validCategorys[i].inEditMode = false;
+                            validTags[i].saving = false;
+                            validTags[i].inEditMode = false;
                         }
 
                         if (finallyCallback) {
@@ -494,7 +455,7 @@
                     vm.errormsg = '';
                     vm.errorid = 0;
 
-                    $http.post(appProps.urlSaveCatgs, { catgs: toBeSavedCategorys })
+                    $http.post(appProps.urlSaveTags, { catgs: toBeSavedTags })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
@@ -510,7 +471,7 @@
 
                 $scope.$apply(function () {
 
-                    vm.populateCategorys();
+                    vm.populateTags();
                 });
             }
             else if ($btn.hasClass('add')) {
@@ -519,15 +480,10 @@
 
                     var newItem = {
                         id: 0,
-                        level: 0,
-                        path: '',
-                        parent_Id: vm.parentIdFilter > 0 ? vm.parentIdFilter : null,
                         name_en: null,
                         name_fr: null,
                         slug_en: null,
                         slug_fr: null,
-                        desc_en: null,
-                        desc_fr: null,
                         active: true
                     };
 
@@ -536,7 +492,7 @@
                     newItem.inEditMode = true;
                     newItem.saving = false;
 
-                    vm.categorys.insert(0, newItem);
+                    vm.tags.insert(0, newItem);
                 });
             }
         };
@@ -550,7 +506,7 @@
                 $scope.$apply(function () {
 
                     vm.searchValue = arg.searchValue;
-                    vm.populateCategorys(appProps.resultItemsPerPg, 0, arg.searchValue);
+                    vm.populateTags(appProps.resultItemsPerPg, 0, arg.searchValue);
                 });
             }
         });
@@ -559,28 +515,28 @@
             $scope.$apply(function () {
 
                 vm.searchValue = '';
-                vm.populateCategorys(appProps.resultItemsPerPg, 0);
+                vm.populateTags(appProps.resultItemsPerPg, 0);
             });
         });
     }
 
 
     angular.module('app-mainmenu')
-        .controller('deleteCategoryInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', deleteCategoryInstanceCtrlrFunc]);
+        .controller('deleteTagInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', deleteTagInstanceCtrlrFunc]);
 
-    function deleteCategoryInstanceCtrlrFunc($uibModalInstance, appProps, param) {
+    function deleteTagInstanceCtrlrFunc($uibModalInstance, appProps, param) {
 
         var vm = this;
         vm.appProps = appProps;
 
-        vm.category = param.category;
+        vm.tag = param.tag;
 
         vm.yes = function () {
 
-            $uibModalInstance.close(vm.category);
+            $uibModalInstance.close(vm.tag);
             $('#glblWait').removeClass('hidden');
 
-            param.save(param.category, function () {
+            param.save(param.tag, function () {
 
                 $('#glblWait').addClass('hidden');
             }, true);
