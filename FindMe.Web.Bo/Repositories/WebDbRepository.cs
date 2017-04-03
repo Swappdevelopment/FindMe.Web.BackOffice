@@ -65,11 +65,15 @@ namespace FindMe.Web.App
         }
         public async Task<object> Execute(string methodName, params object[] parameters)
         {
-            return await Execute(new WebParameter(methodName, parameters));
+            object result = await Execute(new WebParameter(methodName, parameters));
+
+            return result;
         }
         public async Task<object> Execute(params WebParameter[] webParameters)
         {
-            return await Execute(new WebParameterCollection(webParameters));
+            object result = await Execute(new WebParameterCollection(webParameters));
+
+            return result;
         }
         public async Task<object> Execute(WebParameterCollection webParameters, bool isRegenAccessTokenValue = false)
         {

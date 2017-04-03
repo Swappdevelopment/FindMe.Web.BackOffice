@@ -6,7 +6,7 @@
         <div class="modal-header">
 
             <div>
-                <h3 class="findme-color-fc-pink">{{((vm.address.recordState && vm.address.recordState === 10) ? vm.appProps.lbl_NwAddr : vm.appProps.lbl_Edit + ' ' + vm.address.name)}}?</h3>
+                <h3 class="findme-color-fc-pink">{{((vm.address.recordState && vm.address.recordState === 10) ? vm.appProps.lbl_NwAddr : vm.appProps.lbl_Edit + ' ' + vm.address.name)}}</h3>
             </div>
 
         </div>
@@ -122,9 +122,8 @@
                             <tbody>
                                 <tr ng-repeat="rt in vm.address.ratingOverrides">
                                     <td>
-                                        <span>{{rt.fromDate}}</span>
                                         <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="rt.fromDate" is-open="rt.isFromDateOpened"/>
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.fromDate" is-open="rt.isFromDateOpened"/>
                                             <span class="input-group-btn">
                                                 <button type="button" class="btn btn-default" ng-click="rt.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -132,9 +131,9 @@
                                     </td>
                                     <td>
                                         <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="dd-MMMM-yyyy" ng-model="rt.toUtc" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.toDate" is-open="rt.isToDateOpened"/>
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                <button type="button" class="btn btn-default" ng-click="rt.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
                                         </p>
                                     </td>
@@ -159,11 +158,11 @@
         </div>
 
         <div class="modal-footer">
-            <button class="btn btn-findme" type="button" ng-click="vm.save()">
+            <button class="btn btn-findme" type="button" ng-click="vm.save(vm.address)">
                 <b>{{vm.appProps.lbl_Save}}</b>
             </button>
-            <button class="btn btn-findme hollow" type="button" ng-click="vm.cancel()">
-                <b>{{vm.appProps.lbl_Cancel}}</b>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.close()">
+                <b>{{vm.appProps.lbl_Close}}</b>
             </button>
         </div>
     </script>

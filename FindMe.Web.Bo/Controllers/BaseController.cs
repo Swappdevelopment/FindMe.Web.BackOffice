@@ -22,6 +22,8 @@ namespace FindMe.Web.App
         public const string REMEMBER_USER = "REMEMBER_USER";
         public const string USER_FULL_NAME = "USER_FULL_NAME";
 
+        public const string DEFAULT_DATE_FORMAT = "dd/MMMM/yyyy";
+
 
         public const int SEARCH_RESULT_ITEMS_PER_PAGE = 20;
 

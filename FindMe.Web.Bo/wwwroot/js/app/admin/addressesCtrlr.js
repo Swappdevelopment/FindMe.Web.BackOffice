@@ -188,6 +188,23 @@
             });
         };
 
+
+        var setUpContent = function (value) {
+
+            if (value) {
+
+                if (value.ratingOverrides) {
+
+                    $.each(value.ratingOverrides, function (i, v) {
+
+                        v.fromDate = new Date(v.fromUtc);
+                        v.toDate = v.toUtc ? new Date(v.toUtc) : null;
+                    });
+                }
+            }
+        };
+
+
         vm.goInEditMode = function (address) {
 
             if (address) {
@@ -206,15 +223,7 @@
 
                             address.hasContent = true;
 
-
-                            if (address.ratingOverrides) {
-
-                                $.each(address.ratingOverrides, function (i, v) {
-
-                                    v.fromDate = new Date(v.fromUtc);
-                                });
-                            }
-
+                            setUpContent(address);
 
                             editModal(address);
                         }
@@ -420,9 +429,6 @@
                             address.__comp = jQuery.extend(false, {}, address);
 
                             vm.addresses.push(address);
-
-                            address.inEditMode = false;
-                            address.saving = false;
                         }
                     }
                 }
@@ -529,19 +535,31 @@
 
                         toBeSaved.status = toBeSaved.active ? 1 : 0;
 
-                        toBeSaved.client_Id = toBeSaved.client.id;
+                        toBeSaved.client_Id = toBeSaved.client ? toBeSaved.client.id : 0;
                         delete toBeSaved.client;
 
-                        toBeSaved.category_Id = toBeSaved.category.id;
+                        toBeSaved.category_Id = toBeSaved.category ? toBeSaved.category.id : 0;
                         delete toBeSaved.category;
 
-                        toBeSaved.cityDetail_Id = toBeSaved.cityDetail.id;
+                        toBeSaved.cityDetail_Id = toBeSaved.cityDetail ? toBeSaved.cityDetail.id : 0;
                         delete toBeSaved.cityDetail;
 
                         checkRecordState(toBeSaved, address.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedAddresses.push(toBeSaved);
 
-                        address.saving = true;
+
+                        if (toBeSaved.ratingOverrides) {
+
+                            $.each(toBeSaved.ratingOverrides, function (i, v) {
+
+                                v.fromUtc = appProps.swIsoFormat(v.fromDate, true);
+                                v.toUtc = appProps.swIsoFormat(v.toDate, true);
+
+                                delete v.fromDate;
+                                delete v.toDate;
+                            });
+                        }
+
+                        toBeSavedAddresses.push(toBeSaved);
                         validAddresses.push(address);
                     }
                 }
@@ -562,23 +580,35 @@
 
                                     var tempValue = validAddresses[index];
 
-                                    if (value) {
+                                    if (value && value.address) {
 
-                                        tempValue.id = value.id;
-                                        tempValue.name = value.name;
-                                        tempValue.slug = value.slug;
-                                        tempValue.client_Id = value.client_Id;
-                                        tempValue.cityDetail_Id = value.cityDetail_Id;
-                                        tempValue.category_Id = value.category_Id;
-                                        tempValue.latitude = value.latitude;
-                                        tempValue.longitude = value.longitude;
-                                        tempValue.flgRecByFbFans = value.flgRecByFbFans;
-                                        tempValue.rateOverride = value.rateOverride;
-                                        tempValue.rateOverrideCount = value.rateOverrideCount;
-                                        tempValue.rate = value.rate;
-                                        tempValue.rateCount = value.rateCount;
-                                        tempValue.status = value.status;
-                                        toBeSaved.active = (toBeSaved.status === 1);
+                                        tempValue.id = value.address.id;
+                                        tempValue.name = value.address.name;
+                                        tempValue.slug = value.address.slug;
+                                        tempValue.client_Id = value.address.client_Id;
+                                        tempValue.cityDetail_Id = value.address.cityDetail_Id;
+                                        tempValue.category_Id = value.address.category_Id;
+                                        tempValue.latitude = value.address.latitude;
+                                        tempValue.longitude = value.address.longitude;
+                                        tempValue.flgRecByFbFans = value.address.flgRecByFbFans;
+                                        tempValue.rateOverride = value.address.rateOverride;
+                                        tempValue.rateOverrideCount = value.address.rateOverrideCount;
+                                        tempValue.rate = value.address.rate;
+                                        tempValue.rateCount = value.address.rateCount;
+                                        tempValue.status = value.address.status;
+                                        tempValue.active = (tempValue.status === 1);
+
+                                        setUpContent(value);
+
+                                        if (value.ratingOverrides && tempValue.ratingOverrides) {
+
+                                            tempValue.ratingOverrides.length = 0;
+
+                                            for (var i = 0; i < value.ratingOverrides.length; i++) {
+
+                                                tempValue.ratingOverrides.push(value.ratingOverrides[i]);
+                                            }
+                                        }
 
                                         if (toBeSavedAddresses[index].recordState === 10) {
 
@@ -629,11 +659,7 @@
 
                     var finallyFunc = function () {
 
-                        for (var i = 0; i < validAddresses.length; i++) {
-
-                            validAddresses[i].saving = false;
-                            validAddresses[i].inEditMode = false;
-                        }
+                        toggleGlblWaitVisibility(false);
 
                         if (finallyCallback) {
 
@@ -645,6 +671,8 @@
                     vm.errorstatus = '';
                     vm.errormsg = '';
                     vm.errorid = 0;
+
+                    toggleGlblWaitVisibility(true);
 
                     $http.post(appProps.urlSaveAddresses, { addresses: toBeSavedAddresses })
                          .then(successFunc, errorFunc)
@@ -737,24 +765,10 @@
 
         vm.save = function () {
 
-            //$uibModalInstance.close(vm.address);
-
-            param.checkRecordState(vm.address);
-
-            toggleGlblWaitVisibility(true);
-
-            param.save(vm.address, function (success) {
-
-                toggleGlblWaitVisibility(false);
-
-                if (success) {
-
-                    vm.cancel();
-                }
-            });
+            param.save(vm.address);
         };
 
-        vm.cancel = function () {
+        vm.close = function () {
 
             $uibModalInstance.close();
         };

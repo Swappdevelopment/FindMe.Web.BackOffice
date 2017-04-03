@@ -4,7 +4,7 @@
     'use strict';
 
     //Creating the module
-    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate'])
+    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.fontawesome', 'ngTouch', 'ngAnimate'])
 
         .config(function ($routeProvider, $locationProvider) {
 

@@ -32,20 +32,24 @@
 @section scripts {
 
     <environment names="Development">
+        <script src="~/lib/moment/moment.js"></script>
         <script src="~/lib/angular/angular.js"></script>
         <script src="~/lib/angular-route/angular-route.js"></script>
         <script src="~/lib/angular-animate/angular-animate.js"></script>
         <script src="~/lib/angular-touch/angular-touch.js"></script>
         <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+        <script src="~/lib/ui-bootstrap-fontawesome/ui-bootstrap-fontawesome.js"></script>
         <script src="~/js/app/index.js" swp-cache-version="true"></script>
         <script src="~/js/app/app-mainmenu.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
+        <script src="~/lib/moment/moment.min.js"></script>
         <script src="~/lib/angular/angular.min.js"></script>
         <script src="~/lib/angular-route/angular-route.min.js"></script>
         <script src="~/lib/angular-animate/angular-animate.min.js"></script>
         <script src="~/lib/angular-touch/angular-touch.min.js"></script>
         <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
+        <script src="~/lib/ui-bootstrap-fontawesome/ui-bootstrap-fontawesome.min.js"></script>
         <script src="~/js/app/index.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/app-mainmenu.min.js" swp-cache-version="true"></script>
     </environment>
@@ -54,7 +58,26 @@
         angular.module('app-mainmenu')
                .value('appProps',
                     {
+                        swIsoFormat : function(date, toUtc){
+
+                            if (date) {
+
+                                if (moment) {
+
+                                    var dtFormat = '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)';
+
+                                    return toUtc ? moment.utc(date).format(dtFormat) : moment(date).format(dtFormat);
+                                }
+
+                                return date.toString();
+                            }
+
+                            return null;
+                        },
+
                         resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+                        defaultDateFormat: '@(BaseController.DEFAULT_DATE_FORMAT)',
+                        dateTimeIsoOffsetFormat: '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)',
                         currentLang: ('@Html.GetCurrentLang()').encodeHtml(),
 
                         urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
@@ -143,6 +166,7 @@
                         lbl_ClickCount: ('@Html.GetLabel("lbl_ClickCount")').encodeHtml(),
                         lbl_From: ('@Html.GetLabel("lbl_From")').encodeHtml(),
                         lbl_To: ('@Html.GetLabel("lbl_To")').encodeHtml(),
+                        lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
 
                         erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
 
@@ -178,7 +202,7 @@
                         msg_RfrshTags: ('@Html.GetMessage("msg_RfrshTags")').encodeHtml(),
                         msg_SaveTags: ('@Html.GetMessage("msg_SaveTags")').encodeHtml()
 
-        });
+                    });
     </script>
 
     <environment names="Development">

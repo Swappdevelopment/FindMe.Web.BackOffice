@@ -284,7 +284,7 @@ namespace FindMe.Web.App
                 {
                     addrID = param.GetPropVal<long>("addrID");
 
-                    result = await _repo.Execute<object>("GetAddressContent", addrID);
+                    result = await _repo.Execute<object>("GetAddressContent", addrID, false);
                 }
             }
             catch (ExceptionID ex)
@@ -309,23 +309,29 @@ namespace FindMe.Web.App
             object result = null;
             object error = null;
 
-            Address[] addresss;
+            object[] addresses;
+
+            List<object> tempLst = null;
 
             try
             {
                 if (param != null)
                 {
-                    addresss = param.JGetPropVal<Address[]>("addresss");
+                    addresses = param.JGetPropVal<Address[]>("addresses");
 
-                    if (addresss != null
-                        && addresss.Length > 0)
+                    if (addresses != null
+                        && addresses.Length > 0)
                     {
-                        for (int i = 0; i < addresss.Length; i++)
+                        tempLst = new List<object>();
+
+                        foreach (var addr in addresses)
                         {
-                            addresss[i] = await _repo.Execute<Address>("ManageAddress", addresss[i]);
+                            object temp = await _repo.Execute("ManageAddressGetFullContent", addr);
+
+                            tempLst.Add(temp);
                         }
 
-                        result = addresss.Select(l => l == null ? null : l.Simplify()).ToArray();
+                        result = tempLst.ToArray();
                     }
                 }
             }
@@ -343,7 +349,13 @@ namespace FindMe.Web.App
             }
             finally
             {
-                addresss = null;
+                addresses = null;
+
+                if (tempLst != null)
+                {
+                    tempLst.Clear();
+                    tempLst = null;
+                }
             }
 
             return Ok(new { result = result, error = error });
