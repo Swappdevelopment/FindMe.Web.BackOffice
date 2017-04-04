@@ -134,6 +134,10 @@ textarea {
     background-color: #e5fff9;
 }
 
+.table.data tr.inDeleteMode {
+    background-color: #fa9797;
+}
+
 .inline-element {
     display: inline;
 }
@@ -168,4 +172,16 @@ input.two-third {
 input.three-quarter {
     width: 75%;
     min-width: 40px;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+    .bold-text.bigger {
+        font-size: large;
+    }
+
+.no-outline {
+    outline: none;
 }

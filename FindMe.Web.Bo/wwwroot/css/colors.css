@@ -14,6 +14,11 @@
     background-color: #424242 !important;
 }
 
+/* FindMe's Light Gray Backgroundcolor */
+.findme-color-bc-lightgray {
+    background-color: lightslategray;
+}
+
 /* FindMe's Darker Backgroundcolor */
 .findme-color-bc-darker {
     background-color: #1a1a1a !important;
@@ -43,6 +48,11 @@
 /* FindMe's Dark forecolor */
 .findme-color-fc-dark {
     color: #424242 !important;
+}
+
+/* FindMe's Light Gray forecolor */
+.findme-color-fc-lightgray {
+    color: lightslategray;
 }
 
 /* FindMe's Yellow forecolor */

@@ -284,7 +284,7 @@ namespace FindMe.Web.App
                 {
                     addrID = param.GetPropVal<long>("addrID");
 
-                    result = await _repo.Execute<object>("GetAddressContent", addrID, false);
+                    result = await _repo.Execute<object>("GetAddressContent", addrID, null, false);
                 }
             }
             catch (ExceptionID ex)

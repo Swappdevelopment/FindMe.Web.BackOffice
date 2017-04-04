@@ -3,6 +3,7 @@
 <div id="addressesVw">
 
     <script type="text/ng-template" id="addressEditorModal.html">
+
         <div class="modal-header">
 
             <div>
@@ -10,150 +11,200 @@
             </div>
 
         </div>
+
         <div class="modal-body" id="modal-body">
 
-            <form class="editor-frm">
+            <div class="address-container" ng-class="vm.showAddTags ? 'disable-overflow' : ''">
 
-                <div class="row">
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Name}}</b></label>
-                        <input placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="vm.address.name">
-                    </div>
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Slug}}</b></label>
-                        <input placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="vm.address.slug">
-                    </div>
-                </div>
+                <form class="editor-frm">
 
-                <br />
-
-                <div class="row">
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Clnt}}</b></label>
-
-                        <select class="form-control"
-                                ng-model="vm.address.client"
-                                ng-options="client.name for client in vm.clients | orderBy:'name'"></select>
-                    </div>
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Category}}</b></label>
-
-                        <select class="form-control"
-                                ng-model="vm.address.category"
-                                ng-options="category.name for category in vm.categorys"></select>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_City}}</b></label>
-
-                        <select class="form-control"
-                                ng-model="vm.address.cityDetail"
-                                ng-options="cityDetail.name for cityDetail in vm.cityDetails | orderBy:'name'"></select>
-                    </div>
-                </div>
-
-                <br />
-
-                <div class="row">
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Lat}}</b></label>
-                        <input placeholder="{{vm.appProps.lbl_Lat}}" type="number" class="form-control three-quarter no-animate" ng-model="vm.address.latitude">
-                    </div>
-                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <label class="control-label"><b>{{vm.appProps.lbl_Lon}}</b></label>
-                        <input placeholder="{{vm.appProps.lbl_Lon}}" type="number" class="form-control no-animate" ng-model="vm.address.longitude">
-                    </div>
-                </div>
-
-                <br />
-                <hr />
-
-                <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <b>
-                            {{vm.appProps.lbl_Rating}}
-                        </b>
-                        &nbsp;
-                        <span>
-                            {{vm.address.rate}}
-                        </span>
-
-                        &nbsp;
-                        &nbsp;
-
-                        <b>
-                            {{vm.appProps.lbl_RatingCount}}
-                        </b>
-                        &nbsp;
-                        <span>
-                            {{vm.address.rateCount}}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div>
-                            <b>
-                                {{vm.appProps.lbl_Ovrds}}
-                            </b>
-                            <button type="button" class="btn btn-findme btn-xs"><span class="fa fa-plus-square"></span></button>
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Name}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="vm.address.name">
                         </div>
-
-                        <table class="table table-striped table-hover" ng-show="vm.address.ratingOverrides && vm.address.ratingOverrides.length > 0">
-                            <thead>
-                                <tr>
-                                    <td>
-                                        <b>{{vm.appProps.lbl_From}}</b>
-                                    </td>
-                                    <td>
-                                        <b>{{vm.appProps.lbl_To}}</b>
-                                    </td>
-                                    <td>
-                                        <b>{{vm.appProps.lbl_Rating}}</b>
-                                    </td>
-                                    <td>
-                                        <b>{{vm.appProps.lbl_RatingCount}}</b>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="rt in vm.address.ratingOverrides">
-                                    <td>
-                                        <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.fromDate" is-open="rt.isFromDateOpened"/>
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="rt.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
-                                            </span>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <p class="input-group">
-                                            <input type="text" class="form-control" uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.toDate" is-open="rt.isToDateOpened"/>
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="rt.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
-                                            </span>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <input placeholder="{{vm.appProps.lbl_Rate}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.value">
-                                    </td>
-                                    <td>
-                                        <input placeholder="{{vm.appProps.lbl_ClickCount}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.clickCount">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Slug}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="vm.address.slug">
+                        </div>
                     </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Clnt}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.client"
+                                    ng-options="client.name for client in vm.clients | orderBy:'name'"></select>
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Category}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.category"
+                                    ng-options="category.name for category in vm.categorys"></select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_City}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.cityDetail"
+                                    ng-options="cityDetail.name for cityDetail in vm.cityDetails | orderBy:'name'"></select>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Lat}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Lat}}" type="number" class="form-control three-quarter no-animate" ng-model="vm.address.latitude">
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Lon}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Lon}}" type="number" class="form-control no-animate" ng-model="vm.address.longitude">
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+
+                </form>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <span class="bold-text bigger findme-color-fc-pink">
+                                {{vm.appProps.lbl_Rating}}
+                            </span>
+                            &nbsp;
+                            <span class="bold-text">
+                                {{vm.address.rate}}
+                            </span>
+
+                            &nbsp;
+                            &nbsp;
+
+                            <span class="bold-text bigger findme-color-fc-pink">
+                                {{vm.appProps.lbl_RatingCount}}
+                            </span>
+                            &nbsp;
+                            <span class="bold-text">
+                                {{vm.address.rateCount}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div>
+                                <span class="bold-text findme-color-fc-pink">
+                                    {{vm.appProps.lbl_Ovrds}}
+                                </span>
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addRatingOverride()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover" ng-show="vm.address.ratingOverrides && vm.address.ratingOverrides.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_From}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_To}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Rating}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_RatingCount}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="rt in vm.address.ratingOverrides" ng-class="rt.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <button ng-hide="rt.recordState === 30" ng-click="vm.setRatingToDelete(rt)" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                            <button ng-show="rt.recordState === 30" ng-click="rt.recordState = rt.prevRecordState;" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-ban"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <p class="input-group">
+                                                <input type="text" class="form-control no-animate"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.fromDate" ng-disabled="rt.recordState === 30"
+                                                       is-open="rt.isFromDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="rt.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p class="input-group">
+                                                <input type="text" class="form-control no-animate"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.toDate" ng-disabled="rt.recordState === 30"
+                                                       is-open="rt.isToDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="rt.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <input placeholder="{{vm.appProps.lbl_Rate}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.value" ng-disabled="rt.recordState === 30">
+                                        </td>
+                                        <td>
+                                            <input placeholder="{{vm.appProps.lbl_ClickCount}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.clickCount" ng-disabled="rt.recordState === 30">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
                 </div>
 
-                <br />
-                <hr />
+                <div ng-show="vm.address.id > 0">
 
-            </form>
+                    <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Tags}}</span>
+                    <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.openAddTags()">
+                        <span class="fa fa-plus-square"></span>
+                    </button>
+
+                    <div class="tags-container container" ng-show="vm.address.tags && vm.address.tags.length > 0">
+                        <div class="row">
+
+                            <ul>
+                                <li ng-repeat="tg in vm.address.tags">
+                                    <label class="kywrd inline-element" ng-class="tg.recordState === 30 ? 'findme-color-bc-lightgray' : 'findme-color-bc-pink'">
+
+                                        <span class="fa fa-hashtag findme-color-fc-white"></span>
+                                        <span class="findme-color-fc-white">&nbsp;{{tg.name}}</span>
+
+                                        <button type="button" class="btn btn-xs delete" ng-click="tg.recordState = tg.recordState === 30 ? 0 : 30">
+                                            <span ng-class="tg.recordState === 30 ? 'fa fa-ban findme-color-fc-lightgray' : 'fa fa-trash findme-color-fc-pink'" class=""></span>
+                                        </button>
+                                    </label>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -165,6 +216,13 @@
                 <b>{{vm.appProps.lbl_Close}}</b>
             </button>
         </div>
+
+        <div class="add-tags-bg" ng-show="vm.showAddTags" ng-click="vm.showAddTags = false">
+            <div class="add-tags-container" ng-click="$event.stopPropagation()">
+                <span class="wait fa fa-spinner fa-spin fa-4x findme-color-fc-pink" ng-show="vm.gettingAddTags"></span>
+            </div>
+        </div>
+
     </script>
 
     <script type="text/ng-template" id="deleteAddressModal.html">
@@ -316,14 +374,16 @@
                     </td>
                     <td class="text-center">
                         <span class="no-animate">{{address.rateOverride}}</span>
+
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">-->
-                        </td>
+                    </td>
                     </td>
                     <td class="text-center">
                         <span class="no-animate">{{address.rateCount}}</span>
                     </td>
                     <td class="text-center">
                         <span class="no-animate">{{address.rateOverrideCount}}</span>
+
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">-->
                     </td>
 
@@ -335,6 +395,7 @@
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
                         </span>-->
                     </td>
+                    <td cl
                     <td class="text-center">
                         <span class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
@@ -343,6 +404,8 @@
                             <label class="lbl-chkb" for="addressActive-{{address.id}}"></label>
                         </span>-->
                     </td>
+
+
 
                     <!--<td colspan="15" ng-if="address.link">
 

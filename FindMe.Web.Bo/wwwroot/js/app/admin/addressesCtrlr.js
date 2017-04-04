@@ -28,6 +28,7 @@
         vm.clients = [];
         vm.categorys = [];
         vm.cityDetails = [];
+        vm.tags = [];
 
         vm.pgsCollection = [];
         vm.currentPgNmbr = 0;
@@ -119,6 +120,47 @@
 
 
 
+        var checkRatinOvrdRecordState = function (ratingOvrds) {
+
+            if (ratingOvrds) {
+
+
+                if (!Array.isArray(ratingOvrds)) {
+
+                    ratingOvrds = [ratingOvrds];
+                }
+
+                for (var i = 0; i < ratingOvrds.length; i++) {
+
+                    var ratingOvrd = ratingOvrds[i];
+
+                    if (ratingOvrd.__comp
+                        && (!ratingOvrd.recordState || ratingOvrd.recordState <= 0)) {
+
+                        if (ratingOvrd.id > 0) {
+
+                            if (ratingOvrd.fromDate !== ratingOvrd.__comp.fromDate
+                                || ratingOvrd.toDate !== ratingOvrd.__comp.toDate
+                                || ratingOvrd.value !== ratingOvrd.__comp.value
+                                || ratingOvrd.clickCount !== ratingOvrd.__comp.clickCount) {
+
+                                ratingOvrd.recordState = 20;
+                            }
+                            else {
+
+                                ratingOvrd.recordState = 0;
+                            }
+                        }
+                        else {
+
+                            address.recordState = 10;
+                        }
+                    }
+                }
+            }
+
+        };
+
         var checkRecordState = function (address, compAddress, toBeDeleted) {
 
             if (address
@@ -153,9 +195,60 @@
 
                     address.recordState = 10;
                 }
+
+                checkRatinOvrdRecordState(address.ratingOverrides);
             }
         };
 
+
+
+        var handleDbAddress = function (address) {
+
+            if (address) {
+
+                address.active = address.status === 1;
+
+                var tempName;
+
+                if (vm.clients.length > 0) {
+
+                    tempName = $.grep(vm.clients, function (v) {
+                        return v.id === address.client_Id;
+                    });
+
+                    if (tempName && tempName.length > 0) {
+
+                        address.client = tempName[0];
+                    }
+                }
+
+                if (vm.categorys.length > 0) {
+
+                    tempName = $.grep(vm.categorys, function (v) {
+                        return v.id === address.category_Id;
+                    });
+
+                    if (tempName && tempName.length > 0) {
+
+                        address.category = tempName[0];
+                    }
+                }
+
+                if (vm.cityDetails.length > 0) {
+
+                    tempName = $.grep(vm.cityDetails, function (v) {
+                        return v.id === address.cityDetail_Id;
+                    });
+
+                    if (tempName && tempName.length > 0) {
+
+                        address.cityDetail = tempName[0];
+                    }
+                }
+
+                address.__comp = jQuery.extend(false, {}, address);
+            }
+        };
 
 
 
@@ -178,10 +271,12 @@
                         return {
                             address: address,
                             save: vm.save,
+                            deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
                             clients: vm.clients,
                             categorys: vm.categorys,
-                            cityDetails: vm.cityDetails
+                            cityDetails: vm.cityDetails,
+                            tags: vm.tags
                         };
                     }
                 }
@@ -199,6 +294,16 @@
 
                         v.fromDate = new Date(v.fromUtc);
                         v.toDate = v.toUtc ? new Date(v.toUtc) : null;
+
+                        v.__comp = jQuery.extend(false, {}, v);
+                    });
+                }
+
+                if (value.tags) {
+
+                    $.each(value.tags, function (i, v) {
+
+                        v.name = appProps.currentLang.startsWith('en') ? v.name_en : v.name_fr;
                     });
                 }
             }
@@ -209,7 +314,7 @@
 
             if (address) {
 
-                if (address.hasContent) {
+                if (address.hasContent || address.id <= 0) {
 
                     editModal(address);
                 }
@@ -260,25 +365,35 @@
 
         vm.deleteModal = function (address) {
 
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'deleteAddressModal.html',
-                controller: 'deleteAddressInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#addressesVw .modal-container'),
-                resolve: {
-                    param: function () {
+            if (address) {
 
-                        return {
-                            address: address,
-                            save: vm.save
-                        };
-                    }
+                if (address.id > 0) {
+
+                    $uibModal.open({
+                        animation: true,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        templateUrl: 'deleteAddressModal.html',
+                        controller: 'deleteAddressInstanceCtrlr',
+                        controllerAs: 'vm',
+                        size: 'lg',
+                        appendTo: $('#addressesVw .modal-container'),
+                        resolve: {
+                            param: function () {
+
+                                return {
+                                    address: address,
+                                    save: vm.save
+                                };
+                            }
+                        }
+                    });
                 }
-            });
+                else {
+
+                    vm.addresses.remove(address);
+                }
+            }
         };
 
 
@@ -386,47 +501,7 @@
 
                             var address = resp.data.result[i];
 
-                            address.active = address.status === 1;
-
-                            var tempName;
-
-                            if (vm.clients.length > 0) {
-
-                                tempName = $.grep(vm.clients, function (v) {
-                                    return v.id === address.client_Id;
-                                });
-
-                                if (tempName && tempName.length > 0) {
-
-                                    address.client = tempName[0];
-                                }
-                            }
-
-                            if (vm.categorys.length > 0) {
-
-                                tempName = $.grep(vm.categorys, function (v) {
-                                    return v.id === address.category_Id;
-                                });
-
-                                if (tempName && tempName.length > 0) {
-
-                                    address.category = tempName[0];
-                                }
-                            }
-
-                            if (vm.cityDetails.length > 0) {
-
-                                tempName = $.grep(vm.cityDetails, function (v) {
-                                    return v.id === address.cityDetail_Id;
-                                });
-
-                                if (tempName && tempName.length > 0) {
-
-                                    address.cityDetail = tempName[0];
-                                }
-                            }
-
-                            address.__comp = jQuery.extend(false, {}, address);
+                            handleDbAddress(address);
 
                             vm.addresses.push(address);
                         }
@@ -598,6 +673,8 @@
                                         tempValue.status = value.address.status;
                                         tempValue.active = (tempValue.status === 1);
 
+                                        handleDbAddress(tempValue);
+
                                         setUpContent(value);
 
                                         if (value.ratingOverrides && tempValue.ratingOverrides) {
@@ -636,8 +713,6 @@
                                             vm.totalPgs = 0;
                                         }
                                     }
-
-                                    $scope.$apply();
                                 });
                             }
 
@@ -707,12 +782,13 @@
                         latitude: 0,
                         longitude: 0,
                         flgRecByFbFans: false,
-                        rateOverride: -1,
-                        rateOverrideCount: -1,
+                        rateOverride: 0,
+                        rateOverrideCount: 0,
                         rate: 0,
                         rateCount: 0,
                         status: 1,
-                        active: true
+                        active: true,
+                        recordState: 10
                     };
 
                     newItem.__comp = jQuery.extend(true, {}, newItem);
@@ -721,6 +797,8 @@
                     newItem.saving = false;
 
                     vm.addresses.insert(0, newItem);
+
+                    vm.goInEditMode(newItem);
                 });
             }
         };
@@ -750,9 +828,9 @@
 
 
     angular.module('app-mainmenu')
-        .controller('addressEditorInstanceCtrlr', ['$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
+        .controller('addressEditorInstanceCtrlr', ['$http', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
 
-    function addressEditorInstanceCtrlrFunc($uibModalInstance, appProps, param) {
+    function addressEditorInstanceCtrlrFunc($http, $uibModalInstance, appProps, param) {
 
         var vm = this;
         vm.appProps = appProps;
@@ -762,6 +840,81 @@
         vm.clients = param.clients;
         vm.categorys = param.categorys;
         vm.cityDetails = param.cityDetails;
+        vm.tags = param.tags;
+
+        vm.showAddTags = false;
+        vm.gettingAddTags = false;
+
+        vm.openAddTags = function () {
+
+            vm.showAddTags = true;
+
+            if (vm.tags && vm.tags.length > 0) {
+
+                for (var i = 0; i < vm.tags.length; i++) {
+
+                    var tag = vm.tags[i];
+
+                    tag.isSelected = false;
+                    tag.isVisible = true;
+
+                    if ($.grep(vm.address.tags, function (v) { return v.id === tag.ID; }).length > 0) {
+
+                        tag.isVisible = false;
+                    }
+                }
+            }
+            else {
+
+                vm.gettingAddTags = true;
+
+                var successFunc = function (resp) {
+
+                    vm.tags.length = 0;
+
+                    if (resp.data && resp.data.result) {
+
+                        for (var i = 0; i < resp.data.result.length; i++) {
+
+                            var tag = resp.data.result[i];
+
+                            tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
+                            tag.isSelected = false;
+                            tag.isVisible = true;
+
+                            if ($.grep(vm.address.tags, function (v) { return v.id === tag.ID; }).length > 0) {
+
+                                tag.isVisible = false;
+                            }
+
+                            vm.tags.push(tag);
+                        }
+                    }
+                };
+
+                var errorFunc = function (error) {
+
+                    if (error.data
+                        && checkRedirectForSignIn(error.data)) {
+
+                        vm.errorstatus = error.status + ' - ' + error.statusText;
+                        vm.errormsg = error.data.msg;
+                        vm.errorid = error.data.id;
+
+                        vm.showError = true;
+                    }
+                };
+
+                var finallyFunc = function () {
+
+                    vm.gettingAddTags = false;
+                };
+
+                $http.post(appProps.urlGetTags, {})
+                     .then(successFunc, errorFunc)
+                     .finally(finallyFunc);
+            }
+        };
 
         vm.save = function () {
 
@@ -770,14 +923,51 @@
 
         vm.close = function () {
 
+            if (vm.address && vm.address.id <= 0) {
+
+                param.deleteModal(vm.address);
+            }
+
             $uibModalInstance.close();
+        };
+
+        vm.addRatingOverride = function () {
+
+            var newRecord = {
+                id: 0,
+                fromUtc: null,
+                fromDate: new Date(),
+                toUtc: null,
+                toDate: null,
+                value: 0,
+                clickCount: 0,
+                status: 1,
+                recordState: 10,
+                active: true
+            };
+
+            vm.address.ratingOverrides.insert(0, newRecord);
+        };
+
+        vm.setRatingToDelete = function (rt) {
+
+            if (rt) {
+
+                if (rt.recordState == 10) {
+
+                    vm.address.ratingOverrides.remove(rt);
+                }
+                else {
+
+                    rt.prevRecordState = rt.recordState; rt.recordState = 30;
+                }
+            }
         };
 
         $uibModalInstance.closed.then(function () {
 
             $('body').attr('style', '');
         })
-
     }
 
 
