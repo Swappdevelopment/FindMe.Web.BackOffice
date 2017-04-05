@@ -6,7 +6,7 @@
     height: 100%;
     width: 100%;
     background-color: rgba(248, 248, 248, 0.60);
-    /*z-index: 9999;*/
+    z-index: 3000;
 }
 
     .fm-wait .fm-container {

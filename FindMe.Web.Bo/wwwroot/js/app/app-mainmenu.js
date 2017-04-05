@@ -4,7 +4,7 @@
     'use strict';
 
     //Creating the module
-    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ngTouch', 'ngAnimate'])
+    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.fontawesome', 'ngTouch', 'ngAnimate'])
 
         .config(function ($routeProvider, $locationProvider) {
 
@@ -47,6 +47,12 @@
                 controller: 'citiesCtrlr',
                 controllerAs: 'vm',
                 templateUrl: '/Views/App/Admin/cities.html',
+            });
+
+            $routeProvider.when('/tags', {
+                controller: 'tagsCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/tags.html',
             });
 
             $routeProvider.when('/addresses', {

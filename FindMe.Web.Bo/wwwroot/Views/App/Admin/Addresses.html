@@ -2,6 +2,454 @@
 
 <div id="addressesVw">
 
-    <h4 class="findme-color-fc-pink"><i>Addresses</i></h4>
-    
+    <script type="text/ng-template" id="addressEditorModal.html">
+
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{((vm.address.recordState && vm.address.recordState === 10) ? vm.appProps.lbl_NwAddr : vm.appProps.lbl_Edit + ' ' + vm.address.name)}}</h3>
+            </div>
+
+        </div>
+
+        <div class="modal-body" id="modal-body">
+
+            <div class="address-container" ng-class="vm.showAddTags ? 'disable-overflow' : ''">
+
+                <form class="editor-frm">
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Name}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="vm.address.name">
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Slug}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="vm.address.slug">
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Clnt}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.client"
+                                    ng-options="client.name for client in vm.clients | orderBy:'name'"></select>
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Category}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.category"
+                                    ng-options="category.name for category in vm.categorys"></select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_City}}</b></label>
+
+                            <select class="form-control"
+                                    ng-model="vm.address.cityDetail"
+                                    ng-options="cityDetail.name for cityDetail in vm.cityDetails | orderBy:'name'"></select>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Lat}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Lat}}" type="number" class="form-control three-quarter no-animate" ng-model="vm.address.latitude">
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Lon}}</b></label>
+                            <input placeholder="{{vm.appProps.lbl_Lon}}" type="number" class="form-control no-animate" ng-model="vm.address.longitude">
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+
+                </form>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <span class="bold-text bigger findme-color-fc-pink">
+                                {{vm.appProps.lbl_Rating}}
+                            </span>
+                            &nbsp;
+                            <span class="bold-text">
+                                {{vm.address.rate}}
+                            </span>
+
+                            &nbsp;
+                            &nbsp;
+
+                            <span class="bold-text bigger findme-color-fc-pink">
+                                {{vm.appProps.lbl_RatingCount}}
+                            </span>
+                            &nbsp;
+                            <span class="bold-text">
+                                {{vm.address.rateCount}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div>
+                                <span class="bold-text findme-color-fc-pink">
+                                    {{vm.appProps.lbl_Ovrds}}
+                                </span>
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addRatingOverride()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover" ng-show="vm.address.ratingOverrides && vm.address.ratingOverrides.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_From}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_To}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Rating}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_RatingCount}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="rt in vm.address.ratingOverrides" ng-class="rt.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <button ng-hide="rt.recordState === 30" ng-click="vm.setRatingToDelete(rt)" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                            <button ng-show="rt.recordState === 30" ng-click="rt.recordState = rt.prevRecordState;" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-ban"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <p class="input-group">
+                                                <input type="text" class="form-control no-animate"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.fromDate" ng-disabled="rt.recordState === 30"
+                                                       is-open="rt.isFromDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="rt.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p class="input-group">
+                                                <input type="text" class="form-control no-animate"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.toDate" ng-disabled="rt.recordState === 30"
+                                                       is-open="rt.isToDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="rt.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <input placeholder="{{vm.appProps.lbl_Rate}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.value" ng-disabled="rt.recordState === 30">
+                                        </td>
+                                        <td>
+                                            <input placeholder="{{vm.appProps.lbl_ClickCount}}" type="number" class="form-control three-quarter no-animate" ng-model="rt.clickCount" ng-disabled="rt.recordState === 30">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Tags}}</span>
+                    <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.openAddTags()">
+                        <span class="fa fa-plus-square"></span>
+                    </button>
+
+                    <div class="tags-container container" ng-show="vm.address.tags && vm.address.tags.length > 0">
+                        <div class="row">
+
+                            <ul>
+                                <li ng-repeat="tg in vm.address.tags">
+                                    <label class="kywrd inline-element" ng-class="tg.recordState === 30 ? 'findme-color-bc-lightgray' : 'findme-color-bc-pink'">
+
+                                        <span class="fa fa-hashtag findme-color-fc-white"></span>
+                                        <span class="findme-color-fc-white">&nbsp;{{tg.name}}</span>
+
+                                        <button type="button" class="btn btn-xs delete" ng-click="tg.recordState = tg.recordState === 30 ? 0 : 30">
+                                            <span ng-class="tg.recordState === 30 ? 'fa fa-ban findme-color-fc-lightgray' : 'fa fa-trash findme-color-fc-pink'" class=""></span>
+                                        </button>
+                                    </label>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.save(vm.address)">
+                <b>{{vm.appProps.lbl_Save}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.close()">
+                <b>{{vm.appProps.lbl_Close}}</b>
+            </button>
+        </div>
+
+        <div class="add-tags-bg" ng-show="vm.showAddTags" ng-click="vm.showAddTags = false">
+            <div class="add-tags-container" ng-click="$event.stopPropagation()">
+                <span class="wait fa fa-spinner fa-spin fa-4x findme-color-fc-pink" ng-show="vm.gettingAddTags"></span>
+            </div>
+        </div>
+
+    </script>
+
+    <script type="text/ng-template" id="deleteAddressModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{vm.address.name}}?</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.yes()">
+                <b>{{vm.appProps.lbl_Yes}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.no()">
+                <b>{{vm.appProps.lbl_No}}</b>
+            </button>
+        </div>
+    </script>
+
+
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td class="findme-color-fc-pink">
+                <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
+                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.addressesCount + vm.addressesCountMod}}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="main-table-container">
+        <table class="table table-striped table-hover data" ng-init="vm.populateAddresses()">
+            <thead>
+                <tr>
+                    <td class="col-md-1">
+                        <b>{{vm.appProps.lbl_Actns}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_ID}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Name}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Slug}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Clnt}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_Category}}</b>
+                    </td>
+                    <td>
+                        <b>{{vm.appProps.lbl_City}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Lat}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Lon}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Rating}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Ovrd}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_RatingCount}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Ovrd}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_FbFans}}</b>
+                    </td>
+                    <td class="text-center">
+                        <b>{{vm.appProps.lbl_Actv}}</b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="address in vm.addresses">
+                    <td>
+                        <div class="btn-toolbar no-animate" ng-hide="address.gettingContent">
+                            <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="vm.goInEditMode(address)"><span class="fa fa-edit"></span></button>
+                            <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(address)"><span class="fa fa-trash"></span></button>
+                        </div>
+
+                        <div ng-show="address.gettingContent" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                    </td>
+                    <td>
+                        <b ng-show="address.id > 0" class="no-animate">{{address.id}}</b>
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.name}}</span>
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.slug}}</span>
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.client.name}}</span>
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.category.name}}</span>
+                    </td>
+                    <td>
+                        <span class="no-animate">{{address.cityDetail.name}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="no-animate">{{address.latitude}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="no-animate">{{address.longitude}}</span>
+                    </td>
+
+                    <td class="text-center">
+                        <span class="no-animate">{{address.rate}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="no-animate">{{address.rateOverride}}</span>
+
+                        <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">-->
+                    </td>
+                    </td>
+                    <td class="text-center">
+                        <span class="no-animate">{{address.rateCount}}</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="no-animate">{{address.rateOverrideCount}}</span>
+
+                        <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">-->
+                    </td>
+
+                    <td class="text-center">
+                        <span class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                        <!--<span class="check-box no-animate">
+                            <input ng-disabled="address.saving" type="checkbox" value="None" id="addressFbFans-{{address.id}}" name="addressFbFans-{{address.id}}" ng-model="address.flgRecByFbFans" />
+                            <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
+                        </span>-->
+                    </td>
+                    <td cl
+                    <td class="text-center">
+                        <span class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                        <!--<span class="check-box">
+                            <input ng-disabled="address.saving" type="checkbox" value="None" id="addressActive-{{address.id}}" name="addressActive-{{address.id}}" ng-model="address.active" />
+                            <label class="lbl-chkb" for="addressActive-{{address.id}}"></label>
+                        </span>-->
+                    </td>
+
+
+
+                    <!--<td colspan="15" ng-if="address.link">
+
+                        <div ng-hide="address.link.contentLoaded" class="wait-ctrl-container">
+                            <div class="wait-ctrl">
+                                <span class="fa fa-spinner fa-spin fa-3x findme-color-fc-pink no-animate"></span>
+                            </div>
+                        </div>
+
+                        <div ng-show="address.link.contentLoaded">
+
+                        </div>
+
+                    </td>-->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="modal-container">
+
+    </div>
+
+    <div class="modal-editor">
+
+    </div>
+
 </div>

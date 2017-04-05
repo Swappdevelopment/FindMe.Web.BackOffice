@@ -1,0 +1,181 @@
+﻿
+
+<div id="tagsVw">
+
+    <script type="text/ng-template" id="deleteTagModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{vm.tag.name}}?</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-findme" type="button" ng-click="vm.yes()">
+                <b>{{vm.appProps.lbl_Yes}}</b>
+            </button>
+            <button class="btn btn-findme hollow" type="button" ng-click="vm.no()">
+                <b>{{vm.appProps.lbl_No}}</b>
+            </button>
+        </div>
+    </script>
+
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <div ng-show="vm.parentIdFilter > 0" class="parent-panel findme-color-fc-pink no-animate">
+        <button type="button" class="btn btn-findme" title="{{vm.appProps.lbl_Back}}" ng-click="vm.clearParentFilters()"><span class="fa fa-chevron-left"></span></button>
+        <b>{{vm.parentNameFilter}}</b>&nbsp;<span class="fa fa-arrow-right"></span>&nbsp;<b>{{vm.appProps.lbl_SbCatgs}}</b>
+        <br />
+        <br />
+    </div>
+
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td class="findme-color-fc-pink">
+                <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
+                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.tagsCount + vm.tagsCountMod}}</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="main-table-container">
+        <table class="table table-striped table-hover data" ng-init="vm.populateTags()">
+            <thead>
+                <tr>
+                    <td class="col-md-2">
+                        <b>{{vm.appProps.lbl_Actns}}</b>
+                    </td>
+                    <td class="col-md-1">
+                        <b>{{vm.appProps.lbl_ID}}</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>{{vm.appProps.lbl_Name}}</b>
+                    </td>
+                    <td class="col-md-2">
+                        <b>{{vm.appProps.lbl_Slug}}</b>
+                    </td>
+                    <td class="text-center col-md-1">
+                        <b>{{vm.appProps.lbl_Actv}}</b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="tag in vm.tags" ng-class="tag.inEditMode ? 'inEditMode' : ''">
+                    <td>
+                        <div class="btn-toolbar">
+
+                            <button type="button" class="btn btn-findme action no-animate"
+                                    title="{{vm.appProps.lbl_Edit}}" ng-click="vm.goInEditMode($event, tag)" ng-hide="tag.inEditMode">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                            <button type="button" class="btn btn-findme hollow action no-animate"
+                                    title="{{vm.appProps.lbl_Delete}}" ng-click="vm.deleteModal(tag)" ng-hide="tag.inEditMode">
+                                <span class="fa fa-trash"></span>
+                            </button>
+
+                            <button type="button" class="btn btn-findme action no-animate"  
+                                    title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(tag)" ng-show="tag.inEditMode && !tag.saving">
+                                <span class="fa fa-save"></span>
+                            </button>
+                            <button type="button" class="btn btn-findme hollow action no-animate"
+                                    title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.revert(tag)" ng-show="tag.inEditMode && !tag.saving">
+                                <span class="fa fa-times-circle-o"></span>
+                            </button>
+
+                            <button ng-show="tag.id > 0 && tag.level == 0 && !tag.saving && !tag.inEditMode" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
+                                    title="{{vm.appProps.lbl_ShwSbCatgs}}" ng-click="vm.setParentCatg(tag)">
+                                <span class="fa fa-arrow-right"></span>
+                            </button>
+
+                        </div>
+
+
+                        <div ng-show="tag.inEditMode && tag.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                    </td>
+                    <td>
+                        <b ng-show="tag.id > 0" class="no-animate">{{tag.id}}</b>
+                    </td>
+                    <td>
+                        <b>EN:&nbsp;</b>
+                        <span ng-hide="tag.inEditMode" class="no-animate">{{tag.name_en}}</span>
+                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="tag.name_en">
+                        <br />
+                        <b>FR:&nbsp;</b>
+                        <span ng-hide="tag.inEditMode" class="no-animate">{{tag.name_fr}}</span>
+                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="tag.name_fr">
+                    </td>
+                    <td>
+                        <b>EN:&nbsp;</b>
+                        <span ng-hide="tag.inEditMode" class="no-animate">{{tag.slug_en}}</span>
+                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="tag.slug_en">
+                        <br />
+                        <b>FR:&nbsp;</b>
+                        <span ng-hide="tag.inEditMode" class="no-animate">{{tag.slug_fr}}</span>
+                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="tag.slug_fr">
+                    </td>
+                    <td class="text-center">
+                        <span ng-hide="tag.inEditMode" class="fa {{tag.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+                        <span ng-show="tag.inEditMode" class="check-box no-animate">
+                            <input ng-disabled="tag.saving" type="checkbox" value="None" id="tagActive-{{tag.id}}" name="tagActive-{{tag.id}}" ng-model="tag.active" />
+                            <label class="lbl-chkb" for="tagActive-{{tag.id}}"></label>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+        <tr>
+            <td>
+                <ul class="pagination">
+
+                    <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                        <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                            <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <br />
+
+    <div class="modal-container">
+
+    </div>
+
+</div>

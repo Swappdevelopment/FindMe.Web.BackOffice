@@ -10,9 +10,10 @@ using FindMe.Data;
 namespace FindMe.Web.Bo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170331134320_Mig_005")]
+    partial class Mig_005
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
@@ -26,7 +27,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("InvalidPsswrdFormat")
                         .HasColumnName("InvalidPsswrdFormat");
@@ -36,7 +37,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<long>("RefreshToken_Id")
                         .HasColumnName("RefreshToken_Id");
@@ -78,7 +79,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("FlgPassport")
                         .HasColumnName("FlgPassport");
@@ -101,7 +102,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -153,7 +154,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -163,7 +164,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -194,9 +195,9 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
-                    b.Property<DateTimeOffset>("FromUtc")
+                    b.Property<DateTime>("FromUtc")
                         .HasColumnName("FromUtc");
 
                     b.Property<short>("Group")
@@ -211,7 +212,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -227,7 +228,7 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("Text")
                         .HasMaxLength(1024);
 
-                    b.Property<DateTimeOffset?>("ToUtc")
+                    b.Property<DateTime?>("ToUtc")
                         .HasColumnName("ToUtc");
 
                     b.HasKey("ID");
@@ -254,7 +255,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Desc")
                         .HasColumnName("Desc")
@@ -279,7 +280,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .HasColumnName("Name")
@@ -321,9 +322,9 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
-                    b.Property<DateTimeOffset>("FromUtc")
+                    b.Property<DateTime>("FromUtc")
                         .HasColumnName("FromUtc");
 
                     b.Property<bool>("IsImported");
@@ -331,11 +332,11 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
-                    b.Property<DateTimeOffset?>("ToUtc")
+                    b.Property<DateTime?>("ToUtc")
                         .HasColumnName("ToUtc");
 
                     b.Property<short>("Type")
@@ -361,7 +362,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<DateTime>("FromUtc")
                         .HasColumnName("FromUtc");
@@ -371,7 +372,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -435,7 +436,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -445,7 +446,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -475,7 +476,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Desc")
                         .HasColumnName("Desc")
@@ -502,7 +503,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<int>("Seqn")
                         .HasColumnName("Seqn");
@@ -532,9 +533,9 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
-                    b.Property<DateTimeOffset?>("EndDateUtc")
+                    b.Property<DateTime?>("EndDateUtc")
                         .HasColumnName("EndDateUtc");
 
                     b.Property<bool>("IsImported");
@@ -542,11 +543,11 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
-                    b.Property<DateTimeOffset>("SttDateUtc")
+                    b.Property<DateTime>("SttDateUtc")
                         .HasColumnName("SttDateUtc");
 
                     b.HasKey("ID");
@@ -597,7 +598,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("IconClass")
                         .HasColumnName("IconClass")
@@ -615,7 +616,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<long?>("Parent_Id")
                         .HasColumnName("Parent_Id");
@@ -662,7 +663,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -672,7 +673,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -710,7 +711,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -720,7 +721,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -748,7 +749,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<long>("District_Id")
                         .HasColumnName("District_Id");
@@ -767,7 +768,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -824,7 +825,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -837,7 +838,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -883,7 +884,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -896,7 +897,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -942,7 +943,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -955,7 +956,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<int>("Seqn")
                         .HasColumnName("Seqn");
@@ -991,7 +992,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -1001,7 +1002,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<long>("Region_Id")
                         .HasColumnName("Region_Id");
@@ -1043,7 +1044,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Desc")
                         .HasColumnName("Desc")
@@ -1084,7 +1085,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<bool>("Paid")
                         .HasColumnName("Paid");
@@ -1174,7 +1175,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<short>("Day")
                         .HasColumnName("Day");
@@ -1196,7 +1197,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1220,7 +1221,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<long>("IdendityRef_Id")
                         .HasColumnName("IdendityRef_Id");
@@ -1230,7 +1231,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1336,7 +1337,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Desc")
                         .HasColumnName("Desc")
@@ -1354,7 +1355,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1383,7 +1384,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<long>("IPAddress_Id")
                         .HasColumnName("IPAddress_Id");
@@ -1393,7 +1394,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1424,7 +1425,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<DateTimeOffset>("FromUtc")
                         .HasColumnName("FromUtc");
@@ -1434,7 +1435,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1464,20 +1465,20 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
-                    b.Property<DateTimeOffset>("LastActivityTime")
+                    b.Property<DateTime>("LastActivityTime")
                         .HasColumnName("LastActivityTime");
 
-                    b.Property<DateTimeOffset>("LastLoginTime")
+                    b.Property<DateTime>("LastLoginTime")
                         .HasColumnName("LastLoginTime");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1505,10 +1506,6 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<long>("Category_Id")
                         .HasColumnName("Category_Id");
 
-                    b.Property<string>("Civility")
-                        .HasColumnName("Civility")
-                        .HasMaxLength(32);
-
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnName("CompanyName")
@@ -1523,7 +1520,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1558,7 +1555,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -1646,10 +1643,6 @@ namespace FindMe.Web.Bo.Migrations
                         .HasColumnName("CompanyPhone")
                         .HasMaxLength(64);
 
-                    b.Property<string>("ContactCivility")
-                        .HasColumnName("ContactCivility")
-                        .HasMaxLength(32);
-
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasColumnName("ContactEmail")
@@ -1679,7 +1672,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -1689,7 +1682,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1786,14 +1779,14 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1824,7 +1817,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<bool>("IsImported");
 
@@ -1834,7 +1827,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1877,7 +1870,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1903,13 +1896,13 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnName("LockoutEnabled");
 
-                    b.Property<DateTimeOffset?>("LockoutEndDateUtc")
+                    b.Property<DateTime?>("LockoutEndDateUtc")
                         .HasColumnName("LockoutEndDateUtc");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -1951,7 +1944,7 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<long>("IPAddress_Id")
                         .HasColumnName("IPAddress_Id");
@@ -1961,7 +1954,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 
@@ -1990,7 +1983,7 @@ namespace FindMe.Web.Bo.Migrations
 
                     b.Property<short>("Status");
 
-                    b.Property<DateTimeOffset>("TimeDate")
+                    b.Property<DateTime>("TimeDate")
                         .HasColumnName("TimeDate");
 
                     b.Property<long>("UserIP_Id")
@@ -2044,12 +2037,12 @@ namespace FindMe.Web.Bo.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset>("CreationTimeUtc");
+                    b.Property<DateTime>("CreationTimeUtc");
 
                     b.Property<short>("EmailSentStatus")
                         .HasColumnName("EmailSentStatus");
 
-                    b.Property<DateTimeOffset?>("EmailSentStatusTime")
+                    b.Property<DateTime?>("EmailSentStatusTime")
                         .HasColumnName("EmailSentStatusTime");
 
                     b.Property<bool>("IsImported");
@@ -2057,7 +2050,7 @@ namespace FindMe.Web.Bo.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(50);
 
-                    b.Property<DateTimeOffset?>("ModifiedTimeUtc");
+                    b.Property<DateTime?>("ModifiedTimeUtc");
 
                     b.Property<short>("Status");
 

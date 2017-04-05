@@ -30,7 +30,8 @@ namespace FindMe.Web.App
 
             int count = 0;
 
-            Func<Task> func;
+            Func<Task> funcGet;
+            Func<Task> funcCount;
 
             try
             {
@@ -60,23 +61,27 @@ namespace FindMe.Web.App
                 }
 
 
-                func = async () =>
+                funcGet = async () =>
                 {
                     result = await _repo.Execute<object>("GetPivotCategorys", 0, parentID, "", name, false, true, true, onlyParents, limit, offset);
                 };
 
                 if (getTotalCatgs)
                 {
+                    await _repo.VerifyLoginToken();
+
+                    funcCount = async () =>
+                    {
+                        count = await _repo.Execute<int>("GetCategorysCount", 0, parentID, "", name, false, onlyParents);
+                    };
+
                     await Task.WhenAll(
-                                Task.Run(async () =>
-                                {
-                                    count = await _repo.Execute<int>("GetCategorysCount", 0, parentID, "", name, false, onlyParents);
-                                }),
-                                func());
+                                funcCount(),
+                                funcGet());
                 }
                 else
                 {
-                    await func();
+                    await funcGet();
                 }
 
             }
@@ -94,7 +99,8 @@ namespace FindMe.Web.App
             }
             finally
             {
-                func = null;
+                funcCount = null;
+                funcGet = null;
             }
 
             return Ok(new { result = result, count = count, error = error });

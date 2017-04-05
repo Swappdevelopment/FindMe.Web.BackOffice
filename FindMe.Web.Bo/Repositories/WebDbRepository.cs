@@ -10,13 +10,16 @@ namespace FindMe.Web.App
     public class WebDbRepository : IDisposable
     {
         public event EventHandler<ValuePairEventArgs<string, bool>> ChangeAccessToken;
-        public event EventHandler RequestPropertiesInit;
 
 
         private PrjAPICmdReader _reader;
 
         private string _refreshTokenValue;
         private string _accessTokenValue;
+
+        private Func<string> _getRefreshTokenValue;
+        private Func<string> _getAccessTokenValue;
+        private Func<string> _getLanguageCode;
 
         public WebDbRepository(AppDbContext context)
         {
@@ -26,11 +29,19 @@ namespace FindMe.Web.App
             _reader = new PrjAPICmdReader(new DbInteractor(context));
         }
 
-
-        public WebDbRepository SetTokenValues(string refreshTokenValue, string accessTokenValue)
+        public WebDbRepository SetTokenFunctions(Func<string> getRefreshTokenValue, Func<string> getAccessTokenValue)
         {
-            _refreshTokenValue = refreshTokenValue;
-            _accessTokenValue = accessTokenValue;
+
+            _getRefreshTokenValue = getRefreshTokenValue;
+            _getAccessTokenValue = getAccessTokenValue;
+
+            return this;
+        }
+
+        public WebDbRepository SetLanguageFunction(Func<string> getLanguageCode)
+        {
+
+            _getLanguageCode = getLanguageCode;
 
             return this;
         }
@@ -54,11 +65,15 @@ namespace FindMe.Web.App
         }
         public async Task<object> Execute(string methodName, params object[] parameters)
         {
-            return await Execute(new WebParameter(methodName, parameters));
+            object result = await Execute(new WebParameter(methodName, parameters));
+
+            return result;
         }
         public async Task<object> Execute(params WebParameter[] webParameters)
         {
-            return await Execute(new WebParameterCollection(webParameters));
+            object result = await Execute(new WebParameterCollection(webParameters));
+
+            return result;
         }
         public async Task<object> Execute(WebParameterCollection webParameters, bool isRegenAccessTokenValue = false)
         {
@@ -69,9 +84,14 @@ namespace FindMe.Web.App
 
             try
             {
-                RequestPropertiesInit?.Invoke(this, EventArgs.Empty);
+                _refreshTokenValue = _getRefreshTokenValue == null ? null : _getRefreshTokenValue();
+                _accessTokenValue = _getAccessTokenValue == null ? null : _getAccessTokenValue();
 
                 webParameters.AccessValue = _accessTokenValue;
+
+                webParameters.LangCode = _getLanguageCode == null ? "" : _getLanguageCode();
+
+                webParameters.LangCode = string.IsNullOrEmpty(webParameters.LangCode) ? "en" : webParameters.LangCode;
 
                 resp = await _reader.Execute(webParameters);
 
@@ -158,6 +178,10 @@ namespace FindMe.Web.App
         }
 
 
+        public async Task VerifyLoginToken()
+        {
+            await Execute();
+        }
 
         public async Task<T> Execute<T>(string methodName)
         {

@@ -5,13 +5,15 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
-    public class ApiRegionController : BaseController
+    public class ApiTagController : BaseController
     {
-        public ApiRegionController(
+        public ApiTagController(
             IConfigurationRoot config,
             WebDbRepository repo,
             IHostingEnvironment env,
@@ -23,27 +25,23 @@ namespace FindMe.Web.App
 
 
         [HttpPost]
-        public async Task<IActionResult> GetRegions([FromBody]JObject param)
+        public async Task<IActionResult> GetTags([FromBody]JObject param)
         {
             object result = null;
-            object country = null;
             object error = null;
 
             int count = 0;
 
-            Func<Task> func;
+            List<Func<Task>> tasks = null;
 
             try
             {
-                country = await _repo.Execute<object>("GetDefaultCountry", true);
-
-
                 int limit = 0;
                 int offset = 0;
 
                 string name = null;
 
-                bool getTotalCatgs = false;
+                bool getTotalTags = false;
 
                 if (param != null)
                 {
@@ -52,28 +50,31 @@ namespace FindMe.Web.App
 
                     name = param.GetPropVal<string>("name");
 
-                    getTotalCatgs = param.GetPropVal<bool>("getTotalCatgs");
+                    getTotalTags = param.GetPropVal<bool>("getTotalTags");
                 }
 
+                tasks = new List<Func<Task>>();
 
-                func = async () =>
+                tasks.Add(async () =>
                 {
-                    result = await _repo.Execute<object>("GetPivotRegions", 0, "", name, false, true, limit, offset);
-                };
+                    result = await _repo.Execute<object>("GetPivotTags", 0, "", name, true, limit, offset);
+                });
 
-                if (getTotalCatgs)
+                if (getTotalTags)
                 {
-                    await Task.WhenAll(
-                                Task.Run(async () =>
-                                {
-                                    count = await _repo.Execute<int>("GetRegionsCount", 0, "", name, false);
-                                }),
-                                func());
+
+                    tasks.Add(async () =>
+                    {
+                        count = await _repo.Execute<int>("GetTagsCount", 0, "", name);
+                    });
                 }
-                else
+
+                if (tasks.Count > 1)
                 {
-                    await func();
+                    await _repo.VerifyLoginToken();
                 }
+
+                await Task.WhenAll(tasks.Select(f => f()).ToArray());
 
             }
             catch (ExceptionID ex)
@@ -90,35 +91,39 @@ namespace FindMe.Web.App
             }
             finally
             {
-                func = null;
+                if (tasks != null)
+                {
+                    tasks.Clear();
+                    tasks = null;
+                }
             }
 
-            return Ok(new { result = result, count = count, defCountry = country, error = error });
+            return Ok(new { result = result, count = count, error = error });
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveRegions([FromBody]JObject param)
+        public async Task<IActionResult> SaveTags([FromBody]JObject param)
         {
             object result = null;
             object error = null;
 
-            object[] regions;
+            object[] tags;
 
             try
             {
                 if (param != null)
                 {
-                    regions = param.JGetPropVal<object[]>("regions");
+                    tags = param.JGetPropVal<object[]>("catgs");
 
-                    if (regions != null
-                        && regions.Length > 0)
+                    if (tags != null
+                        && tags.Length > 0)
                     {
-                        for (int i = 0; i < regions.Length; i++)
+                        for (int i = 0; i < tags.Length; i++)
                         {
-                            regions[i] = await _repo.Execute<object>("ManagePivotedRegion", regions[i]);
+                            tags[i] = await _repo.Execute<object>("ManagePivotedTag", tags[i]);
                         }
 
-                        result = regions;
+                        result = tags;
                     }
                 }
             }
@@ -136,7 +141,7 @@ namespace FindMe.Web.App
             }
             finally
             {
-                regions = null;
+                tags = null;
             }
 
             return Ok(new { result = result, error = error });

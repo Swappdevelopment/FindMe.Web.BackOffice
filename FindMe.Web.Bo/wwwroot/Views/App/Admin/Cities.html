@@ -43,14 +43,24 @@
                 <b>{{vm.appProps.lbl_Cities}}</b>
             </uib-tab-heading>
 
-            <div class="cities">
+            <div class="cityDetails">
+
+                <div ng-show="vm.cVm.parentFilter.id > 0">
+                    <br />
+                    <button type="button" class="btn btn-findme" style="border-radius: 50%; width: 45px; height: 45px;" ng-click="vm.clearParentFilter()">
+                        <span class="fa fa-times"></span>
+                    </button>
+                    &nbsp;&nbsp;
+                    <h4 class="findme-color-fc-pink inline-element">{{vm.cVm.parentFilter.text}}</h4>
+
+                </div>
 
                 <br />
                 <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.cVm.isBusy">
                     <tr>
                         <td class="findme-color-fc-pink">
                             <span>{{vm.appProps.lbl_Pg}}: {{vm.cVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.cVm.totalPgs}}</span>
-                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.cVm.citysCount}}</b>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.cVm.cityDetailsCount + vm.cVm.cityDetailsCountMod}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -72,72 +82,101 @@
                     <table class="table table-striped table-hover data">
                         <thead>
                             <tr>
-                                <td>
+                                <td class="col-md-3">
                                     <b>{{vm.appProps.lbl_Actns}}</b>
                                 </td>
-                                <td>
+                                <td class="col-md-1">
                                     <b>{{vm.appProps.lbl_ID}}</b>
                                 </td>
-                                <td>
-                                    <b>{{vm.appProps.lbl_LglName}}</b>
-                                </td>
-                                <td>
+                                <td class="col-md-2">
                                     <b>{{vm.appProps.lbl_Name}}</b>
                                 </td>
-                                <td class="text-center">
-                                    <b>{{vm.appProps.lbl_PdClnt}}</b>
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_Region}}</b>
                                 </td>
-                                <td class="text-center">
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_District}}</b>
+                                </td>
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_CityGroup}}</b>
+                                </td>
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_Lat}}</b>
+                                </td>
+                                <td class="col-md-1">
+                                    <b>{{vm.appProps.lbl_Lon}}</b>
+                                </td>
+                                <td class="text-center col-md-1">
                                     <b>{{vm.appProps.lbl_Actv}}</b>
                                 </td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="city in vm.cVm.citys" ng-class="city.inEditMode ? 'inEditMode' : ''">
+                            <tr ng-repeat="cityDetail in vm.cVm.cityDetails" ng-class="cityDetail.inEditMode ? 'inEditMode' : ''">
                                 <td>
-                                    <div ng-hide="city.inEditMode" class="btn-toolbar no-animate">
-                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="city.inEditMode = true;"><span class="fa fa-edit"></span></button>
-                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.cVm.deleteModal(city)"><span class="fa fa-trash"></span></button>
+                                    <div ng-hide="cityDetail.inEditMode" class="btn-toolbar no-animate">
+
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Edit}}" ng-click="cityDetail.inEditMode = true;">
+                                            <span class="fa fa-edit"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Delete}}" ng-click="vm.cVm.deleteModal(cityDetail)">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
                                     </div>
-                                    <div ng-show="city.inEditMode && !city.saving" class="btn-toolbar no-animate">
-                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.cVm.save(city)"><span class="fa fa-save"></span></button>
-                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.cVm.revert(city)"><span class="fa fa-times-circle-o"></span></button>
+                                    <div ng-show="cityDetail.inEditMode && !cityDetail.saving" class="btn-toolbar no-animate">
+                                        <button type="button" class="btn btn-findme action" title="{{vm.appProps.lbl_Save}}" ng-click="vm.cVm.save(cityDetail)"><span class="fa fa-save"></span></button>
+                                        <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.cVm.revert(cityDetail)"><span class="fa fa-times-circle-o"></span></button>
                                     </div>
 
-                                    <div ng-show="city.inEditMode && city.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
+
+                                    <div ng-show="cityDetail.inEditMode && cityDetail.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
 
                                 </td>
                                 <td>
-                                    <b ng-show="city.id > 0" class="no-animate">{{city.id}}</b>
+                                    <b ng-show="cityDetail.id > 0" class="no-animate">{{cityDetail.id}}</b>
                                 </td>
                                 <td>
-                                    <span ng-hide="city.inEditMode" class="no-animate">{{city.legalName}}</span>
-                                    <input ng-disabled="city.saving" ng-show="city.inEditMode" placeholder="{{vm.appProps.lbl_LglName}}" type="text" class="form-control no-animate" ng-model="city.legalName">
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.name}}</span>
+                                    <input ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="cityDetail.name">
                                 </td>
                                 <td>
-                                    <span ng-hide="city.inEditMode" class="no-animate">{{city.dispName}}</span>
-
-                                    <div ng-show="city.inEditMode" class="no-animate">
-                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_Cvlty}}" type="text" class="form-control" ng-model="city.civility">
-                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_LName}}" type="text" class="form-control" ng-model="city.lName">
-                                        <input ng-disabled="city.saving" placeholder="{{vm.appProps.lbl_FName}}" type="text" class="form-control" ng-model="city.fName">
-                                    </div>
-
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.region.name}}</span>
+                                    <select class="form-control"
+                                            ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
+                                            ng-model="cityDetail.region"
+                                            ng-options="region.name for region in vm.cVm.refRegions">
+                                    </select>
+                                </td>
+                                <td>
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.district.name}}</span>
+                                    <select class="form-control"
+                                            ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
+                                            ng-model="cityDetail.district"
+                                            ng-options="district.name for district in vm.cVm.refDistricts">
+                                    </select>
+                                </td>
+                                <td>
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.group.name}}</span>
+                                    <select class="form-control"
+                                            ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode"
+                                            ng-model="cityDetail.group"
+                                            ng-options="cityGroup.name for cityGroup in vm.cVm.refCityGroups">
+                                    </select>
+                                </td>
+                                <td>
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.latitude}}</span>
+                                    <input ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode" placeholder="{{vm.appProps.lbl_Lat}}" type="text" class="form-control inline-element no-animate" ng-model="cityDetail.latitude">
+                                </td>
+                                <td>
+                                    <span ng-hide="cityDetail.inEditMode" class="no-animate">{{cityDetail.longitude}}</span>
+                                    <input ng-disabled="cityDetail.saving" ng-show="cityDetail.inEditMode" placeholder="{{vm.appProps.lbl_Lon}}" type="text" class="form-control inline-element no-animate" ng-model="cityDetail.longitude">
                                 </td>
                                 <td class="text-center">
-                                    <span ng-hide="city.inEditMode" class="fa {{city.paid ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+                                    <span ng-hide="cityDetail.inEditMode" class="fa {{cityDetail.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
-                                    <span ng-show="city.inEditMode" class="check-box no-animate">
-                                        <input ng-disabled="city.saving" type="checkbox" value="None" id="cityPaid-{{city.id}}" name="cityPaid-{{city.id}}" ng-model="city.paid" />
-                                        <label class="lbl-chkb" for="cityPaid-{{city.id}}"></label>
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <span ng-hide="city.inEditMode" class="fa {{city.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
-
-                                    <span ng-show="city.inEditMode" class="check-box">
-                                        <input ng-disabled="city.saving" type="checkbox" value="None" id="cityActive-{{city.id}}" name="cityActive-{{city.id}}" ng-model="city.active" />
-                                        <label class="lbl-chkb" for="cityActive-{{city.id}}"></label>
+                                    <span ng-show="cityDetail.inEditMode" class="check-box">
+                                        <input ng-disabled="cityDetail.saving" type="checkbox" value="None" id="cityDetailActive-{{cityDetail.id}}" name="cityDetailActive-{{cityDetail.id}}" ng-model="cityDetail.active" />
+                                        <label class="lbl-chkb" for="cityDetailActive-{{cityDetail.id}}"></label>
                                     </span>
                                 </td>
                             </tr>
@@ -176,7 +215,7 @@
                     <tr>
                         <td class="findme-color-fc-pink">
                             <span>{{vm.appProps.lbl_Pg}}: {{vm.rVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.rVm.totalPgs}}</span>
-                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.rVm.regionsCount}}</b>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.rVm.regionsCount + vm.rVm.regionsCountMod}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -225,7 +264,7 @@
                                         </button>
 
                                         <button ng-show="region.id > 0 && !region.saving" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
-                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="">
+                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="vm.rVm.filterOnParent(region)">
                                             <span class="fa fa-arrow-right"></span>
                                         </button>
                                     </div>
@@ -234,7 +273,7 @@
                                         <button type="button" class="btn btn-findme hollow action" title="{{vm.appProps.lbl_Cancel}}" ng-click="vm.rVm.revert(region)"><span class="fa fa-times-circle-o"></span></button>
                                     </div>
 
-                                    
+
 
                                     <div ng-show="region.inEditMode && region.saving" class="fa fa-spinner fa-spin fa-2x findme-color-fc-pink no-animate"></div>
 
@@ -295,7 +334,7 @@
                     <tr>
                         <td class="findme-color-fc-pink">
                             <span>{{vm.appProps.lbl_Pg}}: {{vm.dVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.dVm.totalPgs}}</span>
-                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.dVm.districtsCount}}</b>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.dVm.districtsCount + vm.dVm.districtsCountMod}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -349,7 +388,7 @@
                                         </button>
 
                                         <button ng-show="district.id > 0 && !district.saving" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
-                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="">
+                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="vm.dVm.filterOnParent(district)">
                                             <span class="fa fa-arrow-right"></span>
                                         </button>
                                     </div>
@@ -420,7 +459,7 @@
                     <tr>
                         <td class="findme-color-fc-pink">
                             <span>{{vm.appProps.lbl_Pg}}: {{vm.gVm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.gVm.totalPgs}}</span>
-                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.gVm.cityGroupsCount}}</b>
+                            &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.gVm.cityGroupsCount + vm.gVm.cityGroupsCountMod}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -474,7 +513,7 @@
                                         </button>
 
                                         <button ng-show="cityGroup.id > 0 && !cityGroup.saving" type="button" class="btn btn-findme action inline-element no-animate" style="margin-left: 20px;"
-                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="">
+                                                title="{{vm.appProps.msg_SHwRgnsCtys}}" ng-click="vm.gVm.filterOnParent(cityGroup)">
                                             <span class="fa fa-arrow-right"></span>
                                         </button>
                                     </div>

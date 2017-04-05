@@ -77,7 +77,7 @@
             transition: border background-color color ease-in 200ms;
         }
 
-.modal .btn.btn-findme {
+.modal .modal-footer .btn.btn-findme {
     min-width: 150px;
 }
 
@@ -134,6 +134,10 @@ textarea {
     background-color: #e5fff9;
 }
 
+.table.data tr.inDeleteMode {
+    background-color: #fa9797;
+}
+
 .inline-element {
     display: inline;
 }
@@ -148,4 +152,36 @@ textarea {
     -o-animation: 0s none;
     animation: 0s none;
     -webkit-animation: 0s none;
+}
+
+input.half {
+    width: 50%;
+    min-width: 40px;
+}
+
+input.one-third {
+    width: 33%;
+    min-width: 40px;
+}
+
+input.two-third {
+    width: 66%;
+    min-width: 40px;
+}
+
+input.three-quarter {
+    width: 75%;
+    min-width: 40px;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+    .bold-text.bigger {
+        font-size: large;
+    }
+
+.no-outline {
+    outline: none;
 }

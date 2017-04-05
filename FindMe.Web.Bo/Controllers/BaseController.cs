@@ -22,6 +22,8 @@ namespace FindMe.Web.App
         public const string REMEMBER_USER = "REMEMBER_USER";
         public const string USER_FULL_NAME = "USER_FULL_NAME";
 
+        public const string DEFAULT_DATE_FORMAT = "dd/MMMM/yyyy";
+
 
         public const int SEARCH_RESULT_ITEMS_PER_PAGE = 20;
 
@@ -35,6 +37,9 @@ namespace FindMe.Web.App
 
         protected string _checkedAccessToken;
 
+        protected string _changedAccessToken;
+        protected string _changedRefreshToken;
+
         public BaseController(
             IConfigurationRoot config
             , WebDbRepository repo
@@ -43,6 +48,9 @@ namespace FindMe.Web.App
             , IMailService mailService)
             : base()
         {
+            _changedAccessToken = null;
+            _changedRefreshToken = null;
+
             _config = config;
             _repo = repo;
             _env = env;
@@ -53,7 +61,17 @@ namespace FindMe.Web.App
             if (_repo != null)
             {
                 _repo.ChangeAccessToken += Reader_ChangeAccessToken;
-                _repo.RequestPropertiesInit += _repo_RequestPropertiesInit;
+
+                _repo.SetTokenFunctions(
+                    () =>
+                    {
+                        return string.IsNullOrEmpty(_changedRefreshToken) ? GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}") : _changedRefreshToken;
+                    },
+                    () =>
+                    {
+                        return string.IsNullOrEmpty(_changedAccessToken) ? GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}") : _changedAccessToken;
+                    });
+                //_repo.RequestPropertiesInit += _repo_RequestPropertiesInit;
             }
 
             _checkedAccessToken = null;
@@ -72,22 +90,28 @@ namespace FindMe.Web.App
                 e.Value2,
                 (!string.IsNullOrEmpty(rememberToken) && rememberToken.ToLower() == "true"),
                 fullName);
+
+            _changedRefreshToken = refreshToken;
+            _changedAccessToken = e.Value1;
         }
 
-        private void _repo_RequestPropertiesInit(object sender, EventArgs e)
-        {
-            GetClientIpAddressV4ASync().ContinueWith(task =>
-            {
-                if (_repo != null)
-                {
-                    _repo.SetClientIpAddress(task.Result);
-                }
-            });
+        //private async void _repo_RequestPropertiesInit(object sender, EventArgs e)
+        //{
+        //    string ipaddress = await GetClientIpAddressV4ASync();
+        //    //    .ContinueWith(task =>
+        //    //{
+        //    //    if (_repo != null)
+        //    //    {
+        //    //        _repo.SetClientIpAddress(task.Result);
+        //    //    }
+        //    //});
 
-            _repo.SetTokenValues(
-                        GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}"),
-                        GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}"));
-        }
+        //    _repo.SetClientIpAddress(ipaddress);
+
+        //    _repo.SetTokenValues(
+        //                GetCookieValue($"{TOKENS_KEY}:{REFRESH_TOKEN_KEY}"),
+        //                GetCookieValue($"{TOKENS_KEY}:{ACCESS_TOKEN_KEY}"));
+        //}
 
 
 
@@ -265,12 +289,19 @@ namespace FindMe.Web.App
 
         protected string GetCookieValue(string key)
         {
-            if (Request == null
-                || Request.Cookies == null
-                || string.IsNullOrEmpty(key)) return string.Empty;
+            try
+            {
+                if (Request == null
+                    || Request.Cookies == null
+                    || string.IsNullOrEmpty(key)) return string.Empty;
 
 
-            return Request.Cookies[key];
+                return Request.Cookies[key];
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         protected KeyValuePair<string, string>[] GetCookies(string[] keys)
         {

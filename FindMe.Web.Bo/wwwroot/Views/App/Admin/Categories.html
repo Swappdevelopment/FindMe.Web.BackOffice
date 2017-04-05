@@ -6,7 +6,7 @@
         <div class="modal-header">
 
             <div>
-                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{(vm.category.legalName || vm.category.dispName ? (vm.category.legalName ? vm.category.legalName : vm.category.dispName) : 'New Category')}}?</h3>
+                <h3 class="findme-color-fc-pink">{{vm.appProps.lbl_Delete}} {{vm.category.name}}</h3>
             </div>
 
         </div>
@@ -48,7 +48,7 @@
         <tr>
             <td class="findme-color-fc-pink">
                 <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
-                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.categorysCount}}</b>
+                &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.categorysCount + vm.categorysCountMod}}</b>
             </td>
         </tr>
         <tr>
