@@ -828,9 +828,9 @@
 
 
     angular.module('app-mainmenu')
-        .controller('addressEditorInstanceCtrlr', ['$http', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
+        .controller('addressEditorInstanceCtrlr', ['$http', '$scope', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
 
-    function addressEditorInstanceCtrlrFunc($http, $uibModalInstance, appProps, param) {
+    function addressEditorInstanceCtrlrFunc($http, $scope, $uibModalInstance, appProps, param) {
 
         var vm = this;
         vm.appProps = appProps;
@@ -841,11 +841,110 @@
         vm.categorys = param.categorys;
         vm.cityDetails = param.cityDetails;
         vm.tags = param.tags;
+        vm.tagFilter = '';
+
+        $scope.$watch('vm.tagFilter', function (newValue, oldValue) {
+
+            if (vm.tags && vm.tags.length > 0) {
+
+                if (newValue && newValue.length > 0) {
+
+                    var filterAccenFold = String(accentFold(newValue)).toLowerCase();
+
+                    for (var i = 0; i < vm.tags.length; i++) {
+
+                        var tag = vm.tags[i];
+
+                        tag.isFilteredOut = (String(accentFold(tag.name)).toLowerCase().indexOf(filterAccenFold) < 0);
+                    }
+                }
+                else {
+
+                    for (var i = 0; i < vm.tags.length; i++) {
+
+                        var tag = vm.tags[i];
+
+                        tag.isFilteredOut = false;
+                    }
+                }
+            }
+        });
+
+        vm.selectedTagCount = 0;
+
+        vm.selectTag = function (tag) {
+
+            if (tag) {
+
+                if (tag.isSelected) {
+
+                    tag.isSelected = false;
+                    if (vm.selectedTagCount > 0) {
+                        vm.selectedTagCount--;
+                    }
+                }
+                else {
+
+                    tag.isSelected = true;
+                    vm.selectedTagCount++;
+                }
+            }
+        };
 
         vm.showAddTags = false;
         vm.gettingAddTags = false;
 
+        vm.applyTags = function () {
+
+            if (vm.tags && vm.tags.length > 0) {
+
+                for (var i = 0; i < vm.tags.length; i++) {
+
+                    var tag = vm.tags[i];
+
+                    if (tag.isSelected) {
+
+                        vm.address.tags.insert(0, {
+                            id: 0,
+                            recordState: 10,
+                            address_Id: vm.address.id,
+                            id: tag.id,
+                            name: tag.name,
+                            active: true,
+                            status: 1
+                        });
+                    }
+                }
+            }
+
+            vm.showAddTags = false;
+        };
+
+        vm.addressTagClick = function (addrTag) {
+
+            if (addrTag) {
+
+                switch (addrTag.recordState) {
+
+                    case 30:
+                        addrTag.recordState = 0;
+                        break;
+
+                    case 10:
+                        addrTag.recordState = 0;
+                        vm.address.tags.remove(addrTag);
+                        break
+
+                    default:
+                        addrTag.recordState = 30;
+                        break;
+                }
+            }
+        };
+
         vm.openAddTags = function () {
+
+            vm.selectedTagCount = 0;
 
             vm.showAddTags = true;
 
@@ -856,9 +955,10 @@
                     var tag = vm.tags[i];
 
                     tag.isSelected = false;
+                    tag.isFilteredOut = false;
                     tag.isVisible = true;
 
-                    if ($.grep(vm.address.tags, function (v) { return v.id === tag.ID; }).length > 0) {
+                    if ($.grep(vm.address.tags, function (v) { return v.id === tag.id; }).length > 0) {
 
                         tag.isVisible = false;
                     }
@@ -880,9 +980,10 @@
 
                             tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
                             tag.isSelected = false;
+                            tag.isFilteredOut = false;
                             tag.isVisible = true;
 
-                            if ($.grep(vm.address.tags, function (v) { return v.id === tag.ID; }).length > 0) {
+                            if ($.grep(vm.address.tags, function (v) { return v.id === tag.id; }).length > 0) {
 
                                 tag.isVisible = false;
                             }
@@ -914,6 +1015,16 @@
                      .then(successFunc, errorFunc)
                      .finally(finallyFunc);
             }
+
+            $('#addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control input').on('focusin focusout', function (e) {
+
+                var $parent = $($(this).parent());
+
+                if ($parent && $parent.length > 0) {
+
+                    $parent.toggleClass('has-focus');
+                }
+            });
         };
 
         vm.save = function () {

@@ -183,23 +183,26 @@
                     </button>
 
                     <div class="tags-container container" ng-show="vm.address.tags && vm.address.tags.length > 0">
-                        <div class="row">
 
-                            <ul>
-                                <li ng-repeat="tg in vm.address.tags">
-                                    <label class="kywrd inline-element" ng-class="tg.recordState === 30 ? 'findme-color-bc-lightgray' : 'findme-color-bc-pink'">
+                        <ul>
+                            <li ng-repeat="tg in vm.address.tags">
 
-                                        <span class="fa fa-hashtag findme-color-fc-white"></span>
-                                        <span class="findme-color-fc-white">&nbsp;{{tg.name}}</span>
+                                <button class="kywrd inline-element no-outline"
+                                        ng-class="tg.recordState === 30 ? 'findme-color-bc-lightgray' : (tg.recordState === 10 ? 'findme-color-bc-green' : 'findme-color-bc-pink')"
+                                        ng-click="vm.addressTagClick(tg)">
 
-                                        <button type="button" class="btn btn-xs delete" ng-click="tg.recordState = tg.recordState === 30 ? 0 : 30">
-                                            <span ng-class="tg.recordState === 30 ? 'fa fa-ban findme-color-fc-lightgray' : 'fa fa-trash findme-color-fc-pink'" class=""></span>
-                                        </button>
-                                    </label>
-                                </li>
-                            </ul>
+                                    <span class="fa fa-hashtag findme-color-fc-white"></span>
+                                    &nbsp;
+                                    <span class="findme-color-fc-white">{{tg.name}}</span>
+                                    &nbsp;
+                                    <span class="fa-container"
+                                          ng-class="tg.recordState === 30 ? 'fa fa-ban findme-color-fc-lightgray' : (tg.recordState === 10 ? 'fa fa-ban findme-color-fc-green' : 'fa fa-trash findme-color-fc-pink')"></span>
 
-                        </div>
+                                </button>
+
+                            </li>
+                        </ul>
+
                     </div>
 
                 </div>
@@ -217,9 +220,50 @@
             </button>
         </div>
 
-        <div class="add-tags-bg" ng-show="vm.showAddTags" ng-click="vm.showAddTags = false">
+        <div class="add-tags-bg no-animate" ng-show="vm.showAddTags" ng-click="vm.showAddTags = false">
             <div class="add-tags-container" ng-click="$event.stopPropagation()">
-                <span class="wait fa fa-spinner fa-spin fa-4x findme-color-fc-pink" ng-show="vm.gettingAddTags"></span>
+
+                <span class="wait no-animate fa fa-spinner fa-spin fa-4x findme-color-fc-pink" ng-show="vm.gettingAddTags"></span>
+
+                <div class="no-animate" ng-show="!vm.gettingAddTags && vm.tags && vm.tags.length > 0">
+
+                    <div class="form-group">
+                        <div class="form-control no-animate">
+                            <span class="fa fa-search fa-2x findme-color-fc-pink"></span>
+                            <input type="text" placeholder="{{vm.appProps.msg_TpFltrKywrds}}" ng-model="vm.tagFilter">
+                            <span ng-show="vm.tagFilter" class="fa fa-times fa-2x findme-color-fc-pink crsr-pointer" ng-click="vm.tagFilter = ''"></span>
+                        </div>
+                        <span class="findme-color-fc-pink">{{vm.appProps.lbl_KywrdsSltd}} {{vm.selectedTagCount}}</span>
+                    </div>
+
+                    <div class="overflow">
+                        <div class="tags-container container">
+                            <ul>
+                                <li ng-repeat="tg in vm.tags" ng-show="tg.isVisible && !tg.isFilteredOut">
+                                    <button class="kywrd inline-element no-outline"
+                                            ng-class="tg.isSelected ? 'findme-color-bc-pink' : 'findme-color-bc-lightgray'"
+                                            ng-click="vm.selectTag(tg)">
+                                        <span class="fa fa-hashtag findme-color-fc-white"></span>
+                                        &nbsp;
+                                        <span class="findme-color-fc-white">{{tg.name}}</span>
+                                        &nbsp;
+                                        <span class="fa-container" ng-class="tg.isSelected ? 'fa fa-ban findme-color-fc-pink' : 'fa fa-plus findme-color-fc-lightgray'"></span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="btn-toolbar pull-right">
+                        <button class="btn btn-findme" type="button" ng-click="vm.applyTags()">
+                            <b>{{vm.appProps.lbl_Apply}}</b>
+                        </button>
+                        <button class="btn btn-findme hollow" type="button" ng-click="vm.showAddTags = false">
+                            <b>{{vm.appProps.lbl_Cancel}}</b>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -387,14 +431,21 @@
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">-->
                     </td>
 
+
+
+                    td
+
                     <td class="text-center">
                         <span class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
+
+
 
                         <!--<span class="check-box no-animate">
                             <input ng-disabled="address.saving" type="checkbox" value="None" id="addressFbFans-{{address.id}}" name="addressFbFans-{{address.id}}" ng-model="address.flgRecByFbFans" />
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
                         </span>-->
                     </td>
+  <td cl
                     <td cl
                     <td class="text-center">
                         <span class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
@@ -404,6 +455,10 @@
                             <label class="lbl-chkb" for="addressActive-{{address.id}}"></label>
                         </span>-->
                     </td>
+
+
+
+
 
 
 

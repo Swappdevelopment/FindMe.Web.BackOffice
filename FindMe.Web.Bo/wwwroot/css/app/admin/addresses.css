@@ -18,19 +18,86 @@
         overflow: hidden;
     }
 
-        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container {
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container,
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .overflow {
             height: auto !important;
             max-height: calc(100vh - 340px) !important;
             overflow-y: auto;
         }
 
-            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container.disable-overflow {
-                overflow-y: hidden;
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .overflow {
+            padding: 5px 15px;
+        }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .overflow .tags-container {
+                background-color: transparent;
             }
 
-            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .form-control {
-                margin-left: 5px;
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group {
+            padding: 10px 15px 5px 15px;
+            margin: 0 25px;
+        }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control {
+                padding: 3px 35px;
+                -webkit-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+                -moz-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+                box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+                transition: box-shadow ease-in 200ms;
             }
+
+                #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control.has-focus {
+                    -webkit-box-shadow: 0px 0px 5px 1px rgba(78,136,237,0.75);
+                    -moz-box-shadow: 0px 0px 5px 1px rgba(78,136,237,0.75);
+                    box-shadow: 0px 0px 5px 1px rgba(78,136,237,0.75);
+                    transition: box-shadow ease-in 200ms;
+                }
+
+                #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control .fa {
+                    position: absolute;
+                }
+
+                    #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control .fa.fa-search {
+                        left: 48px;
+                        transform: translateY(2px);
+                    }
+
+                    #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control .fa.fa-times {
+                        right: 48px;
+                        transform: translateY(-28px);
+                    }
+
+                #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control input {
+                    width: 100%;
+                    max-width: none;
+                    border: none;
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                    #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control input:active,
+                    #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .form-group .form-control input:focus {
+                        border: none;
+                        outline: none;
+                        box-shadow: none;
+                    }
+
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar {
+            padding: 20px 0;
+        }
+
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar button {
+            margin-right: 35px;
+            min-width: 100px;
+        }
+
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container.disable-overflow {
+            overflow-y: hidden;
+        }
+
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .form-control {
+            margin-left: 5px;
+        }
 
         #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg {
             position: absolute;
@@ -42,30 +109,7 @@
             z-index: 10;
         }
 
-            #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container {
-                position: absolute;
-                background-color: white;
-                border: 1px solid #e50050;
-                border-radius: 10px;
-                width: 90%;
-                height: 90%;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                -webkit-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
-                -moz-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
-                box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
-                z-index: 15;
-            }
-
-                #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .wait {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
-
-        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .tags-container {
+        #addressesVw .modal-editor .modal-dialog .modal-content .tags-container {
             background-color: #ffe0eb;
             border-radius: 5px;
             padding: 10px;
@@ -73,27 +117,50 @@
             margin: 0;
         }
 
-            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .tags-container ul {
+            #addressesVw .modal-editor .modal-dialog .modal-content .tags-container ul {
                 list-style-type: none;
                 margin: 0;
                 padding: 0;
                 overflow: hidden;
             }
 
-                #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .tags-container ul li {
+                #addressesVw .modal-editor .modal-dialog .modal-content .tags-container ul li {
                     float: left;
                     padding: 5px 2.5px;
                 }
 
-                #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .tags-container ul .kywrd {
-                    border: 2px solid transparent;
-                    border-radius: 5px;
-                    padding: 4px 3px;
+            #addressesVw .modal-editor .modal-dialog .modal-content .tags-container .kywrd {
+                border: 2px solid transparent;
+                border-radius: 5px;
+                padding: 2px 3px;
+            }
+
+                #addressesVw .modal-editor .modal-dialog .modal-content .tags-container .kywrd .fa-container {
+                    border: none;
+                    border-radius: 50%;
+                    background-color: white;
+                    padding: 3px 4px;
                 }
 
-                    #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container .tags-container ul .kywrd button.delete {
-                        border: none;
-                        border-radius: 50%;
-                        background-color: white;
-                        outline: none;
-                    }
+        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #e50050;
+            border-radius: 10px;
+            width: 90%;
+            height: 90%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -webkit-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+            -moz-box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+            box-shadow: 3px 4px 5px -3px rgba(0,0,0,0.75);
+            z-index: 15;
+        }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .wait {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
