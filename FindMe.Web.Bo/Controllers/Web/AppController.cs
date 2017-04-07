@@ -22,6 +22,8 @@ namespace FindMe.Web.App
                 AccessLevel.DbSignedIn,
                 () =>
                 {
+                    ViewData["ConfigRoot"] = _config;
+
                     WebRootPath();
 
                     return View();

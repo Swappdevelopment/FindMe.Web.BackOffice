@@ -1,6 +1,7 @@
 ﻿using FindMe.Data;
 using FindMe.Data.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,6 @@ using Swapp.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
@@ -282,6 +282,23 @@ namespace FindMe.Web.App
 
                 if (param != null)
                 {
+                    if (_env != null
+                        && _config != null)
+                    {
+                        if (_env.IsDevelopment())
+                        {
+                            UrlManager.SetupApplicationHost(_config["UrlConfigs:development:webSite"]);
+                        }
+                        else if (_env.IsDevelopment())
+                        {
+                            UrlManager.SetupApplicationHost(_config["UrlConfigs:staging:webSite"]);
+                        }
+                        else
+                        {
+                            UrlManager.SetupApplicationHost(_config["UrlConfigs:production:webSite"]);
+                        }
+                    }
+
                     addrID = param.GetPropVal<long>("addrID");
 
                     result = await _repo.Execute<object>("GetAddressContent", addrID, null, false);
@@ -303,6 +320,7 @@ namespace FindMe.Web.App
             return Ok(new { result = result });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> SaveAddresses([FromBody]JObject param)
         {
@@ -313,15 +331,39 @@ namespace FindMe.Web.App
 
             List<object> tempLst = null;
 
+            Func<JObject, Address> func;
+
+
             try
             {
                 if (param != null)
                 {
-                    addresses = param.JGetPropVal<Address[]>("addresses");
+                    func = (jobj) =>
+                    {
+                        if (jobj == null) return null;
+
+
+                        var addr = Helper.JSonCamelDeserializeObject<Address>(jobj);
+
+                        var jImages = jobj.JGetPropVal<JObject[]>("images");
+
+                        if (jImages != null && jImages.Length > 0)
+                        {
+                            foreach (var jImg in jImages)
+                            {
+                            }
+                        }
+
+                        return addr;
+                    };
+
+                    addresses = param.JGetPropVal<JObject[]>("addresses");
 
                     if (addresses != null
                         && addresses.Length > 0)
                     {
+                        addresses = addresses.Select(l => func(l as JObject)).ToArray();
+
                         tempLst = new List<object>();
 
                         foreach (var addr in addresses)
@@ -359,6 +401,33 @@ namespace FindMe.Web.App
             }
 
             return Ok(new { result = result, error = error });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UploadAddressImage(string data = null)
+        {
+            try
+            {
+                var files = Request.Form.Files;
+
+                var xxx = (from l in Request.Form.Keys.Select(k => Request.Form[k])
+                           where l.Count > 0
+                           select Helper.JSonDeserializeObject<AddressFile>(l[0])).ToArray();
+
+                foreach (var key in Request.Form.Keys)
+                {
+                    var obj = Request.Form[key];
+
+                    var temp = obj[0];
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

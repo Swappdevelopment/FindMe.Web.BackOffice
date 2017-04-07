@@ -1,4 +1,10 @@
-﻿@{
+﻿
+@using Microsoft.Extensions.Options;
+@using Microsoft.Extensions.Configuration;
+
+@{
+    var configRoot = ViewData["ConfigRoot"] as IConfigurationRoot;
+
     ViewBag.Title = "App";
 }
 
@@ -168,7 +174,10 @@
             lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
             lbl_KywrdsSltd: ('@Html.GetLabel("lbl_KywrdsSltd")').encodeHtml(),
             lbl_Apply: ('@Html.GetLabel("lbl_Apply")').encodeHtml(),
-            
+            lbl_Imgs: ('@Html.GetLabel("lbl_Imgs")').encodeHtml(),
+            lbl_Logos: ('@Html.GetLabel("lbl_Logos")').encodeHtml(),
+            lbl_Prvw: ('@Html.GetLabel("lbl_Prvw")').encodeHtml(),
+
             erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
 
             msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
@@ -210,6 +219,11 @@
     </script>
 
     <environment names="Development">
+
+        <script>
+            GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:development:webSite"])';
+        </script>
+
         <script src="~/js/accentFold.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
@@ -222,6 +236,19 @@
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
+
+        <environment names="Staging">
+            <script>
+                GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:staging:webSite"])';
+            </script>
+        </environment>
+
+        <environment names="Production">
+            <script>
+                GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:production:webSite"])';
+            </script>
+        </environment>
+
         <script src="~/js/accentFold.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>

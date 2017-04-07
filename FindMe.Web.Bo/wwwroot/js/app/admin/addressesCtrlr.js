@@ -306,6 +306,14 @@
                         v.name = appProps.currentLang.startsWith('en') ? v.name_en : v.name_fr;
                     });
                 }
+
+                if (value.images) {
+
+                    $.each(value.images, function (i, v) {
+
+                        v.active = v.status === 1;
+                    });
+                }
             }
         };
 
@@ -535,9 +543,9 @@
                         offset: offset,
                         getTotalAddresses: (vm.addressesCount <= 0 || forceGetCount),
                         allNames: (allNames ? allNames : null),
-                        getRefClients: (vm.clients.length == 0),
-                        getRefCatgs: (vm.categorys.length == 0),
-                        getRefCities: (vm.cityDetails.length == 0)
+                        getRefClients: (vm.clients.length === 0),
+                        getRefCatgs: (vm.categorys.length === 0),
+                        getRefCities: (vm.cityDetails.length === 0)
                     })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
@@ -655,6 +663,8 @@
 
                                     var tempValue = validAddresses[index];
 
+                                    var i;
+
                                     if (value && value.address) {
 
                                         tempValue.id = value.address.id;
@@ -681,9 +691,19 @@
 
                                             tempValue.ratingOverrides.length = 0;
 
-                                            for (var i = 0; i < value.ratingOverrides.length; i++) {
+                                            for (i = 0; i < value.ratingOverrides.length; i++) {
 
                                                 tempValue.ratingOverrides.push(value.ratingOverrides[i]);
+                                            }
+                                        }
+
+                                        if (value.tags && tempValue.tags) {
+
+                                            tempValue.tags.length = 0;
+
+                                            for (i = 0; i < value.tags.length; i++) {
+
+                                                tempValue.tags.push(value.tags[i]);
                                             }
                                         }
 
@@ -847,22 +867,25 @@
 
             if (vm.tags && vm.tags.length > 0) {
 
+                var tag;
+                var i;
+
                 if (newValue && newValue.length > 0) {
 
                     var filterAccenFold = String(accentFold(newValue)).toLowerCase();
 
-                    for (var i = 0; i < vm.tags.length; i++) {
+                    for (i = 0; i < vm.tags.length; i++) {
 
-                        var tag = vm.tags[i];
+                        tag = vm.tags[i];
 
                         tag.isFilteredOut = (String(accentFold(tag.name)).toLowerCase().indexOf(filterAccenFold) < 0);
                     }
                 }
                 else {
 
-                    for (var i = 0; i < vm.tags.length; i++) {
+                    for (i = 0; i < vm.tags.length; i++) {
 
-                        var tag = vm.tags[i];
+                        tag = vm.tags[i];
 
                         tag.isFilteredOut = false;
                     }
@@ -905,10 +928,9 @@
                     if (tag.isSelected) {
 
                         vm.address.tags.insert(0, {
-                            id: 0,
                             recordState: 10,
-                            address_Id: vm.address.id,
                             id: tag.id,
+                            address_Id: vm.address.id,
                             name: tag.name,
                             active: true,
                             status: 1
@@ -1027,6 +1049,65 @@
             });
         };
 
+
+        vm.uploadImgClick = function ($event, img) {
+
+            if ($event && $event.currentTarget) {
+
+                var $fileInput = $($event.currentTarget).siblings('input[type="file"]');
+
+                if ($fileInput && $fileInput.length > 0) {
+
+                    $fileInput.off('change');
+
+                    $fileInput.on('change', function () {
+
+                        var $parentForm = $(this).parents('form.img-upload').first();
+
+                        if ($parentForm && $parentForm.length > 0) {
+
+                            var fd = new FormData();
+
+                            $.each($fileInput.get(0).files, function (index, value) {
+
+                                fd.append(value.name, value);
+                                fd.append(value.name + '_' + index + '_KEY', JSON.stringify(img));
+                            });
+
+
+                            $http.post('/ApiAddress/UploadAddressImage', fd, {
+                                transformRequest: angular.identity,
+                                headers: { 'Content-Type': undefined }
+                            });
+                        }
+                    });
+
+                    $fileInput.first().click();
+                }
+            }
+        };
+
+
+        vm.uploadFileReady = function ($event) {
+
+            if ($event && $event.currentTarget) {
+
+                var $fileInput = $($event.currentTarget);
+
+                if ($fileInput && $fileInput.length > 0) {
+
+                    $fileInput = $fileInput.parents('form.img-upload').first();
+
+                    if ($fileInput && $fileInput.length > 0) {
+
+                        $fileInput.submit();
+                    }
+                }
+            }
+        };
+
+
+
         vm.save = function () {
 
             param.save(vm.address);
@@ -1064,7 +1145,7 @@
 
             if (rt) {
 
-                if (rt.recordState == 10) {
+                if (rt.recordState === 10) {
 
                     vm.address.ratingOverrides.remove(rt);
                 }
