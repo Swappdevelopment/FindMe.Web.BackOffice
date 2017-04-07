@@ -7,6 +7,7 @@
 /// <reference path="js/app/admin/categoriesctrlr.js" />
 /// <reference path="js/app/admin/citiesctrlr.js" />
 /// <reference path="js/app/admin/clientsCtrlr.js" />
+/// <reference path="js/app/admin/tagsctrlr.js" />
 /// <reference path="js/app/admin/usersCtrlr.js" />
 /// <reference path="js/app/app-mainmenu.js" />
 /// <reference path="js/app/homeCtrlr.js" />
