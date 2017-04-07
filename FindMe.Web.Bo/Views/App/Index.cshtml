@@ -55,157 +55,162 @@
     </environment>
 
     <script>
+        var GlobalProps = {
+
+            swIsoFormat : function(date, toUtc){
+
+                if (date) {
+
+                    if (moment) {
+
+                        var dtFormat = '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)';
+
+                        return toUtc ? moment.utc(date).format(dtFormat) : moment(date).format(dtFormat);
+                    }
+
+                    return date.toString();
+                }
+
+                return null;
+            },
+
+            resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
+            defaultDateFormat: '@(BaseController.DEFAULT_DATE_FORMAT)',
+            dateTimeIsoOffsetFormat: '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)',
+            currentLang: ('@Html.GetCurrentLang()').encodeHtml(),
+
+            urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
+            urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
+            urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
+            urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
+            urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
+            urlSaveCatgs: '@Url.Action("SaveCatgs", "ApiCatg")',
+            urlGetCityDetails: '@Url.Action("GetCityDetails", "ApiCity")',
+            urlSaveCityDetails: '@Url.Action("SaveCityDetails", "ApiCity")',
+            urlGetRegions: '@Url.Action("GetRegions", "ApiCity")',
+            urlSaveRegions: '@Url.Action("SaveRegions", "ApiCity")',
+            urlGetDistricts: '@Url.Action("GetDistricts", "ApiCity")',
+            urlSaveDistricts: '@Url.Action("SaveDistricts", "ApiCity")',
+            urlGetCityGroups: '@Url.Action("GetCityGroups", "ApiCity")',
+            urlSaveCityGroups: '@Url.Action("SaveCityGroups", "ApiCity")',
+            urlGetAllCityStuff: '@Url.Action("GetAllCityStuff", "ApiCity")',
+            urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
+            urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
+            urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
+            urlGetTags: '@Url.Action("GetTags", "ApiTag")',
+            urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
+
+            lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
+            lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
+            lbl_LglName: ('@Html.GetLabel("lbl_LglName")').encodeHtml(),
+            lbl_Actns: ('@Html.GetLabel("lbl_Actns")').encodeHtml(),
+            lbl_Actv: ('@Html.GetLabel("lbl_Actv")').encodeHtml(),
+            lbl_PdClnt: ('@Html.GetLabel("lbl_PdClnt")').encodeHtml(),
+            lbl_ID: ('@Html.GetLabel("lbl_ID")').encodeHtml(),
+            lbl_FName: ('@Html.GetLabel("lbl_FName")').encodeHtml(),
+            lbl_LName: ('@Html.GetLabel("lbl_LName")').encodeHtml(),
+            lbl_Email: ('@Html.GetLabel("lbl_Email")').encodeHtml(),
+            lbl_Usrnm: ('@Html.GetLabel("lbl_Usrnm")').encodeHtml(),
+            lbl_CntctNm: ('@Html.GetLabel("lbl_CntctNm")').encodeHtml(),
+            lbl_LckOut: ('@Html.GetLabel("lbl_LckOut")').encodeHtml(),
+            lbl_Prfl: ('@Html.GetLabel("lbl_Prfl")').encodeHtml(),
+            lbl_ReSnd: ('@Html.GetLabel("lbl_ReSnd")').encodeHtml(),
+            lbl_CnclCnfrmtn: ('@Html.GetLabel("lbl_CnclCnfrmtn")').encodeHtml(),
+            lbl_Clnts: ('@Html.GetLabel("lbl_Clnts")').encodeHtml(),
+            lbl_Clnt: ('@Html.GetLabel("lbl_Clnt")').encodeHtml(),
+            lbl_City: ('@Html.GetLabel("lbl_City")').encodeHtml(),
+            lbl_Category: ('@Html.GetLabel("lbl_Category")').encodeHtml(),
+            lbl_Pgs: ('@Html.GetLabel("lbl_Pgs")').encodeHtml(),
+            lbl_Pg: ('@Html.GetLabel("lbl_Pg")').encodeHtml(),
+            lbl_of: ('@Html.GetLabel("lbl_of")').encodeHtml(),
+            lbl_TtlRows: ('@Html.GetLabel("lbl_TtlRows")').encodeHtml(),
+            lbl_Edit: ('@Html.GetLabel("lbl_Edit")').encodeHtml(),
+            lbl_Delete: ('@Html.GetLabel("lbl_Delete")').encodeHtml(),
+            lbl_Save: ('@Html.GetLabel("lbl_Save")').encodeHtml(),
+            lbl_Cancel: ('@Html.GetLabel("lbl_Cancel")').encodeHtml(),
+            lbl_Desc: ('@Html.GetLabel("lbl_Desc")').encodeHtml(),
+            lbl_Cvlty: ('@Html.GetLabel("lbl_Cvlty")').encodeHtml(),
+            lbl_Yes: ('@Html.GetLabel("lbl_Yes")').encodeHtml(),
+            lbl_No: ('@Html.GetLabel("lbl_No")').encodeHtml(),
+            lbl_Categories: ('@Html.GetLabel("lbl_Categories")').encodeHtml(),
+            lbl_Slug: ('@Html.GetLabel("lbl_Slug")').encodeHtml(),
+            lbl_SbCatgs: ('@Html.GetLabel("lbl_SbCatgs")').encodeHtml(),
+            lbl_ShwSbCatgs: ('@Html.GetLabel("lbl_ShwSbCatgs")').encodeHtml(),
+            lbl_Back: ('@Html.GetLabel("lbl_Back")').encodeHtml(),
+            lbl_Cities: ('@Html.GetLabel("lbl_Cities")').encodeHtml(),
+            lbl_Rgns: ('@Html.GetLabel("lbl_Rgns")').encodeHtml(),
+            lbl_Dstrcts: ('@Html.GetLabel("lbl_Dstrcts")').encodeHtml(),
+            lbl_Grps: ('@Html.GetLabel("lbl_Grps")').encodeHtml(),
+            lbl_CtsRgnsDstrctsGrps: ('@Html.GetLabel("lbl_CtsRgnsDstrctsGrps")').encodeHtml(),
+            lbl_Icon: ('@Html.GetLabel("lbl_Icon")').encodeHtml(),
+            lbl_Lat: ('@Html.GetLabel("lbl_Lat")').encodeHtml(),
+            lbl_Lon: ('@Html.GetLabel("lbl_Lon")').encodeHtml(),
+            lbl_Region: ('@Html.GetLabel("lbl_Region")').encodeHtml(),
+            lbl_District: ('@Html.GetLabel("lbl_District")').encodeHtml(),
+            lbl_CityGroup: ('@Html.GetLabel("lbl_CityGroup")').encodeHtml(),
+            lbl_CityFrRgn: ('@Html.GetLabel("lbl_CityFrRgn")').encodeHtml(),
+            lbl_CityFrDst: ('@Html.GetLabel("lbl_CityFrDst")').encodeHtml(),
+            lbl_CityFrGrp: ('@Html.GetLabel("lbl_CityFrGrp")').encodeHtml(),
+            lbl_FbFans: ('@Html.GetLabel("lbl_FbFans")').encodeHtml(),
+            lbl_Rating: ('@Html.GetLabel("lbl_Rating")').encodeHtml(),
+            lbl_RatingCount: ('@Html.GetLabel("lbl_RatingCount")').encodeHtml(),
+            lbl_Ovrd: ('@Html.GetLabel("lbl_Ovrd")').encodeHtml(),
+            lbl_Ovrds: ('@Html.GetLabel("lbl_Ovrds")').encodeHtml(),
+            lbl_CvltMr: ('@Html.GetLabel("lbl_CvltMr")').encodeHtml(),
+            lbl_CvltMiss: ('@Html.GetLabel("lbl_CvltMiss")').encodeHtml(),
+            lbl_CvltMme: ('@Html.GetLabel("lbl_CvltMme")').encodeHtml(),
+            lbl_Tags: ('@Html.GetLabel("lbl_Tags")').encodeHtml(),
+            lbl_NwAddr: ('@Html.GetLabel("lbl_NwAddr")').encodeHtml(),
+            lbl_Rate: ('@Html.GetLabel("lbl_Rate")').encodeHtml(),
+            lbl_ClickCount: ('@Html.GetLabel("lbl_ClickCount")').encodeHtml(),
+            lbl_From: ('@Html.GetLabel("lbl_From")').encodeHtml(),
+            lbl_To: ('@Html.GetLabel("lbl_To")').encodeHtml(),
+            lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
+            lbl_KywrdsSltd: ('@Html.GetLabel("lbl_KywrdsSltd")').encodeHtml(),
+            lbl_Apply: ('@Html.GetLabel("lbl_Apply")').encodeHtml(),
+            
+            erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
+
+            msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
+            msg_SavePrfl: ('@Html.GetMessage("msg_SavePrfl")').encodeHtml(),
+            msg_WtngEmailCnfrmtn: ('@Html.GetMessage("msg_WtngEmailCnfrmtn")').encodeHtml(),
+            msg_AddClnts: ('@Html.GetMessage("msg_AddClnts")').encodeHtml(),
+            msg_RfrshClnts: ('@Html.GetMessage("msg_RfrshClnts")').encodeHtml(),
+            msg_SaveClnts: ('@Html.GetMessage("msg_SaveClnts")').encodeHtml(),
+            msg_AddCatgs: ('@Html.GetMessage("msg_AddCatgs")').encodeHtml(),
+            msg_RfrshCatgs: ('@Html.GetMessage("msg_RfrshCatgs")').encodeHtml(),
+            msg_SaveCatgs: ('@Html.GetMessage("msg_SaveCatgs")').encodeHtml(),
+            msg_SHwRgnsCtys: ('@Html.GetMessage("msg_SHwRgnsCtys")').encodeHtml(),
+            msg_SHwDstrctsCtys: ('@Html.GetMessage("msg_SHwDstrctsCtys")').encodeHtml(),
+            msg_SHwGrpsCtys: ('@Html.GetMessage("msg_SHwGrpsCtys")').encodeHtml(),
+            msg_TpFltrKywrds: ('@Html.GetMessage("msg_TpFltrKywrds")').encodeHtml(),
+
+            msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
+            msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
+            msg_SaveCtys: ('@Html.GetMessage("msg_SaveCtys")').encodeHtml(),
+            msg_AddRgn: ('@Html.GetMessage("msg_AddRgn")').encodeHtml(),
+            msg_RfrshRgns: ('@Html.GetMessage("msg_RfrshRgns")').encodeHtml(),
+            msg_SaveRgns: ('@Html.GetMessage("msg_SaveRgns")').encodeHtml(),
+            msg_AddDstrct: ('@Html.GetMessage("msg_AddDstrct")').encodeHtml(),
+            msg_RfrshDstrcts: ('@Html.GetMessage("msg_RfrshDstrcts")').encodeHtml(),
+            msg_SaveDstrcts: ('@Html.GetMessage("msg_SaveDstrcts")').encodeHtml(),
+            msg_AddCtyGrp: ('@Html.GetMessage("msg_AddCtyGrp")').encodeHtml(),
+            msg_RfrshCtyGrps: ('@Html.GetMessage("msg_RfrshCtyGrps")').encodeHtml(),
+            msg_SaveCtyGrps: ('@Html.GetMessage("msg_SaveCtyGrps")').encodeHtml(),
+            msg_AddAddr: ('@Html.GetMessage("msg_AddAddr")').encodeHtml(),
+            msg_RfrshAddrs: ('@Html.GetMessage("msg_RfrshAddrs")').encodeHtml(),
+            msg_SaveAddrs: ('@Html.GetMessage("msg_SaveAddrs")').encodeHtml(),
+            msg_AddTag: ('@Html.GetMessage("msg_AddTag")').encodeHtml(),
+            msg_RfrshTags: ('@Html.GetMessage("msg_RfrshTags")').encodeHtml(),
+            msg_SaveTags: ('@Html.GetMessage("msg_SaveTags")').encodeHtml()
+
+        };
         angular.module('app-mainmenu')
-               .value('appProps',
-                    {
-                        swIsoFormat : function(date, toUtc){
-
-                            if (date) {
-
-                                if (moment) {
-
-                                    var dtFormat = '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)';
-
-                                    return toUtc ? moment.utc(date).format(dtFormat) : moment(date).format(dtFormat);
-                                }
-
-                                return date.toString();
-                            }
-
-                            return null;
-                        },
-
-                        resultItemsPerPg: @(BaseController.SEARCH_RESULT_ITEMS_PER_PAGE),
-                        defaultDateFormat: '@(BaseController.DEFAULT_DATE_FORMAT)',
-                        dateTimeIsoOffsetFormat: '@(Swapp.Data.Helper.JS_DATETIME_ISO_FORMAT_WITH_OFFSET)',
-                        currentLang: ('@Html.GetCurrentLang()').encodeHtml(),
-
-                        urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
-                        urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
-                        urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
-                        urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
-                        urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
-                        urlSaveCatgs: '@Url.Action("SaveCatgs", "ApiCatg")',
-                        urlGetCityDetails: '@Url.Action("GetCityDetails", "ApiCity")',
-                        urlSaveCityDetails: '@Url.Action("SaveCityDetails", "ApiCity")',
-                        urlGetRegions: '@Url.Action("GetRegions", "ApiCity")',
-                        urlSaveRegions: '@Url.Action("SaveRegions", "ApiCity")',
-                        urlGetDistricts: '@Url.Action("GetDistricts", "ApiCity")',
-                        urlSaveDistricts: '@Url.Action("SaveDistricts", "ApiCity")',
-                        urlGetCityGroups: '@Url.Action("GetCityGroups", "ApiCity")',
-                        urlSaveCityGroups: '@Url.Action("SaveCityGroups", "ApiCity")',
-                        urlGetAllCityStuff: '@Url.Action("GetAllCityStuff", "ApiCity")',
-                        urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
-                        urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
-                        urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
-                        urlGetTags: '@Url.Action("GetTags", "ApiTag")',
-                        urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
-
-                        lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
-                        lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
-                        lbl_LglName: ('@Html.GetLabel("lbl_LglName")').encodeHtml(),
-                        lbl_Actns: ('@Html.GetLabel("lbl_Actns")').encodeHtml(),
-                        lbl_Actv: ('@Html.GetLabel("lbl_Actv")').encodeHtml(),
-                        lbl_PdClnt: ('@Html.GetLabel("lbl_PdClnt")').encodeHtml(),
-                        lbl_ID: ('@Html.GetLabel("lbl_ID")').encodeHtml(),
-                        lbl_FName: ('@Html.GetLabel("lbl_FName")').encodeHtml(),
-                        lbl_LName: ('@Html.GetLabel("lbl_LName")').encodeHtml(),
-                        lbl_Email: ('@Html.GetLabel("lbl_Email")').encodeHtml(),
-                        lbl_Usrnm: ('@Html.GetLabel("lbl_Usrnm")').encodeHtml(),
-                        lbl_CntctNm: ('@Html.GetLabel("lbl_CntctNm")').encodeHtml(),
-                        lbl_LckOut: ('@Html.GetLabel("lbl_LckOut")').encodeHtml(),
-                        lbl_Prfl: ('@Html.GetLabel("lbl_Prfl")').encodeHtml(),
-                        lbl_ReSnd: ('@Html.GetLabel("lbl_ReSnd")').encodeHtml(),
-                        lbl_CnclCnfrmtn: ('@Html.GetLabel("lbl_CnclCnfrmtn")').encodeHtml(),
-                        lbl_Clnts: ('@Html.GetLabel("lbl_Clnts")').encodeHtml(),
-                        lbl_Clnt: ('@Html.GetLabel("lbl_Clnt")').encodeHtml(),
-                        lbl_City: ('@Html.GetLabel("lbl_City")').encodeHtml(),
-                        lbl_Category: ('@Html.GetLabel("lbl_Category")').encodeHtml(),
-                        lbl_Pgs: ('@Html.GetLabel("lbl_Pgs")').encodeHtml(),
-                        lbl_Pg: ('@Html.GetLabel("lbl_Pg")').encodeHtml(),
-                        lbl_of: ('@Html.GetLabel("lbl_of")').encodeHtml(),
-                        lbl_TtlRows: ('@Html.GetLabel("lbl_TtlRows")').encodeHtml(),
-                        lbl_Edit: ('@Html.GetLabel("lbl_Edit")').encodeHtml(),
-                        lbl_Delete: ('@Html.GetLabel("lbl_Delete")').encodeHtml(),
-                        lbl_Save: ('@Html.GetLabel("lbl_Save")').encodeHtml(),
-                        lbl_Cancel: ('@Html.GetLabel("lbl_Cancel")').encodeHtml(),
-                        lbl_Desc: ('@Html.GetLabel("lbl_Desc")').encodeHtml(),
-                        lbl_Cvlty: ('@Html.GetLabel("lbl_Cvlty")').encodeHtml(),
-                        lbl_Yes: ('@Html.GetLabel("lbl_Yes")').encodeHtml(),
-                        lbl_No: ('@Html.GetLabel("lbl_No")').encodeHtml(),
-                        lbl_Categories: ('@Html.GetLabel("lbl_Categories")').encodeHtml(),
-                        lbl_Slug: ('@Html.GetLabel("lbl_Slug")').encodeHtml(),
-                        lbl_SbCatgs: ('@Html.GetLabel("lbl_SbCatgs")').encodeHtml(),
-                        lbl_ShwSbCatgs: ('@Html.GetLabel("lbl_ShwSbCatgs")').encodeHtml(),
-                        lbl_Back: ('@Html.GetLabel("lbl_Back")').encodeHtml(),
-                        lbl_Cities: ('@Html.GetLabel("lbl_Cities")').encodeHtml(),
-                        lbl_Rgns: ('@Html.GetLabel("lbl_Rgns")').encodeHtml(),
-                        lbl_Dstrcts: ('@Html.GetLabel("lbl_Dstrcts")').encodeHtml(),
-                        lbl_Grps: ('@Html.GetLabel("lbl_Grps")').encodeHtml(),
-                        lbl_CtsRgnsDstrctsGrps: ('@Html.GetLabel("lbl_CtsRgnsDstrctsGrps")').encodeHtml(),
-                        lbl_Icon: ('@Html.GetLabel("lbl_Icon")').encodeHtml(),
-                        lbl_Lat: ('@Html.GetLabel("lbl_Lat")').encodeHtml(),
-                        lbl_Lon: ('@Html.GetLabel("lbl_Lon")').encodeHtml(),
-                        lbl_Region: ('@Html.GetLabel("lbl_Region")').encodeHtml(),
-                        lbl_District: ('@Html.GetLabel("lbl_District")').encodeHtml(),
-                        lbl_CityGroup: ('@Html.GetLabel("lbl_CityGroup")').encodeHtml(),
-                        lbl_CityFrRgn: ('@Html.GetLabel("lbl_CityFrRgn")').encodeHtml(),
-                        lbl_CityFrDst: ('@Html.GetLabel("lbl_CityFrDst")').encodeHtml(),
-                        lbl_CityFrGrp: ('@Html.GetLabel("lbl_CityFrGrp")').encodeHtml(),
-                        lbl_FbFans: ('@Html.GetLabel("lbl_FbFans")').encodeHtml(),
-                        lbl_Rating: ('@Html.GetLabel("lbl_Rating")').encodeHtml(),
-                        lbl_RatingCount: ('@Html.GetLabel("lbl_RatingCount")').encodeHtml(),
-                        lbl_Ovrd: ('@Html.GetLabel("lbl_Ovrd")').encodeHtml(),
-                        lbl_Ovrds: ('@Html.GetLabel("lbl_Ovrds")').encodeHtml(),
-                        lbl_CvltMr: ('@Html.GetLabel("lbl_CvltMr")').encodeHtml(),
-                        lbl_CvltMiss: ('@Html.GetLabel("lbl_CvltMiss")').encodeHtml(),
-                        lbl_CvltMme: ('@Html.GetLabel("lbl_CvltMme")').encodeHtml(),
-                        lbl_Tags: ('@Html.GetLabel("lbl_Tags")').encodeHtml(),
-                        lbl_NwAddr: ('@Html.GetLabel("lbl_NwAddr")').encodeHtml(),
-                        lbl_Rate: ('@Html.GetLabel("lbl_Rate")').encodeHtml(),
-                        lbl_ClickCount: ('@Html.GetLabel("lbl_ClickCount")').encodeHtml(),
-                        lbl_From: ('@Html.GetLabel("lbl_From")').encodeHtml(),
-                        lbl_To: ('@Html.GetLabel("lbl_To")').encodeHtml(),
-                        lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
-
-                        erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
-
-                        msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
-                        msg_SavePrfl: ('@Html.GetMessage("msg_SavePrfl")').encodeHtml(),
-                        msg_WtngEmailCnfrmtn: ('@Html.GetMessage("msg_WtngEmailCnfrmtn")').encodeHtml(),
-                        msg_AddClnts: ('@Html.GetMessage("msg_AddClnts")').encodeHtml(),
-                        msg_RfrshClnts: ('@Html.GetMessage("msg_RfrshClnts")').encodeHtml(),
-                        msg_SaveClnts: ('@Html.GetMessage("msg_SaveClnts")').encodeHtml(),
-                        msg_AddCatgs: ('@Html.GetMessage("msg_AddCatgs")').encodeHtml(),
-                        msg_RfrshCatgs: ('@Html.GetMessage("msg_RfrshCatgs")').encodeHtml(),
-                        msg_SaveCatgs: ('@Html.GetMessage("msg_SaveCatgs")').encodeHtml(),
-                        msg_SHwRgnsCtys: ('@Html.GetMessage("msg_SHwRgnsCtys")').encodeHtml(),
-                        msg_SHwDstrctsCtys: ('@Html.GetMessage("msg_SHwDstrctsCtys")').encodeHtml(),
-                        msg_SHwGrpsCtys: ('@Html.GetMessage("msg_SHwGrpsCtys")').encodeHtml(),
-
-                        msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
-                        msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
-                        msg_SaveCtys: ('@Html.GetMessage("msg_SaveCtys")').encodeHtml(),
-                        msg_AddRgn: ('@Html.GetMessage("msg_AddRgn")').encodeHtml(),
-                        msg_RfrshRgns: ('@Html.GetMessage("msg_RfrshRgns")').encodeHtml(),
-                        msg_SaveRgns: ('@Html.GetMessage("msg_SaveRgns")').encodeHtml(),
-                        msg_AddDstrct: ('@Html.GetMessage("msg_AddDstrct")').encodeHtml(),
-                        msg_RfrshDstrcts: ('@Html.GetMessage("msg_RfrshDstrcts")').encodeHtml(),
-                        msg_SaveDstrcts: ('@Html.GetMessage("msg_SaveDstrcts")').encodeHtml(),
-                        msg_AddCtyGrp: ('@Html.GetMessage("msg_AddCtyGrp")').encodeHtml(),
-                        msg_RfrshCtyGrps: ('@Html.GetMessage("msg_RfrshCtyGrps")').encodeHtml(),
-                        msg_SaveCtyGrps: ('@Html.GetMessage("msg_SaveCtyGrps")').encodeHtml(),
-                        msg_AddAddr: ('@Html.GetMessage("msg_AddAddr")').encodeHtml(),
-                        msg_RfrshAddrs: ('@Html.GetMessage("msg_RfrshAddrs")').encodeHtml(),
-                        msg_SaveAddrs: ('@Html.GetMessage("msg_SaveAddrs")').encodeHtml(),
-                        msg_AddTag: ('@Html.GetMessage("msg_AddTag")').encodeHtml(),
-                        msg_RfrshTags: ('@Html.GetMessage("msg_RfrshTags")').encodeHtml(),
-                        msg_SaveTags: ('@Html.GetMessage("msg_SaveTags")').encodeHtml()
-
-                    });
+               .value('appProps', GlobalProps);
     </script>
 
     <environment names="Development">
+        <script src="~/js/accentFold.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/account/profileCtrlr.js" swp-cache-version="true"></script>
@@ -217,6 +222,7 @@
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
+        <script src="~/js/accentFold.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/account/profileCtrlr.min.js" swp-cache-version="true"></script>
