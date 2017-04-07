@@ -1052,60 +1052,53 @@
 
         vm.uploadImgClick = function ($event, img) {
 
-            if ($event && $event.currentTarget) {
+            if (img) {
 
-                var $fileInput = $($event.currentTarget).siblings('input[type="file"]');
+                if (img.waitingUpload) {
 
-                if ($fileInput && $fileInput.length > 0) {
-
-                    $fileInput.off('change');
-
-                    $fileInput.on('change', function () {
-
-                        var $parentForm = $(this).parents('form.img-upload').first();
-
-                        if ($parentForm && $parentForm.length > 0) {
-
-                            var fd = new FormData();
-
-                            $.each($fileInput.get(0).files, function (index, value) {
-
-                                fd.append(value.name, value);
-                                fd.append(value.name + '_' + index + '_KEY', JSON.stringify(img));
-                            });
-
-
-                            $http.post('/ApiAddress/UploadAddressImage', fd, {
-                                transformRequest: angular.identity,
-                                headers: { 'Content-Type': undefined }
-                            });
-                        }
-                    });
-
-                    $fileInput.first().click();
+                    img.waitingUpload = false;
                 }
-            }
-        };
+                else {
 
+                    if ($event && $event.currentTarget) {
 
-        vm.uploadFileReady = function ($event) {
+                        var $fileInput = $($event.currentTarget).siblings('input[type="file"]');
 
-            if ($event && $event.currentTarget) {
+                        if ($fileInput && $fileInput.length > 0) {
 
-                var $fileInput = $($event.currentTarget);
+                            $fileInput.off('change');
 
-                if ($fileInput && $fileInput.length > 0) {
+                            $fileInput.on('change', function () {
 
-                    $fileInput = $fileInput.parents('form.img-upload').first();
+                                $scope.$apply(function () {
 
-                    if ($fileInput && $fileInput.length > 0) {
+                                    var $parentForm = $fileInput.parents('form.img-upload').first();
 
-                        $fileInput.submit();
+                                    if ($parentForm && $parentForm.length > 0) {
+
+                                        var fd = new FormData();
+
+                                        $.each($fileInput.get(0).files, function (index, value) {
+
+                                            fd.append(value.name, value);
+                                            fd.append(value.name + '_' + index + '_KEY', JSON.stringify(img));
+                                        });
+
+                                        img.waitingUpload = true;
+                                        //$http.post('/ApiAddress/UploadAddressImage', fd, {
+                                        //    transformRequest: angular.identity,
+                                        //    headers: { 'Content-Type': undefined }
+                                        //});
+                                    }
+                                });
+                            });
+
+                            $fileInput.first().click();
+                        }
                     }
                 }
             }
         };
-
 
 
         vm.save = function () {

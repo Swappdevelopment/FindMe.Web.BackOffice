@@ -94,8 +94,9 @@
                                         <td>
                                             <b>{{vm.appProps.lbl_Prvw}}</b>
                                         </td>
+                                        <td></td>
                                         <td>
-                                            <b>{{vm.appProps.lbl_Alt}}</b>
+                                            <b>{{vm.appProps.lbl_ImgAlt}}</b>
                                         </td>
                                         <td>
                                             <b>{{vm.appProps.lbl_Desc}}</b>
@@ -108,37 +109,45 @@
                                 <tbody>
                                     <tr ng-repeat="img in vm.address.images" ng-class="img.recordState === 30 ? 'inDeleteMode' : ''">
                                         <td>
-                                            <button ng-hide="img.recordState === 30" ng-click="" type="button" class="btn btn-findme btn-xs no-animate">
-                                                <span class="fa fa-trash"></span>
-                                            </button>
-                                            <button ng-show="img.recordState === 30" ng-click="" type="button" class="btn btn-findme btn-xs no-animate">
-                                                <span class="fa fa-ban"></span>
+                                            <button ng-click="img.recordState = img.recordState === 30 ? 0 : 30" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa" ng-class="img.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
                                             </button>
                                         </td>
                                         <td>
-                                            <a ng-show="img.id > 0" href="" target="_blank" ng-href="{{img.url}}">
-                                                <img width="60" height="60" ng-src="{{img.thumbUrl}}" alt="{{img.alt}}"/>
-                                            </a>
-                                            &nbsp;
-                                            &nbsp;
-                                            <form class="inline-element img-upload" method="post"  action="/ApiAddress/UploadAddressImage/?data=xxxxx" enctype="multipart/form-data">
-                                                <button type="button" class="btn btn-findme btn-sm" ng-click="vm.uploadImgClick($event, img)">
-                                                    <span class="fa fa-upload"></span>
+                                            <div class="img-preview-container">
+                                                <a class="img-preview" href="" target="_blank" ng-href="{{img.id > 0 && !img.waitingUpload ? img.url : ''}}">
+                                                    <div class="grp">
+                                                        <img width="60" height="60"
+                                                             ng-show="img.id > 0 && !img.waitingUpload"
+                                                             ng-src="{{img.thumbUrl ? img.thumbUrl : '/images/no-image.png'}}"
+                                                             alt="{{img.alt}}" />
+                                                    </div>
+                                                </a>
+                                                
+                                                <span ng-show="img.waitingUpload" class="fa fa-save" title="{{vm.appProps.msg_RqrsSave}}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form ng-hide="img.recordState === 30" class="inline-element img-upload" method="post" action="/ApiAddress/UploadAddressImage/?data=xxxxx" enctype="multipart/form-data">
+                                                <button type="button" class="btn btn-findme btn-sm upload"
+                                                        ng-click="vm.uploadImgClick($event, img)"
+                                                        title="{{img.waitingUpload ? vm.appProps.lbl_Cancel : vm.appProps.msg_AddRplcImg}}">
+                                                    <span class="fa" ng-class="img.waitingUpload ? 'fa-ban' : 'fa-upload'"></span>
                                                 </button>
-                                                <input type="file" class="hidden" name="file-{{$index}}" data-index="{{$index}}"/>
+                                                <input type="file" class="hidden" name="file-{{$index}}" data-index="{{$index}}" />
                                             </form>
                                         </td>
                                         <td>
-                                            <input class="form-control" ng-model="img.alt" />
+                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.alt" />
                                         </td>
                                         <td>
-                                            <textarea class="form-control" ng-model="img.desc"></textarea>
+                                            <textarea class="form-control" ng-disabled="img.recordState === 30" ng-model="img.desc"></textarea>
                                         </td>
                                         <td class="text-center">
-                                            <span class="fa fa-2x no-animate" ng-hide="img.inEditMode" ng-class="img.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>
+                                            <!--<span class="fa fa-2x no-animate" ng-hide="img.inEditMode" ng-class="img.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
 
-                                            <span ng-show="img.inEditMode" class="check-box">
-                                                <input type="checkbox" value="None" id="addrImgActive-{{img.id}}" name="addrImgActive-{{img.id}}" ng-model="img.active" />
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrImgActive-{{img.id}}" name="addrImgActive-{{img.id}}" ng-model="img.active" ng-disabled="img.recordState === 30"/>
                                                 <label class="lbl-chkb" for="addrImgActive-{{img.id}}"></label>
                                             </span>
                                         </td>
@@ -500,7 +509,6 @@
 
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">-->
                     </td>
-                    </td>
                     <td class="text-center">
                         <span class="no-animate">{{address.rateCount}}</span>
                     </td>
@@ -509,10 +517,6 @@
 
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">-->
                     </td>
-
-
-
-                    td
 
                     <td class="text-center">
                         <span class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
@@ -524,8 +528,6 @@
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
                         </span>-->
                     </td>
-                    <td cl
-                    <td cl
                     <td class="text-center">
                         <span class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 

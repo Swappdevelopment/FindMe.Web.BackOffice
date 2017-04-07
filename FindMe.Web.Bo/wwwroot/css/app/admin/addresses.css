@@ -82,14 +82,49 @@
                         box-shadow: none;
                     }
 
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .table .img-preview-container {
+            position: relative;
+            padding-top: 15px;
+        }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .table .img-preview-container a.img-preview .grp {
+                margin: 22px 0 0 0;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 60px;
+                width: 60px;
+                border-radius: 10px;
+                overflow: hidden;
+                background-color: lightgray;
+            }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .table .img-preview-container button.upload {
+                margin: 7px 0 0 0;
+                position: absolute;
+                top: 50%;
+                left: 70px;
+            }
+
+            #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .table .img-preview-container span.fa-save {
+                color: white;
+                background-color: #121212;
+                padding: 10px;
+                margin: 4px 0 0 14px;
+                position: absolute;
+                top: 50%;
+                border-radius: 50%;
+            }
+
+
         #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar {
             padding: 20px 0;
         }
 
-        #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar button {
-            margin-right: 35px;
-            min-width: 100px;
-        }
+            #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar button {
+                margin-right: 35px;
+                min-width: 100px;
+            }
 
         #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .address-container.disable-overflow {
             overflow-y: hidden;
