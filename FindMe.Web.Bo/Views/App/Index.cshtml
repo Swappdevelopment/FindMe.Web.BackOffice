@@ -103,9 +103,11 @@
             urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
             urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
             urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
+            urlUploadAddressFiles: '@Url.Action("UploadAddressFiles", "ApiAddress")',
             urlGetTags: '@Url.Action("GetTags", "ApiTag")',
             urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
-
+            
+            lbl_Addresses: ('@Html.GetLabel("lbl_Addresses")').encodeHtml(),
             lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
             lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
             lbl_LglName: ('@Html.GetLabel("lbl_LglName")').encodeHtml(),
@@ -179,9 +181,11 @@
             lbl_Prvw: ('@Html.GetLabel("lbl_Prvw")').encodeHtml(),
             lbl_ImgAlt: ('@Html.GetLabel("lbl_ImgAlt")').encodeHtml(),
             lbl_LogoAlt: ('@Html.GetLabel("lbl_LogoAlt")').encodeHtml(),
+            lbl_Revert: ('@Html.GetLabel("lbl_Revert")').encodeHtml(),
+            lbl_Format: ('@Html.GetLabel("lbl_Format")').encodeHtml(),
 
             erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
-
+            
             msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
             msg_SavePrfl: ('@Html.GetMessage("msg_SavePrfl")').encodeHtml(),
             msg_WtngEmailCnfrmtn: ('@Html.GetMessage("msg_WtngEmailCnfrmtn")').encodeHtml(),
@@ -198,6 +202,7 @@
             msg_RqrsSave: ('@Html.GetMessage("msg_RqrsSave")').encodeHtml(),
             msg_AddRplcImg: ('@Html.GetMessage("msg_AddRplcImg")').encodeHtml(),
             msg_AddRplcLogo: ('@Html.GetMessage("msg_AddRplcLogo")').encodeHtml(),
+            msg_MrkForDltn: ('@Html.GetMessage("msg_MrkForDltn")').encodeHtml(),
 
             msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
             msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
