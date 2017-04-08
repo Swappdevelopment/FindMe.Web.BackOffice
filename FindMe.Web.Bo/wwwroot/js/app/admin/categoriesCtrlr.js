@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('categoriesCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', categoriesCtrlrFunc]);
+           .controller('categoriesCtrlr', ['$http', '$scope', '$sce', '$uibModal', 'appProps', 'headerConfigService', categoriesCtrlrFunc]);
 
-    function categoriesCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function categoriesCtrlrFunc($http, $scope, $sce, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -245,6 +245,9 @@
         };
 
 
+        var catgsPopulated = false;
+
+
         var prevName = '';
         var prevParentIdFilter = 0;
         vm.populateCategorys = function (limit, offset, name) {
@@ -329,6 +332,7 @@
                 toggleGlblWaitVisibility(false);
             };
 
+            catgsPopulated = false;
             toggleGlblWaitVisibility(true);
 
             $http.post(appProps.urlGetCatgs, { parentID: vm.parentIdFilter, limit: limit, offset: offset, getTotalCatgs: (vm.categorysCount <= 0 || forceGetCount), name: (name ? name : null) })
@@ -562,6 +566,93 @@
                 vm.populateCategorys(appProps.resultItemsPerPg, 0);
             });
         });
+
+
+
+        //vm.catgIcons = [
+        //{
+        //    'class': 'icon-svgglyth-01',
+        //    'class': 'icon-svgglyth-02',
+        //    'class': 'icon-svgglyth-03',
+        //    'class': 'icon-svgglyth-04',
+        //    'class': 'icon-svgglyth-05'
+        //}];
+
+        //var faIconsRetrieved = false;
+
+        //var setUpCatgIconsDropDown = function () {
+
+        //    if (faIconsRetrieved && catgsPopulated) {
+
+        //        var selectHtml = '<span class="fa fa-2x" ng-class="category.iconClass"></span>' +
+        //                         '<select class="form-control" ng-model="category.iconClass" ng-disabled="category.saving" ng-show="category.inEditMode">';
+
+        //        for (var i = 0; i < vm.catgIcons.length; i++) {
+
+        //            var catgIcon = vm.catgIcons[i];
+
+        //            selectHtml += '<option value="' + catgIcon.class + '"><span class="fa ' + catgIcon.class + ' fa-2x"></span>&nbsp;' + catgIcon.class + '</option>';
+        //        }
+
+        //        selectHtml += '</select>';
+
+        //        $('#categorysVw .table.data td.catg-icon div').each(function () {
+
+        //            $(this).html('');
+        //        });
+
+        //        for (var i = 0; i < vm.categorys.length; i++) {
+
+        //            vm.categorys[i].iconsSelect = $sce.trustAsHtml(selectHtml);
+        //        }
+        //    }
+        //};
+
+        //$scope.$on('catgRowsLoaded', function (e) {
+
+        //    catgsPopulated = true;
+        //    setUpCatgIconsDropDown();
+        //});
+
+        //var getFontAwesomes = function () {
+
+        //    var successFunc = function (resp) {
+
+        //        if (resp && resp.data && resp.data.length > 0) {
+
+        //            for (var i = 0; i < resp.data.length; i++) {
+
+        //                vm.catgIcons.push(resp.data[i]);
+        //            }
+
+        //            faIconsRetrieved = true;
+        //            setUpCatgIconsDropDown();
+        //        }
+        //    };
+
+        //    var errorFunc = function (error) {
+
+        //        if (error.data
+        //            && checkRedirectForSignIn(error.data)) {
+
+        //            vm.errorstatus = error.status + ' - ' + error.statusText;
+        //            vm.errormsg = error.data.msg;
+        //            vm.errorid = error.data.id;
+
+        //            vm.showError = true;
+        //        }
+        //    };
+
+        //    var finallyFunc = function () {
+
+        //    };
+
+        //    $http.get('/files/fontawesome-classes.json')
+        //         .then(successFunc, errorFunc)
+        //         .finally(finallyFunc);
+        //};
+
+        //getFontAwesomes();
     }
 
 

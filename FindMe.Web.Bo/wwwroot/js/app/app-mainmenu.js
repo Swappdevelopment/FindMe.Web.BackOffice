@@ -131,7 +131,24 @@
                 }
             };
         }
-        ]);
+        ])
+
+        .directive('onfinishrender', ['$timeout', function ($timeout) {
+
+            var linkFunction = function (scope, element, attributes) {
+                if (scope.$last === true) {
+
+                    $timeout(function () {
+                        scope.$emit(attributes.onfinishrender);
+                    });
+                }
+            };
+
+            return {
+                restrict: 'A',
+                link: linkFunction
+            };
+        }]);
 
         //.run(function ($animate) {
 

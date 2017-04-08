@@ -94,7 +94,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="category in vm.categorys" ng-class="category.inEditMode ? 'inEditMode' : ''">
+                <tr ng-repeat="category in vm.categorys" ng-class="category.inEditMode ? 'inEditMode' : ''" onfinishrender="catgRowsLoaded">
                     <td>
                         <div class="btn-toolbar">
 
@@ -107,7 +107,7 @@
                                 <span class="fa fa-trash"></span>
                             </button>
 
-                            <button type="button" class="btn btn-findme action no-animate"  
+                            <button type="button" class="btn btn-findme action no-animate"
                                     title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(category)" ng-show="category.inEditMode && !category.saving">
                                 <span class="fa fa-save"></span>
                             </button>
@@ -130,9 +130,11 @@
                     <td>
                         <b ng-show="category.id > 0" class="no-animate">{{category.id}}</b>
                     </td>
-                    <td>
-                        <span ng-hide="category.inEditMode" class="no-animate">{{category.iconClass}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Icon}}" type="text" class="form-control no-animate" ng-model="category.iconClass">
+                    <td class="catg-icon">
+                        <span ng-hide="category.inEditMode" class="no-animate"><span class="findme-color-fc-pink fa fa-2x" ng-class="category.iconClass"></span>&nbsp;{{category.iconClass}}</span>
+                        <div>
+                            <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Icon}}" type="text" class="form-control no-animate" ng-model="category.iconClass">
+                        </div>
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
