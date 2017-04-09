@@ -99,6 +99,7 @@
             urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
             urlGetTags: '@Url.Action("GetTags", "ApiTag")',
             urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
+            urlUploadCSV: '@Url.Action("UploadCSV", "ApiBulkImport")',
 
             lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
             lbl_FullName: ('@Html.GetLabel("lbl_FullName")').encodeHtml(),
@@ -168,7 +169,8 @@
             lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
             lbl_KywrdsSltd: ('@Html.GetLabel("lbl_KywrdsSltd")').encodeHtml(),
             lbl_Apply: ('@Html.GetLabel("lbl_Apply")').encodeHtml(),
-            
+            lbl_Import: ('@Html.GetLabel("lbl_Import")').encodeHtml(),
+
             erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
 
             msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
@@ -220,6 +222,7 @@
         <script src="~/js/app/admin/citiesCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/tagsCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/bulkImportCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
         <script src="~/js/accentFold.min.js" swp-cache-version="true"></script>
@@ -232,6 +235,7 @@
         <script src="~/js/app/admin/citiesCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/tagsCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/admin/bulkImportCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 
 }
@@ -250,6 +254,7 @@
                     <li><a href="#!/tags"><span>@Html.GetLabel("lbl_Tags")</span></a></li>
                     <li><a href="#!/cities"><span>@Html.GetLabel("lbl_Cities")</span></a></li>
                     <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
+                    <li><a href="#!/bulkimport"><span>@Html.GetLabel("lbl_Import")</span></a></li>
                 </ul>
             </div>
 
@@ -261,6 +266,7 @@
                     <li><a href="#!/tags"><div><span class="fa fa-hashtag fa-2x"></span></div></a></li>
                     <li><a href="#!/cities"><div><span class="fa fa-building-o fa-2x"></span></div></a></li>
                     <li><a href="#!/addresses"><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
+                    <li><a href="#!/bulkimport"><div><span class="fa fa-file fa-2x"></span></div></a></li>
                 </ul>
             </div>
         </div>
