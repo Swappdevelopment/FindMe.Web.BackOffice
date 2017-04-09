@@ -13,7 +13,7 @@
 
 
         headerConfigService.reset();
-        headerConfigService.title = appProps.lbl_Clnts;
+        headerConfigService.title = appProps.lbl_Addresses;
         headerConfigService.showToolBar = true;
         headerConfigService.showSearchCtrl = true;
         headerConfigService.showSaveBtn = false;
@@ -120,7 +120,7 @@
 
 
 
-        var checkRatinOvrdRecordState = function (ratingOvrds) {
+        var checkRatinOvrdsRecordState = function (ratingOvrds) {
 
             if (ratingOvrds) {
 
@@ -153,12 +153,53 @@
                         }
                         else {
 
-                            address.recordState = 10;
+                            ratingOvrd.recordState = 10;
                         }
                     }
                 }
             }
 
+        };
+
+        var checkImagesRecordState = function (imgs) {
+
+            if (imgs) {
+
+
+                if (!Array.isArray(imgs)) {
+
+                    imgs = [imgs];
+                }
+
+                for (var i = 0; i < imgs.length; i++) {
+
+                    var img = imgs[i];
+
+                    if (img.__comp
+                        && (!img.recordState || img.recordState <= 0)) {
+
+                        if (img.id > 0) {
+
+                            if (img.desc !== img.__comp.desc
+                                || img.name !== img.__comp.name
+                                || img.alt !== img.__comp.alt
+                                || img.active !== img.__comp.active
+                                || img.waitingUpload) {
+
+                                img.recordState = 20;
+                            }
+                            else {
+
+                                img.recordState = 0;
+                            }
+                        }
+                        else {
+
+                            img.recordState = 10;
+                        }
+                    }
+                }
+            }
         };
 
         var checkRecordState = function (address, compAddress, toBeDeleted) {
@@ -196,10 +237,10 @@
                     address.recordState = 10;
                 }
 
-                checkRatinOvrdRecordState(address.ratingOverrides);
+                checkRatinOvrdsRecordState(address.ratingOverrides);
+                checkImagesRecordState(address.images);
             }
         };
-
 
 
         var handleDbAddress = function (address) {
@@ -251,7 +292,6 @@
         };
 
 
-
         var editModal = function (address) {
 
             $('body').attr('style', 'overflow: hidden; position: fixed;');
@@ -273,6 +313,7 @@
                             save: vm.save,
                             deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
+                            checkImagesRecordState: checkImagesRecordState,
                             clients: vm.clients,
                             categorys: vm.categorys,
                             cityDetails: vm.cityDetails,
@@ -304,6 +345,15 @@
                     $.each(value.tags, function (i, v) {
 
                         v.name = appProps.currentLang.startsWith('en') ? v.name_en : v.name_fr;
+                    });
+                }
+
+                if (value.images) {
+
+                    $.each(value.images, function (i, v) {
+
+                        v.active = v.status === 1;
+                        v.__comp = jQuery.extend(false, {}, v);
                     });
                 }
             }
@@ -397,21 +447,21 @@
         };
 
 
-        var prevAllNames = '';
-        vm.populateAddresses = function (limit, offset, allNames) {
+        var prevNames = '';
+        vm.populateAddresses = function (limit, offset, names) {
 
             var forceGetCount = false;
 
-            if (allNames || prevAllNames) {
+            if (names || prevNames) {
 
-                forceGetCount = (allNames !== prevAllNames || vm.addressesCountMod !== 0);
+                forceGetCount = (names !== prevNames || vm.addressesCountMod !== 0);
             }
             else {
 
                 forceGetCount = (vm.addressesCountMod !== 0);
             }
 
-            prevAllNames = allNames;
+            prevNames = names;
 
             vm.showError = false;
             vm.errorstatus = '';
@@ -420,7 +470,7 @@
 
             limit = !limit ? appProps.resultItemsPerPg : limit;
             offset = !offset ? 0 : offset;
-            allNames = !allNames ? vm.searchValue : allNames;
+            names = !names ? vm.searchValue : names;
 
             var successFunc = function (resp) {
 
@@ -534,10 +584,10 @@
                         limit: limit,
                         offset: offset,
                         getTotalAddresses: (vm.addressesCount <= 0 || forceGetCount),
-                        allNames: (allNames ? allNames : null),
-                        getRefClients: (vm.clients.length == 0),
-                        getRefCatgs: (vm.categorys.length == 0),
-                        getRefCities: (vm.cityDetails.length == 0)
+                        name: (names ? names : null),
+                        getRefClients: (vm.clients.length === 0),
+                        getRefCatgs: (vm.categorys.length === 0),
+                        getRefCities: (vm.cityDetails.length === 0)
                     })
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
@@ -578,6 +628,134 @@
             }
         };
 
+
+        var uploadFiles = function (addresses, finallyCallback) {
+
+            if (addresses) {
+
+                if (!Array.isArray(addresses)) {
+
+                    addresses = [addresses];
+                }
+
+                var saveSuccess = false;
+
+
+                var successFunc = function (resp) {
+
+                    saveSuccess = true;
+
+                    if (resp && resp.data && resp.data.result) {
+
+                        for (i = 0; i < resp.data.result.length; i++) {
+
+                            var addr = resp.data.result[i];
+                            var clientAddr = $.grep(vm.addresses, function (v) { return v.uid === addr.uid; })[0];
+
+                            if (clientAddr) {
+
+                                setUpContent(addr);
+
+                                if (clientAddr.images && addr.images && addr.images.length > 0) {
+
+                                    clientAddr.images.length = 0;
+
+                                    for (i = 0; i < addr.images.length; i++) {
+
+                                        clientAddr.images.push(addr.images[i]);
+                                    }
+                                }
+
+                                if (clientAddr.logos && addr.logos && addr.logos.length > 0) {
+
+                                    clientAddr.logos.length = 0;
+
+                                    for (i = 0; i < addr.logos.length; i++) {
+
+                                        clientAddr.logos.push(addr.logos[i]);
+                                    }
+                                }
+
+                                if (clientAddr.documents && addr.documents && addr.documents.length > 0) {
+
+                                    clientAddr.documents.length = 0;
+
+                                    for (i = 0; i < addr.documents.length; i++) {
+
+                                        clientAddr.documents.push(addr.documents[i]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+
+                var errorFunc = function (error) {
+
+                    if (error.data
+                        && checkRedirectForSignIn(error.data)) {
+
+                        vm.errorstatus = error.status + ' - ' + error.statusText;
+                        vm.errormsg = error.data.msg;
+                        vm.errorid = error.data.id;
+                        vm.showError = true;
+                    }
+                };
+
+                var finallyFunc = function () {
+
+                    for (var i = 0; i < addresses.length; i++) {
+
+                        addresses[i].toBeUploadedFiles = [];
+                    }
+
+                    toggleGlblWaitVisibility(false);
+
+                    if (finallyCallback) {
+
+                        finallyCallback(saveSuccess);
+                    }
+                };
+
+
+                var formData = new FormData();
+
+                var hasFiles = false;
+
+                for (var i = 0; i < addresses.length; i++) {
+
+                    var addr = addresses[i];
+
+                    formData.append('address', JSON.stringify({ id: addr.id, uid: addr.uid, clientUID: addr.clientUID }));
+
+                    $.each(addr.toBeUploadedFiles, function (index, value) {
+
+                        hasFiles = true;
+
+                        var key = addr.uid + '|' + value.value.type + '|' + index;
+
+                        formData.append(key, value.file);
+                        formData.append(key, JSON.stringify(value.value));
+                    });
+                }
+
+                if (hasFiles) {
+
+                    $http.post(appProps.urlUploadAddressFiles, formData, {
+                        transformRequest: angular.identity,
+                        headers: { 'Content-Type': undefined }
+                    })
+                    .then(successFunc, errorFunc)
+                    .finally(finallyFunc);
+                }
+                else {
+
+                    saveSuccess = true;
+
+                    finallyFunc();
+                }
+            }
+        };
 
         vm.save = function (addresses, finallyCallback, deleteFlags) {
 
@@ -655,6 +833,8 @@
 
                                     var tempValue = validAddresses[index];
 
+                                    var i;
+
                                     if (value && value.address) {
 
                                         tempValue.id = value.address.id;
@@ -681,9 +861,29 @@
 
                                             tempValue.ratingOverrides.length = 0;
 
-                                            for (var i = 0; i < value.ratingOverrides.length; i++) {
+                                            for (i = 0; i < value.ratingOverrides.length; i++) {
 
                                                 tempValue.ratingOverrides.push(value.ratingOverrides[i]);
+                                            }
+                                        }
+
+                                        if (value.tags && tempValue.tags) {
+
+                                            tempValue.tags.length = 0;
+
+                                            for (i = 0; i < value.tags.length; i++) {
+
+                                                tempValue.tags.push(value.tags[i]);
+                                            }
+                                        }
+
+                                        if (value.images && tempValue.images) {
+
+                                            tempValue.images.length = 0;
+
+                                            for (i = 0; i < value.images.length; i++) {
+
+                                                tempValue.images.push(value.images[i]);
                                             }
                                         }
 
@@ -734,11 +934,18 @@
 
                     var finallyFunc = function () {
 
-                        toggleGlblWaitVisibility(false);
+                        if (saveSuccess && validAddresses.length > 0) {
 
-                        if (finallyCallback) {
+                            uploadFiles(validAddresses, finallyCallback);
+                        }
+                        else {
 
-                            finallyCallback(saveSuccess);
+                            toggleGlblWaitVisibility(false);
+
+                            if (finallyCallback) {
+
+                                finallyCallback(saveSuccess);
+                            }
                         }
                     };
 
@@ -841,28 +1048,34 @@
         vm.categorys = param.categorys;
         vm.cityDetails = param.cityDetails;
         vm.tags = param.tags;
+
+        vm.checkImagesRecordState = param.checkImagesRecordState;
+
         vm.tagFilter = '';
 
         $scope.$watch('vm.tagFilter', function (newValue, oldValue) {
 
             if (vm.tags && vm.tags.length > 0) {
 
+                var tag;
+                var i;
+
                 if (newValue && newValue.length > 0) {
 
                     var filterAccenFold = String(accentFold(newValue)).toLowerCase();
 
-                    for (var i = 0; i < vm.tags.length; i++) {
+                    for (i = 0; i < vm.tags.length; i++) {
 
-                        var tag = vm.tags[i];
+                        tag = vm.tags[i];
 
                         tag.isFilteredOut = (String(accentFold(tag.name)).toLowerCase().indexOf(filterAccenFold) < 0);
                     }
                 }
                 else {
 
-                    for (var i = 0; i < vm.tags.length; i++) {
+                    for (i = 0; i < vm.tags.length; i++) {
 
-                        var tag = vm.tags[i];
+                        tag = vm.tags[i];
 
                         tag.isFilteredOut = false;
                     }
@@ -905,10 +1118,9 @@
                     if (tag.isSelected) {
 
                         vm.address.tags.insert(0, {
-                            id: 0,
                             recordState: 10,
-                            address_Id: vm.address.id,
                             id: tag.id,
+                            address_Id: vm.address.id,
                             name: tag.name,
                             active: true,
                             status: 1
@@ -1027,6 +1239,127 @@
             });
         };
 
+
+        var removeToBeUploadedFile = function (file) {
+
+            if (file && vm.address && vm.address.toBeUploadedFiles && vm.address.toBeUploadedFiles.length > 0) {
+
+                $.each(
+                    $.grep(vm.address.toBeUploadedFiles, function (v) {
+                        return v.value === file;
+                    }),
+                    function (index, value) {
+
+                        vm.address.toBeUploadedFiles.remove(value);
+                    });
+            }
+        };
+
+        vm.revertImg = function (img) {
+
+            if (img && img.__comp) {
+
+                img.name = img.__comp.name;
+                img.format = img.__comp.format;
+                img.alt = img.__comp.alt;
+                img.desc = img.__comp.desc;
+                img.active = img.__comp.active;
+
+                img.recordState = 0;
+
+                img.waitingUpload = false;
+
+                removeToBeUploadedFile(img);
+            }
+        }
+        vm.uploadImgClick = function ($event, img) {
+
+            if (img) {
+
+                if (img.waitingUpload) {
+
+                    img.name = img.__comp.name;
+                    img.format = img.__comp.format;
+                    img.waitingUpload = false;
+
+                    if (img.recordStateBeforeUpload) {
+
+                        img.recordState = img.recordStateBeforeUpload;
+                    }
+                    else {
+
+                        img.recordState = 0;
+                    }
+
+                    removeToBeUploadedFile(img);
+                }
+                else {
+
+                    if ($event && $event.currentTarget) {
+
+                        var $fileInput = $($event.currentTarget).siblings('input[type="file"]');
+
+                        if ($fileInput && $fileInput.length > 0) {
+
+                            $fileInput.off('change');
+
+                            $fileInput.on('change', function () {
+
+                                $scope.$apply(function () {
+
+                                    if (vm.address) {
+
+                                        if (!vm.address.toBeUploadedFiles) {
+
+                                            vm.address.toBeUploadedFiles = [];
+                                        }
+
+                                        $.each($fileInput.get(0).files, function (index, value) {
+
+                                            var name = null;
+                                            var format = null;
+
+                                            if (value.name) {
+
+                                                format = value.name.split('.');
+
+                                                if (format && format.length > 0) {
+
+                                                    name = String(format[0]).toLowerCase();
+                                                    format = String(format[format.length - 1]).toLowerCase();
+                                                }
+                                                else {
+
+                                                    name = null;
+                                                    format = null;
+                                                }
+                                            }
+
+                                            img.name = name;
+                                            img.format = format;
+
+                                            vm.address.toBeUploadedFiles.push({
+                                                file: value,
+                                                key: value.name + '_' + index + '_KEY',
+                                                value: img
+                                            });
+                                        });
+
+                                        img.waitingUpload = true;
+                                        img.recordStateBeforeUpload = img.recordState;
+                                        vm.checkImagesRecordState(img);
+                                    }
+                                });
+                            });
+
+                            $fileInput.first().click();
+                        }
+                    }
+                }
+            }
+        };
+
+
         vm.save = function () {
 
             param.save(vm.address);
@@ -1060,11 +1393,42 @@
             vm.address.ratingOverrides.insert(0, newRecord);
         };
 
+        vm.addImage = function () {
+
+            var newRecord = {
+                recordState: 10,
+                id: 0,
+                type: 10,
+                uid: null,
+                alt: null,
+                desc: null,
+                status: 1,
+                active: true
+            };
+
+            vm.address.images.insert(0, newRecord);
+        };
+
+        vm.markImageForDeletion = function (img) {
+
+            if (img) {
+
+                if (img.recordState === 10) {
+
+                    vm.address.images.remove(img);
+                }
+                else {
+
+                    img.recordState = 30;
+                }
+            }
+        };
+
         vm.setRatingToDelete = function (rt) {
 
             if (rt) {
 
-                if (rt.recordState == 10) {
+                if (rt.recordState === 10) {
 
                     vm.address.ratingOverrides.remove(rt);
                 }

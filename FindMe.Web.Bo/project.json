@@ -32,7 +32,8 @@
     },
     "Microsoft.EntityFrameworkCore.Tools": "1.1.0-preview4-final",
     "Microsoft.ApplicationInsights.AspNetCore": "2.0.0-beta1",
-    "FindMe.Data.Db.MySql": "1.0.0-*"
+    "FindMe.Data.Db.MySql": "1.0.0-*",
+    "CoreFtp": "1.3.4"
   },
 
   "tools": {

@@ -80,6 +80,109 @@
 
                     <div class="row">
                         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <div>
+                                <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Imgs}}</span>
+
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addImage()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover images" ng-show="vm.address.images && vm.address.images.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Prvw}}</b>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Name}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Format}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_ImgAlt}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Desc}}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            <b>{{vm.appProps.lbl_Actv}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="img in vm.address.images" ng-class="img.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <div class="btn-toolbar">
+                                                <button ng-click="vm.markImageForDeletion(img)" title="{{vm.appProps.msg_MrkAsDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
+                                                    <span class="fa" ng-class="img.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
+                                                </button>
+                                                <button ng-click="vm.revertImg(img)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!img.recordState || img.recordState === 0 || img.recordState === 10">
+                                                    <span class="fa fa-undo"></span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="img-preview-container">
+                                                <a class="img-preview" href="" target="_blank" ng-href="{{img.id > 0 && !img.waitingUpload ? img.url : ''}}">
+                                                    <div class="grp">
+                                                        <img width="60" height="60"
+                                                             ng-show="img.id > 0 && !img.waitingUpload"
+                                                             ng-src="{{img.thumbUrl ? img.thumbUrl : '/images/no-image.png'}}"
+                                                             alt="{{img.alt}}" />
+                                                    </div>
+                                                </a>
+
+                                                <span ng-show="img.waitingUpload" class="fa fa-save" title="{{vm.appProps.msg_RqrsSave}}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form ng-hide="img.recordState === 30" class="inline-element img-upload" method="post" action="/ApiAddress/UploadAddressImage/?data=xxxxx" enctype="multipart/form-data">
+                                                <button type="button" class="btn btn-findme btn-sm upload"
+                                                        ng-click="vm.uploadImgClick($event, img)"
+                                                        title="{{img.waitingUpload ? vm.appProps.lbl_Cancel : vm.appProps.msg_AddRplcImg}}">
+                                                    <span class="fa" ng-class="img.waitingUpload ? 'fa-ban' : 'fa-upload'"></span>
+                                                </button>
+                                                <input type="file" class="hidden" name="file-{{$index}}" data-index="{{$index}}" />
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.name" ng-change="vm.checkImagesRecordState(img)" />
+                                        </td>
+                                        <td>
+                                            <span>{{img.format}}</span>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.alt" ng-change="vm.checkImagesRecordState(img)" />
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" ng-disabled="img.recordState === 30" ng-model="img.desc" ng-change="vm.checkImagesRecordState(img)"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <!--<span class="fa fa-2x no-animate" ng-hide="img.inEditMode" ng-class="img.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
+
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrImgActive-{{img.id}}" name="addrImgActive-{{img.id}}" ng-model="img.active" ng-disabled="img.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrImgActive-{{img.id}}"></label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <span class="bold-text bigger findme-color-fc-pink">
                                 {{vm.appProps.lbl_Rating}}
                             </span>
@@ -293,13 +396,15 @@
 
     <div uib-collapse="!vm.showError" style="padding: 20px;">
 
-        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
-            <h4>
-                {{vm.errorstatus}}
-            </h4>
-            <p>
-                {{vm.errormsg}}
-            </p>
+        <div style="z-index: 5000;">
+            <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+                <h4>
+                    {{vm.errorstatus}}
+                </h4>
+                <p>
+                    {{vm.errormsg}}
+                </p>
+            </div>
         </div>
     </div>
 
@@ -421,7 +526,6 @@
 
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverride">-->
                     </td>
-                    </td>
                     <td class="text-center">
                         <span class="no-animate">{{address.rateCount}}</span>
                     </td>
@@ -430,10 +534,6 @@
 
                         <!--<input ng-disabled="address.saving" placeholder="{{vm.appProps.lbl_Ovrd}}" type="number" class="form-control half no-animate" ng-model="address.rateOverrideCount">-->
                     </td>
-
-
-
-                    td
 
                     <td class="text-center">
                         <span class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
@@ -445,8 +545,6 @@
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>
                         </span>-->
                     </td>
-  <td cl
-                    <td cl
                     <td class="text-center">
                         <span class="fa {{address.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
 
@@ -476,6 +574,7 @@
 
                     </td>-->
                 </tr>
+                </
             </tbody>
         </table>
     </div>

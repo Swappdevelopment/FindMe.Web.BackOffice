@@ -1,4 +1,10 @@
-﻿@{
+﻿
+@using Microsoft.Extensions.Options;
+@using Microsoft.Extensions.Configuration;
+
+@{
+    var configRoot = ViewData["ConfigRoot"] as IConfigurationRoot;
+
     ViewBag.Title = "App";
 }
 
@@ -97,8 +103,11 @@
             urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
             urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
             urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
+            urlUploadAddressFiles: '@Url.Action("UploadAddressFiles", "ApiAddress")',
             urlGetTags: '@Url.Action("GetTags", "ApiTag")',
             urlSaveTags: '@Url.Action("SaveTags", "ApiTag")',
+            
+            lbl_Addresses: ('@Html.GetLabel("lbl_Addresses")').encodeHtml(),
             urlUploadCSV: '@Url.Action("UploadCSV", "ApiBulkImport")',
 
             lbl_Name: ('@Html.GetLabel("lbl_Name")').encodeHtml(),
@@ -169,10 +178,18 @@
             lbl_Close: ('@Html.GetLabel("lbl_Close")').encodeHtml(),
             lbl_KywrdsSltd: ('@Html.GetLabel("lbl_KywrdsSltd")').encodeHtml(),
             lbl_Apply: ('@Html.GetLabel("lbl_Apply")').encodeHtml(),
+            lbl_Imgs: ('@Html.GetLabel("lbl_Imgs")').encodeHtml(),
+            lbl_Logos: ('@Html.GetLabel("lbl_Logos")').encodeHtml(),
+            lbl_Prvw: ('@Html.GetLabel("lbl_Prvw")').encodeHtml(),
+            lbl_ImgAlt: ('@Html.GetLabel("lbl_ImgAlt")').encodeHtml(),
+            lbl_LogoAlt: ('@Html.GetLabel("lbl_LogoAlt")').encodeHtml(),
+            lbl_Revert: ('@Html.GetLabel("lbl_Revert")').encodeHtml(),
+            lbl_Format: ('@Html.GetLabel("lbl_Format")').encodeHtml(),
+
             lbl_Import: ('@Html.GetLabel("lbl_Import")').encodeHtml(),
 
             erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
-
+            
             msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
             msg_SavePrfl: ('@Html.GetMessage("msg_SavePrfl")').encodeHtml(),
             msg_WtngEmailCnfrmtn: ('@Html.GetMessage("msg_WtngEmailCnfrmtn")').encodeHtml(),
@@ -186,6 +203,10 @@
             msg_SHwDstrctsCtys: ('@Html.GetMessage("msg_SHwDstrctsCtys")').encodeHtml(),
             msg_SHwGrpsCtys: ('@Html.GetMessage("msg_SHwGrpsCtys")').encodeHtml(),
             msg_TpFltrKywrds: ('@Html.GetMessage("msg_TpFltrKywrds")').encodeHtml(),
+            msg_RqrsSave: ('@Html.GetMessage("msg_RqrsSave")').encodeHtml(),
+            msg_AddRplcImg: ('@Html.GetMessage("msg_AddRplcImg")').encodeHtml(),
+            msg_AddRplcLogo: ('@Html.GetMessage("msg_AddRplcLogo")').encodeHtml(),
+            msg_MrkForDltn: ('@Html.GetMessage("msg_MrkForDltn")').encodeHtml(),
 
             msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
             msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
@@ -212,6 +233,11 @@
     </script>
 
     <environment names="Development">
+
+        <script>
+            GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:development:webSite"])';
+        </script>
+
         <script src="~/js/accentFold.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
@@ -225,6 +251,19 @@
         <script src="~/js/app/admin/bulkImportCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
+
+        <environment names="Staging">
+            <script>
+                GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:staging:webSite"])';
+            </script>
+        </environment>
+
+        <environment names="Production">
+            <script>
+                GlobalProps.webSiteUrl = '@(configRoot == null ? "" : configRoot["UrlConfigs:production:webSite"])';
+            </script>
+        </environment>
+
         <script src="~/js/accentFold.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>
