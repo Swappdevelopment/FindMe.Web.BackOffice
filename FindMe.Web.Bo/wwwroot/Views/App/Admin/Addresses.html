@@ -132,10 +132,14 @@
                                                              ng-show="img.id > 0 && !img.waitingUpload"
                                                              ng-src="{{img.thumbUrl ? img.thumbUrl : '/images/no-image.png'}}"
                                                              alt="{{img.alt}}" />
+                                                        <img class="local" width="60" height="60"
+                                                             ng-show="img.id <= 0 || img.waitingUpload"
+                                                             src=""
+                                                             alt="{{img.alt}}" />
                                                     </div>
                                                 </a>
 
-                                                <span ng-show="img.waitingUpload" class="fa fa-save" title="{{vm.appProps.msg_RqrsSave}}"></span>
+                                                <!--<span ng-show="img.waitingUpload" class="fa fa-save" title="{{vm.appProps.msg_RqrsSave}}"></span>-->
                                             </div>
                                         </td>
                                         <td>

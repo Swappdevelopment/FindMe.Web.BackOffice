@@ -726,17 +726,23 @@
 
                     var addr = addresses[i];
 
-                    formData.append('address', JSON.stringify({ id: addr.id, uid: addr.uid, clientUID: addr.clientUID }));
+                    if (addr.toBeUploadedFiles) {
 
-                    $.each(addr.toBeUploadedFiles, function (index, value) {
+                        formData.append('address', JSON.stringify({ id: addr.id, uid: addr.uid, clientUID: addr.clientUID }));
 
-                        hasFiles = true;
+                        $.each(addr.toBeUploadedFiles, function (index, value) {
 
-                        var key = addr.uid + '|' + value.value.type + '|' + index;
+                            if (!value.recordState || value.recordState !== 30) {
 
-                        formData.append(key, value.file);
-                        formData.append(key, JSON.stringify(value.value));
-                    });
+                                hasFiles = true;
+
+                                var key = addr.uid + '|' + value.value.type + '|' + index;
+
+                                formData.append(key, value.file);
+                                formData.append(key, JSON.stringify(value.value));
+                            }
+                        });
+                    }
                 }
 
                 if (hasFiles) {
@@ -1314,36 +1320,56 @@
                                             vm.address.toBeUploadedFiles = [];
                                         }
 
-                                        $.each($fileInput.get(0).files, function (index, value) {
 
-                                            var name = null;
-                                            var format = null;
+                                        var files = $fileInput.get(0).files;
 
-                                            if (value.name) {
+                                        if (files && files.length > 0) {
 
-                                                format = value.name.split('.');
+                                            $.each(files, function (index, value) {
 
-                                                if (format && format.length > 0) {
+                                                var name = null;
+                                                var format = null;
 
-                                                    name = String(format[0]).toLowerCase();
-                                                    format = String(format[format.length - 1]).toLowerCase();
+                                                if (value.name) {
+
+                                                    format = value.name.split('.');
+
+                                                    if (format && format.length > 0) {
+
+                                                        name = String(format[0]).toLowerCase();
+                                                        format = String(format[format.length - 1]).toLowerCase();
+                                                    }
+                                                    else {
+
+                                                        name = null;
+                                                        format = null;
+                                                    }
                                                 }
-                                                else {
 
-                                                    name = null;
-                                                    format = null;
-                                                }
-                                            }
+                                                img.name = name;
+                                                img.format = format;
 
-                                            img.name = name;
-                                            img.format = format;
-
-                                            vm.address.toBeUploadedFiles.push({
-                                                file: value,
-                                                key: value.name + '_' + index + '_KEY',
-                                                value: img
+                                                vm.address.toBeUploadedFiles.push({
+                                                    file: value,
+                                                    key: value.name + '_' + index + '_KEY',
+                                                    value: img
+                                                });
                                             });
-                                        });
+
+
+                                            var $localImg = $fileInput.parents('tr').first().find('td img.local');
+
+                                            if ($localImg && $localImg.length > 0) {
+
+                                                var reader = new FileReader();
+
+                                                reader.onload = function (e) {
+                                                    $localImg.attr('src', e.target.result);
+                                                }
+
+                                                reader.readAsDataURL(files[0]);
+                                            }
+                                        }
 
                                         img.waitingUpload = true;
                                         img.recordStateBeforeUpload = img.recordState;

@@ -362,31 +362,46 @@ namespace FindMe.Web.App
 
                         var addr = Helper.JSonCamelDeserializeObject<Address>(jobj);
 
+
+                        var jFiles = new List<JObject>();
+
+
                         var jObjects = jobj.JGetPropVal<JObject[]>("images");
 
-                        if (jObjects != null && jObjects.Length > 0)
+                        if (jObjects != null)
                         {
-                            addr.Files = addr.Files == null ? new ObjectCollection<AddressFile>() : addr.Files;
-
-                            foreach (var jImg in jObjects.Where(j => !j.JGetPropVal<bool>("waitingUpload")))
-                            {
-                                addr.Files.Add(Helper.JSonCamelDeserializeObject<AddressFile>(jImg));
-                            }
+                            jFiles.AddRange(jObjects);
                         }
-
 
                         jObjects = jobj.JGetPropVal<JObject[]>("logos");
 
-                        if (jObjects != null && jObjects.Length > 0)
+                        if (jObjects != null)
+                        {
+                            jFiles.AddRange(jObjects);
+                        }
+
+                        jObjects = jobj.JGetPropVal<JObject[]>("documnets");
+
+                        if (jObjects != null)
+                        {
+                            jFiles.AddRange(jObjects);
+                        }
+
+                        if (jFiles.Count > 0)
                         {
                             addr.Files = addr.Files == null ? new ObjectCollection<AddressFile>() : addr.Files;
 
-                            foreach (var jImg in jObjects.Where(j => !j.JGetPropVal<bool>("waitingUpload")))
+                            foreach (var jImg in jFiles
+                                                    .Where(j =>
+                                                        !j.JGetPropVal<bool>("waitingUpload")
+                                                        || ((RecordState)j.JGetPropVal<int>("recordState")) == RecordState.Deleted))
                             {
                                 addr.Files.Add(Helper.JSonCamelDeserializeObject<AddressFile>(jImg));
                             }
                         }
 
+                        jFiles.Clear();
+                        jFiles = null;
 
                         jObjects = null;
 
@@ -402,11 +417,21 @@ namespace FindMe.Web.App
 
                         tempLst = new List<object>();
 
-                        foreach (var addr in addresses)
+                        foreach (var addr in addresses.OfType<Address>())
                         {
                             object temp = await _repo.Execute("ManageAddressGetFullContent", addr);
 
                             tempLst.Add(temp);
+                            temp = null;
+
+                            if (addr.Files != null
+                                && addr.Files.Count > 0)
+                            {
+                                foreach (var af in addr.Files.Where(l => l.RecordState == RecordState.Deleted))
+                                {
+                                    await DeleteFtpFile(af, addr.ClientUID, addr.UID);
+                                }
+                            }
                         }
 
                         result = tempLst.ToArray();
@@ -636,6 +661,59 @@ namespace FindMe.Web.App
             finally
             {
                 result = null;
+            }
+        }
+
+        private async Task DeleteFtpFile(AddressFile file, string clientUID, string addrUID)
+        {
+            try
+            {
+                if (file == null) return;
+
+
+                string currentEnv = "production";
+
+                if (_env.IsDevelopment())
+                {
+                    currentEnv = "development";
+                }
+                else if (_env.IsStaging())
+                {
+                    currentEnv = "staging";
+                }
+
+                UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
+
+
+                string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
+                string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
+                string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
+                bool ftpIgnoreCertificateErrors = true;
+
+                using (var ftpClient = new FtpClient(
+                                            new FtpClientConfiguration()
+                                            {
+                                                Host = ftpHost,
+                                                Username = ftpUserName,
+                                                Password = ftppassword,
+                                                EncryptionType = FtpEncryption.Implicit,
+                                                IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                            }))
+                {
+                    await ftpClient.LoginAsync();
+
+                    string ftpPath = file.GetFtpSource(clientUID, addrUID);
+
+                    try
+                    {
+                        await ftpClient.DeleteFileAsync(ftpPath);
+                    }
+                    catch { }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }
