@@ -61,6 +61,13 @@
                 templateUrl: '/Views/App/Admin/Addresses.html',
             });
 
+            $routeProvider.when('/bulkimport', {
+                controller: 'bulkImportCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Admin/BulkImport.html',
+            });
+
+
             $routeProvider.otherwise({ redirecTo: '/' });
 
             //$locationProvider.html5Mode(true);
