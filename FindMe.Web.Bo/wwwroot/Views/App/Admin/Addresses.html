@@ -82,6 +82,120 @@
                         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                             <div>
+                                <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Logos}}</span>
+
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addLogo()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover images" ng-show="vm.address.logos && vm.address.logos.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Prvw}}</b>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Name}}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            <b>{{vm.appProps.lbl_IsDef}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Format}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_ImgAlt}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Desc}}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            <b>{{vm.appProps.lbl_Actv}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="logo in vm.address.logos" ng-class="logo.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <div class="btn-toolbar">
+                                                <button ng-click="vm.markRowForDeletion(logo, vm.address.logos)" title="{{vm.appProps.msg_MrkForDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
+                                                    <span class="fa" ng-class="logo.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
+                                                </button>
+                                                <button ng-click="vm.revertFile(logo)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!logo.recordState || logo.recordState === 0 || logo.recordState === 10">
+                                                    <span class="fa fa-undo"></span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="img-preview-container">
+                                                <a class="img-preview" href="" target="_blank" ng-href="{{logo.id > 0 && !logo.waitingUpload ? logo.url : ''}}">
+                                                    <div class="grp">
+                                                        <img width="60" height="60"
+                                                             ng-show="logo.id > 0 && !logo.waitingUpload"
+                                                             ng-src="{{logo.thumbUrl ? logo.thumbUrl : '/images/no-image.png'}}"
+                                                             alt="{{logo.alt}}" />
+                                                        <img class="local" width="60" height="60"
+                                                             ng-show="logo.id <= 0 || logo.waitingUpload"
+                                                             src=""
+                                                             alt="{{logo.alt}}" />
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form ng-hide="logo.recordState === 30" class="inline-element img-upload" method="post" enctype="multipart/form-data">
+                                                <button type="button" class="btn btn-findme btn-sm upload"
+                                                        ng-click="vm.uploadImgClick($event, logo)"
+                                                        title="{{logo.waitingUpload ? vm.appProps.lbl_Cancel : vm.appProps.msg_AddRplcLogo}}">
+                                                    <span class="fa" ng-class="logo.waitingUpload ? 'fa-ban' : 'fa-upload'"></span>
+                                                </button>
+                                                <input type="file" class="hidden" name="file-{{$index}}" data-index="{{$index}}" />
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="logo.recordState === 30" ng-model="logo.name" ng-change="vm.checkFilesRecordState(logo)" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrLogoDefault-{{$index}}" name="addrLogoDefault-{{$index}}" ng-change="vm.fileSetToDefault(logo, vm.address.logos)" ng-model="logo.isDefault" ng-disabled="logo.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrLogoDefault-{{$index}}"></label>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span>{{logo.format}}</span>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="logo.recordState === 30" ng-model="logo.alt" ng-change="vm.checkFilesRecordState(logo)" />
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" ng-disabled="logo.recordState === 30" ng-model="logo.desc" ng-change="vm.checkFilesRecordState(logo)"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <!--<span class="fa fa-2x no-animate" ng-hide="logo.inEditMode" ng-class="logo.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
+
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrLogoActive-{{$index}}" name="addrLogoActive-{{$index}}" ng-change="vm.checkFilesRecordState(logo)" ng-model="logo.active" ng-disabled="logo.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrLogoActive-{{$index}}"></label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <div>
                                 <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Imgs}}</span>
 
                                 <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addImage()"><span class="fa fa-plus-square"></span></button>
@@ -97,6 +211,9 @@
                                         <td></td>
                                         <td>
                                             <b>{{vm.appProps.lbl_Name}}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            <b>{{vm.appProps.lbl_IsDef}}</b>
                                         </td>
                                         <td>
                                             <b>{{vm.appProps.lbl_Format}}</b>
@@ -116,10 +233,10 @@
                                     <tr ng-repeat="img in vm.address.images" ng-class="img.recordState === 30 ? 'inDeleteMode' : ''">
                                         <td>
                                             <div class="btn-toolbar">
-                                                <button ng-click="vm.markImageForDeletion(img)" title="{{vm.appProps.msg_MrkAsDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <button ng-click="vm.markRowForDeletion(img, vm.address.images)" title="{{vm.appProps.msg_MrkForDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
                                                     <span class="fa" ng-class="img.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
                                                 </button>
-                                                <button ng-click="vm.revertImg(img)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!img.recordState || img.recordState === 0 || img.recordState === 10">
+                                                <button ng-click="vm.revertFile(img)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!img.recordState || img.recordState === 0 || img.recordState === 10">
                                                     <span class="fa fa-undo"></span>
                                                 </button>
                                             </div>
@@ -138,12 +255,11 @@
                                                              alt="{{img.alt}}" />
                                                     </div>
                                                 </a>
-
                                                 <!--<span ng-show="img.waitingUpload" class="fa fa-save" title="{{vm.appProps.msg_RqrsSave}}"></span>-->
                                             </div>
                                         </td>
                                         <td>
-                                            <form ng-hide="img.recordState === 30" class="inline-element img-upload" method="post" action="/ApiAddress/UploadAddressImage/?data=xxxxx" enctype="multipart/form-data">
+                                            <form ng-hide="img.recordState === 30" class="inline-element img-upload" method="post" action="/ApiAddress/UploadAddressImage" enctype="multipart/form-data">
                                                 <button type="button" class="btn btn-findme btn-sm upload"
                                                         ng-click="vm.uploadImgClick($event, img)"
                                                         title="{{img.waitingUpload ? vm.appProps.lbl_Cancel : vm.appProps.msg_AddRplcImg}}">
@@ -153,24 +269,185 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.name" ng-change="vm.checkImagesRecordState(img)" />
+                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.name" ng-change="vm.checkFilesRecordState(img)" />
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrImgDefault-{{$index}}" name="addrImgDefault-{{$index}}" ng-change="vm.fileSetToDefault(img, vm.address.images)" ng-model="img.isDefault" ng-disabled="img.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrImgDefault-{{$index}}"></label>
+                                            </span>
                                         </td>
                                         <td>
                                             <span>{{img.format}}</span>
                                         </td>
                                         <td>
-                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.alt" ng-change="vm.checkImagesRecordState(img)" />
+                                            <input class="form-control" ng-disabled="img.recordState === 30" ng-model="img.alt" ng-change="vm.checkFilesRecordState(img)" />
                                         </td>
                                         <td>
-                                            <textarea class="form-control" ng-disabled="img.recordState === 30" ng-model="img.desc" ng-change="vm.checkImagesRecordState(img)"></textarea>
+                                            <textarea class="form-control" ng-disabled="img.recordState === 30" ng-model="img.desc" ng-change="vm.checkFilesRecordState(img)"></textarea>
                                         </td>
                                         <td class="text-center">
                                             <!--<span class="fa fa-2x no-animate" ng-hide="img.inEditMode" ng-class="img.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
 
                                             <span class="check-box">
-                                                <input type="checkbox" value="None" id="addrImgActive-{{img.id}}" name="addrImgActive-{{img.id}}" ng-model="img.active" ng-disabled="img.recordState === 30" />
-                                                <label class="lbl-chkb" for="addrImgActive-{{img.id}}"></label>
+                                                <input type="checkbox" value="None" id="addrImgActive-{{$index}}" name="addrImgActive-{{$index}}" ng-change="vm.checkFilesRecordState(img)" ng-model="img.active" ng-disabled="img.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrImgActive-{{$index}}"></label>
                                             </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <div>
+                                <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_Documents}}</span>
+
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addDoc()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover images" ng-show="vm.address.documents && vm.address.documents.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Name}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Format}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_ImgAlt}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Desc}}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            <b>{{vm.appProps.lbl_Actv}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="doc in vm.address.documents" ng-class="doc.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <div class="btn-toolbar">
+                                                <button ng-click="vm.markRowForDeletion(doc, vm.address.documents)" title="{{vm.appProps.msg_MrkForDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
+                                                    <span class="fa" ng-class="doc.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
+                                                </button>
+                                                <button ng-click="vm.revertFile(doc)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!doc.recordState || doc.recordState === 0 || doc.recordState === 10">
+                                                    <span class="fa fa-undo"></span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <form ng-hide="doc.recordState === 30" class="inline-element img-upload" method="post" enctype="multipart/form-data">
+                                                <button type="button" class="btn btn-findme btn-sm upload"
+                                                        ng-click="vm.uploadImgClick($event, doc)"
+                                                        title="{{doc.waitingUpload ? vm.appProps.lbl_Cancel : vm.appProps.msg_AddRplcDoc}}">
+                                                    <span class="fa" ng-class="doc.waitingUpload ? 'fa-ban' : 'fa-upload'"></span>
+                                                </button>
+                                                <input type="file" class="hidden" name="file-{{$index}}" data-index="{{$index}}" />
+                                            </form>
+                                        </td>
+
+                                        <td>
+                                            <a href="" target="_blank" ng-href="{{doc.id > 0 && !doc.waitingUpload ? doc.url : ''}}">
+                                                <span class="fa fa-file fa-2x"></span>
+                                            </a>
+                                        </td>
+
+                                        <td>
+                                            <input class="form-control" ng-disabled="doc.recordState === 30" ng-model="doc.name" ng-change="vm.checkFilesRecordState(doc)" />
+                                        </td>
+                                        <td>
+                                            <span>{{doc.format}}</span>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="doc.recordState === 30" ng-model="doc.alt" ng-change="vm.checkFilesRecordState(doc)" />
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" ng-disabled="doc.recordState === 30" ng-model="doc.desc" ng-change="vm.checkFilesRecordState(doc)"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <!--<span class="fa fa-2x no-animate" ng-hide="doc.inEditMode" ng-class="doc.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
+
+                                            <span class="check-box">
+                                                <input type="checkbox" value="None" id="addrDocActive-{{$index}}" name="addrDocActive-{{$index}}" ng-change="vm.checkFilesRecordState(doc)" ng-model="doc.active" ng-disabled="doc.recordState === 30" />
+                                                <label class="lbl-chkb" for="addrDocActive-{{$index}}"></label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                            <div>
+                                <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_OpenHrs}}</span>
+                                <h6 class="findme-color-fc-pink">***&nbsp;{{vm.appProps.msg_Use24HrFrmt}}</h6>
+                            </div>
+
+                            <table class="table data table-striped table-hover images" ng-show="vm.address.openHours && vm.address.openHours.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_OpenTm}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_CloseTm}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody ng-repeat="day in vm.address.openHours">
+                                    
+                                    <tr>
+                                        <td colspan="3">
+                                            <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addOpenHours(day)"><span class="fa fa-plus-square"></span></button>
+                                            &nbsp;
+                                            &nbsp;
+                                            <b>{{day.name}}</b>
+                                        </td>
+                                    </tr>
+
+                                    <tr ng-repeat="dayRow in day.openHours" ng-class="dayRow.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <div class="btn-toolbar">
+                                                <button ng-click="vm.markRowForDeletion(dayRow, day.openHours)" title="{{vm.appProps.msg_MrkForDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
+                                                    <span class="fa" ng-class="dayRow.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
+                                                </button>
+                                                <button ng-click="vm.revertDayRow(dayRow)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!dayRow.recordState || dayRow.recordState === 0 || dayRow.recordState === 10">
+                                                    <span class="fa fa-undo"></span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div uib-timepicker mousewheel="false" ng-model="dayRow.timeFrom" ng-change="vm.timeFromChanged(dayRow)" hour-step="1" minute-step="1" show-meridian="false"></div>
+                                        </td>
+                                        <td>
+                                            <div uib-timepicker mousewheel="false" ng-model="dayRow.timeTo" ng-change="vm.timeToChanged(dayRow)" hour-step="1" minute-step="1" show-meridian="false"></div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -309,6 +586,62 @@
 
                             </li>
                         </ul>
+
+                    </div>
+
+                </div>
+
+                <div class="tripad-widget" ng-show="vm.address.id > 0">
+                    <br />
+                    <hr />
+
+                    <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_TripAd}}</span>
+                    &nbsp;
+                    <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_CodeSnipet}}</span>
+
+                    <div class="btn-toolbar">
+                        <button type="button" class="btn btn-findme btn-sm no-animate"
+                                title="{{vm.appProps.lbl_Revert}}" ng-click="vm.revertTripAd()"
+                                ng-disabled="!vm.address.tripAdWidget.recordState || vm.address.tripAdWidget.recordState === 0 || vm.address.tripAdWidget.recordState === 10">
+                            <span class="fa fa-undo"></span>
+                        </button>
+                        <button type="button" class="btn btn-findme btn-sm no-animate"
+                                title="{{vm.appProps.lbl_Revert}}" ng-click="vm.deleteTripAd()"
+                                ng-disabled="!vm.address.tripAdWidget.largeValue && !vm.address.tripAdWidget.smallValue">
+                            <span class="fa fa-trash"></span>
+                        </button>
+                    </div>
+
+                    <br />
+
+                    <div ng-class="vm.address.tripAdWidget.recordState === 30 ? 'findme-color-bc-pinklight' : ''">
+
+                        <div class="btn-toolbar hidden">
+                            <button type="button" class="btn btn-lg btn-findme" ng-click="vm.tripadCode = true; vm.tripadPreview = false;" ng-class="vm.tripadCode ? 'toggle-on' : ''">{{vm.appProps.lbl_CodeSnipet}}</button>
+                            <button type="button" class="btn btn-lg btn-findme" ng-click="vm.tripadPreview = true; vm.tripadCode = false;" ng-class="vm.tripadPreview ? 'toggle-on' : ''">{{vm.appProps.lbl_Prvw}}</button>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <span class="bold-text col-lg-6 col-md-6 col-sm-12 col-xs-12">Desktop Widget</span>
+                            <span class="bold-text col-lg-6 col-md-6 col-sm-12 col-xs-12">Mobile Widget</span>
+                        </div>
+                        <div class="row" ng-show="vm.tripadCode">
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <textarea maxlength="500000" class="form-control" ng-model="vm.address.tripAdWidget.largeValue" ng-change="vm.checkTripAdWidget(vm.address.tripAdWidget)"></textarea>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <textarea maxlength="500000" class="form-control" ng-model="vm.address.tripAdWidget.smallValue" ng-change="vm.checkTripAdWidget(vm.address.tripAdWidget)"></textarea>
+                            </div>
+                        </div>
+                        <div class="row" ng-show="vm.tripadPreview">
+                            <div class="prvw large col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-bind-html="vm.address.tripAdWidget.trustLargeValue()">
+                                
+                            </div>
+                            <div class="prvw small col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-bind-html="vm.address.tripAdWidget.trustSmallValue()">
+                                
+                            </div>
+                        </div>
 
                     </div>
 
