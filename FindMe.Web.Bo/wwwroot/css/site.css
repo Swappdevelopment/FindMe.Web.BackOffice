@@ -66,7 +66,8 @@
             background-color: #C00C48 !important;
         }
 
-        .btn.btn-findme:hover {
+        .btn.btn-findme:hover,
+        .btn.btn-findme.toggle-on {
             border: solid 0.5px #FFCC00;
             color: white !important;
             background-color: #FFCC00 !important;
@@ -145,6 +146,21 @@ textarea {
     -o-animation: 0s none;
     animation: 0s none;
     -webkit-animation: 0s none;
+}
+
+input.w-40 {
+    min-width: 40px;
+    max-width: 40px;
+}
+
+input.w-60 {
+    min-width: 60px;
+    max-width: 60px;
+}
+
+input.w-80 {
+    min-width: 80px;
+    max-width: 80px;
 }
 
 input.half {

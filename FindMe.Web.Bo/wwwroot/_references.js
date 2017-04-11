@@ -5,6 +5,7 @@
 /// <reference path="js/account/signInCtrlr.js" />
 /// <reference path="js/app/account/profileCtrlr.js" />
 /// <reference path="js/app/admin/addressesCtrlr.js" />
+/// <reference path="js/app/admin/bulkimportctrlr.js" />
 /// <reference path="js/app/admin/bulkimportctrlr.min.js" />
 /// <reference path="js/app/admin/categoriesctrlr.js" />
 /// <reference path="js/app/admin/citiesctrlr.js" />

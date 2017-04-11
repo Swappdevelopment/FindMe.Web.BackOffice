@@ -115,6 +115,13 @@
                 border-radius: 50%;
             }
 
+        #addressesVw .modal-editor .modal-dialog .modal-content .modal-body .tripad-widget textarea {
+            min-height: 300px;
+            max-height: 500px;
+            max-width: none;
+            width: 100%;
+        }
+
 
         #addressesVw .modal-editor .modal-dialog .modal-content .add-tags-bg .add-tags-container .btn-toolbar {
             padding: 20px 0;

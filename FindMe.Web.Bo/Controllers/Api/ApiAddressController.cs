@@ -380,7 +380,7 @@ namespace FindMe.Web.App
                             jFiles.AddRange(jObjects);
                         }
 
-                        jObjects = jobj.JGetPropVal<JObject[]>("documnets");
+                        jObjects = jobj.JGetPropVal<JObject[]>("documents");
 
                         if (jObjects != null)
                         {
@@ -403,7 +403,54 @@ namespace FindMe.Web.App
                         jFiles.Clear();
                         jFiles = null;
 
+
+                        jObjects = jobj.JGetPropVal<JObject[]>("openHours");
+
+                        if (jObjects != null)
+                        {
+                            addr.DaysOpen = new ObjectCollection<DayOpen>();
+
+                            foreach (var jday in jObjects)
+                            {
+                                var jDayRows = jday.JGetPropVal<JObject[]>("openHours");
+
+                                if (jDayRows != null
+                                    && jDayRows.Length > 0)
+                                {
+                                    var dayEnum = (WeekDay)jday.JGetPropVal<int>("day");
+
+                                    foreach (var dayRow in jDayRows)
+                                    {
+                                        addr.DaysOpen.Add(new DayOpen()
+                                        {
+                                            RecordState = (RecordState)dayRow.JGetPropVal<int>("recordState"),
+                                            Address_Id = addr.ID,
+                                            Day = dayEnum,
+                                            ID = dayRow.JGetPropVal<long>("id"),
+                                            HoursFrom = dayRow.JGetPropVal<short>("hrFrom"),
+                                            HoursTo = dayRow.JGetPropVal<short>("hrTo"),
+                                            MinutesFrom = dayRow.JGetPropVal<short>("minFrom"),
+                                            MinutesTo = dayRow.JGetPropVal<short>("minTo"),
+                                            Status = (ModelStatus)dayRow.JGetPropVal<int>("status"),
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
                         jObjects = null;
+
+                        var tripAdWidget = jobj.JGetPropVal<AddressTripAdWidget>("tripAdWidget");
+
+                        if (tripAdWidget != null)
+                        {
+                            addr.TripAdWidgets = new ObjectCollection<AddressTripAdWidget>()
+                            {
+                                tripAdWidget
+                            };
+
+                            tripAdWidget = null;
+                        }
 
                         return addr;
                     };
@@ -520,13 +567,13 @@ namespace FindMe.Web.App
                                             .SetFile(Request.Form.Files.FirstOrDefault(f => f.Name == k)));
 
 
-                        addr.Files = new ObjectCollection<AddressFile>((await _repo.Execute<AddressFile[]>("ManageAddressFiles",
-                                                                            addr.UID,
-                                                                            false,
-                                                                            addr.Files,
-                                                                            null,
-                                                                            null,
-                                                                            true)));
+                        addr.Files = new ObjectCollection<AddressFile>(await _repo.Execute<AddressFile[]>("ManageAddressFiles",
+                                                                                    addr.UID,
+                                                                                    false,
+                                                                                    addr.Files,
+                                                                                    null,
+                                                                                    null,
+                                                                                    true));
 
                         filesToSave = addr.Files.Where(l => l.HasFile()).ToArray();
 

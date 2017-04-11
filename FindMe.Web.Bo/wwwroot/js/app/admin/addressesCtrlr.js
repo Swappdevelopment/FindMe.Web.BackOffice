@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('addressesCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', addressesCtrlrFunc]);
+           .controller('addressesCtrlr', ['$http', '$scope', '$sce', '$uibModal', 'appProps', 'headerConfigService', addressesCtrlrFunc]);
 
-    function addressesCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function addressesCtrlrFunc($http, $scope, $sce, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -119,7 +119,6 @@
         };
 
 
-
         var checkRatinOvrdsRecordState = function (ratingOvrds) {
 
             if (ratingOvrds) {
@@ -161,42 +160,135 @@
 
         };
 
-        var checkImagesRecordState = function (imgs) {
+        var checkFilesRecordState = function (files) {
 
-            if (imgs) {
+            if (files) {
 
 
-                if (!Array.isArray(imgs)) {
+                if (!Array.isArray(files)) {
 
-                    imgs = [imgs];
+                    files = [files];
                 }
 
-                for (var i = 0; i < imgs.length; i++) {
+                for (var i = 0; i < files.length; i++) {
 
-                    var img = imgs[i];
+                    var file = files[i];
 
-                    if (img.__comp
-                        && (!img.recordState || img.recordState <= 0)) {
+                    file.status = file.active ? 1 : 0;
 
-                        if (img.id > 0) {
+                    if (file.__comp
+                        && (!file.recordState || file.recordState <= 0)) {
 
-                            if (img.desc !== img.__comp.desc
-                                || img.name !== img.__comp.name
-                                || img.alt !== img.__comp.alt
-                                || img.active !== img.__comp.active
-                                || img.waitingUpload) {
+                        if (file.id > 0) {
 
-                                img.recordState = 20;
+                            if (file.desc !== file.__comp.desc
+                                || file.name !== file.__comp.name
+                                || file.isDefault !== file.__comp.isDefault
+                                || file.alt !== file.__comp.alt
+                                || file.active !== file.__comp.active
+                                || file.waitingUpload) {
+
+                                file.recordState = 20;
                             }
                             else {
 
-                                img.recordState = 0;
+                                file.recordState = 0;
                             }
                         }
                         else {
 
-                            img.recordState = 10;
+                            file.recordState = 10;
                         }
+                    }
+                }
+            }
+        };
+
+        var checkOpenHoursRecordState = function (openHours) {
+
+            if (openHours) {
+
+
+                if (!Array.isArray(openHours)) {
+
+                    openHours = [openHours];
+                }
+
+                var func = function (dayRow) {
+
+                    if (dayRow) {
+
+                        dayRow.status = dayRow.active ? 1 : 0;
+
+                        if (dayRow.__comp
+                            && (!dayRow.recordState || dayRow.recordState <= 0)) {
+
+                            if (dayRow.id > 0) {
+
+                                if (dayRow.hrFrom !== dayRow.__comp.hrFrom
+                                    || dayRow.hrTo !== dayRow.__comp.hrTo
+                                    || dayRow.minFrom !== dayRow.__comp.minFrom
+                                    || dayRow.minTo !== dayRow.__comp.minTo
+                                    || dayRow.active !== dayRow.__comp.active) {
+
+                                    dayRow.recordState = 20;
+                                }
+                                else {
+
+                                    dayRow.recordState = 0;
+                                }
+                            }
+                            else {
+
+                                dayRow.recordState = 10;
+                            }
+                        }
+                    }
+                };
+
+                for (var i = 0; i < openHours.length; i++) {
+
+                    var dayRow = openHours[i];
+
+                    if (dayRow.openHours) {
+
+                        $.each(dayRow.openHours, function (index, value) {
+
+                            func(value);
+                        });
+                    }
+                    else {
+
+                        func(dayRow);
+                    }
+                }
+            }
+        };
+
+        var checkTripAdWidgetRecordState = function (tripAd) {
+
+            if (tripAd) {
+
+                tripAd.status = tripAd.active ? 1 : 0;
+
+                if (tripAd.__comp
+                    && (!tripAd.recordState || tripAd.recordState <= 0)) {
+
+                    if (tripAd.id > 0) {
+
+                        if (tripAd.largeValue !== tripAd.__comp.largeValue
+                            || tripAd.smallValue !== tripAd.__comp.smallValue) {
+
+                            tripAd.recordState = 20;
+                        }
+                        else {
+
+                            tripAd.recordState = 0;
+                        }
+                    }
+                    else {
+
+                        tripAd.recordState = 10;
                     }
                 }
             }
@@ -238,7 +330,11 @@
                 }
 
                 checkRatinOvrdsRecordState(address.ratingOverrides);
-                checkImagesRecordState(address.images);
+                checkFilesRecordState(address.images);
+                checkFilesRecordState(address.logos);
+                checkFilesRecordState(address.documents);
+                checkOpenHoursRecordState(address.openHours);
+                checkTripAdWidgetRecordState(address.tripAdWidget);
             }
         };
 
@@ -313,7 +409,9 @@
                             save: vm.save,
                             deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
-                            checkImagesRecordState: checkImagesRecordState,
+                            checkFilesRecordState: checkFilesRecordState,
+                            checkOpenHoursRecordState: checkOpenHoursRecordState,
+                            checkTripAdWidgetRecordState: checkTripAdWidgetRecordState,
                             clients: vm.clients,
                             categorys: vm.categorys,
                             cityDetails: vm.cityDetails,
@@ -356,6 +454,91 @@
                         v.__comp = jQuery.extend(false, {}, v);
                     });
                 }
+
+                if (value.logos) {
+
+                    $.each(value.logos, function (i, v) {
+
+                        v.active = v.status === 1;
+                        v.__comp = jQuery.extend(false, {}, v);
+                    });
+                }
+
+                if (value.documents) {
+
+                    $.each(value.documents, function (i, v) {
+
+                        v.active = v.status === 1;
+                        v.__comp = jQuery.extend(false, {}, v);
+                    });
+                }
+
+                if (value.openHours) {
+
+                    $.each(value.openHours, function (i, day) {
+
+                        switch (day.day) {
+
+                            case 10:
+                                day.name = appProps.lbl_Monday;
+                                break;
+                            case 20:
+                                day.name = appProps.lbl_Tuesday;
+                                break;
+                            case 30:
+                                day.name = appProps.lbl_Wednesday;
+                                break;
+                            case 40:
+                                day.name = appProps.lbl_Thursday;
+                                break;
+                            case 50:
+                                day.name = appProps.lbl_Friday;
+                                break;
+                            case 60:
+                                day.name = appProps.lbl_Saturday;
+                                break;
+                            case 70:
+                                day.name = appProps.lbl_Sunday;
+                                break;
+                            case 80:
+                                day.name = appProps.lbl_pHoliday;
+                                break;
+                        }
+
+                        $.each(day.openHours, function (i, dayRow) {
+
+                            dayRow.timeFrom = new Date(2000, 10, 10, dayRow.hrFrom, dayRow.minFrom);
+                            dayRow.timeTo = new Date(2000, 10, 10, dayRow.hrTo, dayRow.minTo);
+
+                            dayRow.active = dayRow.status === 1;
+                            dayRow.__comp = jQuery.extend(false, {}, dayRow);
+                        });
+                    });
+                }
+
+                if (!value.tripAdWidget) {
+
+                    value.tripAdWidget = {
+
+                        id: 0,
+                        largeValue: '',
+                        smallValue: '',
+                        recordState: 0,
+                        status: 1
+                    };
+                }
+
+                value.tripAdWidget.__comp = jQuery.extend(false, {}, value.tripAdWidget);
+
+                value.tripAdWidget.trustLargeValue = function () {
+
+                    return $sce.trustAsHtml(value.tripAdWidget.largeValue);
+                };
+
+                value.tripAdWidget.trustSmallValue = function () {
+
+                    return $sce.trustAsHtml(value.tripAdWidget.smallValue);
+                };
             }
         };
 
@@ -739,6 +922,9 @@
                                 var key = addr.uid + '|' + value.value.type + '|' + index;
 
                                 formData.append(key, value.file);
+
+                                checkFilesRecordState(value.value);
+
                                 formData.append(key, JSON.stringify(value.value));
                             }
                         });
@@ -893,6 +1079,58 @@
                                             }
                                         }
 
+                                        if (value.logos && tempValue.logos) {
+
+                                            tempValue.logos.length = 0;
+
+                                            for (i = 0; i < value.logos.length; i++) {
+
+                                                tempValue.logos.push(value.logos[i]);
+                                            }
+                                        }
+
+                                        if (value.documents && tempValue.documents) {
+
+                                            tempValue.documents.length = 0;
+
+                                            for (i = 0; i < value.documents.length; i++) {
+
+                                                tempValue.documents.push(value.documents[i]);
+                                            }
+                                        }
+
+                                        if (value.openHours && tempValue.openHours) {
+
+                                            tempValue.openHours.length = 0;
+
+                                            for (i = 0; i < value.openHours.length; i++) {
+
+                                                tempValue.openHours.push(value.openHours[i]);
+                                            }
+                                        }
+
+                                        if (tempValue.tripAdWidget) {
+
+                                            if (value.tripAdWidget) {
+
+                                                tempValue.tripAdWidget.status = value.tripAdWidget.status;
+                                                tempValue.tripAdWidget.uid = value.tripAdWidget.uid;
+                                                tempValue.tripAdWidget.id = value.tripAdWidget.id;
+                                                tempValue.tripAdWidget.largeValue = value.tripAdWidget.largeValue;
+                                                tempValue.tripAdWidget.smallValue = value.tripAdWidget.smallValue;
+                                            }
+                                            else {
+
+                                                tempValue.tripAdWidget.status = 1;
+                                                tempValue.tripAdWidget.uid = null;
+                                                tempValue.tripAdWidget.id = 0;
+                                                tempValue.tripAdWidget.largeValue = null;
+                                                tempValue.tripAdWidget.smallValue = null;
+                                            }
+
+                                            tempValue.tripAdWidget.recordState = 0;
+                                        }
+
                                         if (toBeSavedAddresses[index].recordState === 10) {
 
                                             vm.addressesCountMod += 1;
@@ -1041,9 +1279,9 @@
 
 
     angular.module('app-mainmenu')
-        .controller('addressEditorInstanceCtrlr', ['$http', '$scope', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
+        .controller('addressEditorInstanceCtrlr', ['$http', '$scope', '$sce', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
 
-    function addressEditorInstanceCtrlrFunc($http, $scope, $uibModalInstance, appProps, param) {
+    function addressEditorInstanceCtrlrFunc($http, $scope, $sce, $uibModalInstance, appProps, param) {
 
         var vm = this;
         vm.appProps = appProps;
@@ -1055,7 +1293,26 @@
         vm.cityDetails = param.cityDetails;
         vm.tags = param.tags;
 
-        vm.checkImagesRecordState = param.checkImagesRecordState;
+        vm.checkFilesRecordState = param.checkFilesRecordState; 
+        vm.checkOpenHoursRecordState = param.checkOpenHoursRecordState;
+
+        vm.checkTripAdWidget = function (tripAd) {
+
+            if (tripAd) {
+
+                if (tripAd.largeValue) {
+
+                    tripAd.largeValue = tripAd.largeValue.replaceAll('"', "'");
+                }
+
+                if (tripAd.smallValue) {
+
+                    tripAd.smallValue = tripAd.smallValue.replaceAll('"', "'");
+                }
+
+                param.checkTripAdWidgetRecordState(tripAd)
+            }
+        }
 
         vm.tagFilter = '';
 
@@ -1090,6 +1347,9 @@
         });
 
         vm.selectedTagCount = 0;
+
+        vm.tripadCode = true;
+        vm.tripadPreview = false;
 
         vm.selectTag = function (tag) {
 
@@ -1261,43 +1521,44 @@
             }
         };
 
-        vm.revertImg = function (img) {
+        vm.revertFile = function (file) {
 
-            if (img && img.__comp) {
+            if (file && file.__comp) {
 
-                img.name = img.__comp.name;
-                img.format = img.__comp.format;
-                img.alt = img.__comp.alt;
-                img.desc = img.__comp.desc;
-                img.active = img.__comp.active;
+                file.name = file.__comp.name;
+                file.isDefault = file.__comp.isDefault;
+                file.format = file.__comp.format;
+                file.alt = file.__comp.alt;
+                file.desc = file.__comp.desc;
+                file.active = file.__comp.active;
 
-                img.recordState = 0;
+                file.recordState = 0;
 
-                img.waitingUpload = false;
+                file.waitingUpload = false;
 
-                removeToBeUploadedFile(img);
+                removeToBeUploadedFile(file);
             }
         }
-        vm.uploadImgClick = function ($event, img) {
+        vm.uploadImgClick = function ($event, file) {
 
-            if (img) {
+            if (file) {
 
-                if (img.waitingUpload) {
+                if (file.waitingUpload) {
 
-                    img.name = img.__comp.name;
-                    img.format = img.__comp.format;
-                    img.waitingUpload = false;
+                    file.name = file.__comp.name;
+                    file.format = file.__comp.format;
+                    file.waitingUpload = false;
 
-                    if (img.recordStateBeforeUpload) {
+                    if (file.recordStateBeforeUpload) {
 
-                        img.recordState = img.recordStateBeforeUpload;
+                        file.recordState = file.recordStateBeforeUpload;
                     }
                     else {
 
-                        img.recordState = 0;
+                        file.recordState = 0;
                     }
 
-                    removeToBeUploadedFile(img);
+                    removeToBeUploadedFile(file);
                 }
                 else {
 
@@ -1346,13 +1607,13 @@
                                                     }
                                                 }
 
-                                                img.name = name;
-                                                img.format = format;
+                                                file.name = name;
+                                                file.format = format;
 
                                                 vm.address.toBeUploadedFiles.push({
                                                     file: value,
                                                     key: value.name + '_' + index + '_KEY',
-                                                    value: img
+                                                    value: file
                                                 });
                                             });
 
@@ -1364,6 +1625,7 @@
                                                 var reader = new FileReader();
 
                                                 reader.onload = function (e) {
+
                                                     $localImg.attr('src', e.target.result);
                                                 }
 
@@ -1371,9 +1633,9 @@
                                             }
                                         }
 
-                                        img.waitingUpload = true;
-                                        img.recordStateBeforeUpload = img.recordState;
-                                        vm.checkImagesRecordState(img);
+                                        file.waitingUpload = true;
+                                        file.recordStateBeforeUpload = file.recordState;
+                                        vm.checkFilesRecordState(file);
                                     }
                                 });
                             });
@@ -1384,7 +1646,104 @@
                 }
             }
         };
+        vm.fileSetToDefault = function (file, fileCollection) {
 
+            if (file && fileCollection && fileCollection.length > 0) {
+
+                $.each($.grep(fileCollection, function (v) { return v.isDefault === true; }), function (index, value) {
+
+                    value.isDefault = false;
+                });
+
+                file.isDefault = true;
+            }
+
+            vm.checkFilesRecordState(file)
+        };
+
+
+        vm.revertDayRow = function (dayRow) {
+
+            if (dayRow && dayRow.__comp) {
+
+                dayRow.timeFrom = dayRow.__comp.timeFrom;
+                dayRow.timeTo = dayRow.__comp.timeTo;
+                dayRow.hrFrom = dayRow.__comp.hrFrom;
+                dayRow.hrTo = dayRow.__comp.hrTo;
+                dayRow.minFrom = dayRow.__comp.minFrom;
+                dayRow.minTo = dayRow.__comp.minTo;
+
+                dayRow.active = dayRow.__comp.active;
+
+                dayRow.recordState = 0;
+
+                dayRow.waitingUpload = false;
+            }
+
+            vm.checkOpenHoursRecordState(dayRow);
+        }
+        vm.timeFromChanged = function (dayRow) {
+
+            if (dayRow) {
+                if (dayRow.timeFrom) {
+
+                    dayRow.hrFrom = dayRow.timeFrom.getHours();
+                    dayRow.minFrom = dayRow.timeFrom.getMinutes();
+                }
+                else {
+
+                    dayRow.hrFrom = 0;
+                    dayRow.minFrom = 0;
+                }
+            }
+
+            vm.checkOpenHoursRecordState(dayRow);
+        };
+        vm.timeToChanged = function (dayRow) {
+
+            if (dayRow) {
+                if (dayRow.timeTo) {
+
+                    dayRow.hrTo = dayRow.timeTo.getHours();
+                    dayRow.minTo = dayRow.timeTo.getMinutes();
+                }
+                else {
+
+                    dayRow.hrTo = 0;
+                    dayRow.minTo = 0;
+                }
+            }
+        };
+
+        vm.revertTripAd = function () {
+
+            if (vm.address && vm.address.tripAdWidget && vm.address.tripAdWidget.__comp) {
+
+                vm.address.tripAdWidget.smallValue = vm.address.tripAdWidget.__comp.smallValue;
+                vm.address.tripAdWidget.largeValue = vm.address.tripAdWidget.__comp.largeValue;
+
+
+                vm.address.tripAdWidget.recordState = 0;
+            }
+        }
+        vm.deleteTripAd = function () {
+
+            if (vm.address && vm.address.tripAdWidget) {
+
+                vm.address.tripAdWidget.smallValue = null;
+                vm.address.tripAdWidget.largeValue = null;
+
+                if (vm.address.tripAdWidget.recordState
+                    && vm.address.tripAdWidget.recordState === 10) {
+
+                    vm.address.tripAdWidget.recordState = 0;
+                }
+                else {
+
+                    vm.address.tripAdWidget.recordState = 30;
+                }
+            }
+        }
 
         vm.save = function () {
 
@@ -1419,12 +1778,30 @@
             vm.address.ratingOverrides.insert(0, newRecord);
         };
 
+        vm.addLogo = function () {
+
+            var newRecord = {
+                recordState: 10,
+                id: 0,
+                type: 50,
+                isDefault: $.grep(vm.address.logos, function (v) { return v.isDefault === true; }).length <= 0,
+                uid: null,
+                alt: null,
+                desc: null,
+                status: 1,
+                active: true
+            };
+
+            vm.address.logos.insert(0, newRecord);
+        };
+
         vm.addImage = function () {
 
             var newRecord = {
                 recordState: 10,
                 id: 0,
                 type: 10,
+                isDefault: $.grep(vm.address.images, function (v) { return v.isDefault === true; }).length <= 0,
                 uid: null,
                 alt: null,
                 desc: null,
@@ -1435,17 +1812,58 @@
             vm.address.images.insert(0, newRecord);
         };
 
-        vm.markImageForDeletion = function (img) {
+        vm.addDoc = function () {
 
-            if (img) {
+            var newRecord = {
+                recordState: 10,
+                id: 0,
+                type: 0,
+                isDefault: $.grep(vm.address.documents, function (v) { return v.isDefault === true; }).length <= 0,
+                uid: null,
+                alt: null,
+                desc: null,
+                status: 1,
+                active: true
+            };
 
-                if (img.recordState === 10) {
+            vm.address.documents.insert(0, newRecord);
+        };
 
-                    vm.address.images.remove(img);
+        vm.addOpenHours = function (day) {
+
+            if (day && day.openHours) {
+
+                var newRecord = {
+                    recordState: 10,
+                    id: 0,
+                    hrFrom: null,
+                    hrTo: null,
+                    minFrom: null,
+                    minTo: null,
+                    status: 1,
+                    active: true
+                };
+
+                day.openHours.insert(0, newRecord);
+            }
+        };
+
+        vm.markRowForDeletion = function (row, rowCollection) {
+
+            if (row && rowCollection) {
+
+                if (row.recordState === 10) {
+
+                    rowCollection.remove(row);
+                }
+                else if (row.recordState === 30) {
+
+                    row.recordState = row.recordStateBeforeDelete;
                 }
                 else {
 
-                    img.recordState = 30;
+                    row.recordStateBeforeDelete = row.recordState;
+                    row.recordState = 30;
                 }
             }
         };
