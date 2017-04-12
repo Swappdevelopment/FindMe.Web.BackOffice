@@ -1,4 +1,5 @@
-﻿(function () {
+﻿
+(function () {
 
     'use strict';
 
@@ -198,7 +199,6 @@
         };
 
 
-
         vm.clearForm = function () {
 
             vm.hasSuccess = false;
@@ -288,18 +288,6 @@
                 }
             }
         };
-
-
-        //$(addrCSVFileInput).change(function () {
-        //    if ($(this).val()) {
-
-        //        $("#upload").prop("disabled", false);
-        //    }
-        //    else {
-
-        //        $("#upload").prop("disabled", true);
-        //    }
-        //});
     }
 
 

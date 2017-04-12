@@ -1,11 +1,9 @@
 ﻿using FindMe.Data;
-using FindMe.Web.App.CSVObjects;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
 using System.Collections.Generic;
@@ -121,6 +119,8 @@ namespace FindMe.Web.App
             IFormFile fileTimeCSV;
 
             string[] header = null;
+
+            DaysCsv[] daysCsv;
 
             PropertyInfo[] props;
 
@@ -275,6 +275,22 @@ namespace FindMe.Web.App
                                                 "ValidateCsvCategories",
                                                 Helper.JSonCamelSerializeObject(
                                                             csvCategories.Select(l => l.Simplify()).ToArray()));
+
+                    daysCsv = this.GetCsvDays(fileTimeCSV);
+
+                    if (daysCsv != null && daysCsv.Length > 0)
+                    {
+                        foreach (var addr in addresses)
+                        {
+                            addr._DaysCsv = (from d in daysCsv.Where(l => l.AddressUUID == addr.AddressUUID).SelectMany(l => l.Pivot()).OrderBy(l => l.Seqn)
+                                             group d by d.Name into g
+                                             select new
+                                             {
+                                                 name = g.Key,
+                                                 values = g.OrderBy(l => l.HourFrom).ThenBy(l => l.HourTo).Select(l => l.Simplify()).ToArray()
+                                             }).ToArray();
+                        }
+                    }
                 }
 
                 return Ok(
@@ -299,6 +315,8 @@ namespace FindMe.Web.App
                 header = null;
                 props = null;
 
+                daysCsv = null;
+
                 if (csvCategories != null)
                 {
                     csvCategories.Clear();
@@ -309,6 +327,176 @@ namespace FindMe.Web.App
                 {
                     addresses.Clear();
                     addresses = null;
+                }
+
+                if (lines != null)
+                {
+                    lines.Clear();
+                    lines = null;
+                }
+            }
+        }
+
+
+        private DaysCsv[] GetCsvDays(IFormFile file)
+        {
+            if (file == null || file.Length <= 0) return new DaysCsv[0];
+
+            PropertyInfo[] props;
+
+            var days = new List<DaysCsv>();
+            var lines = new List<string[]>();
+
+            string[] header = null;
+
+            DaysCsv d;
+
+            try
+            {
+                props = typeof(DaysCsv).GetProperties();
+
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                {
+                    header = reader.ReadLine().Split(';');
+
+                    if (header.Length != (props.Length + DaysCsv.ADDITIONAL_PROPERTIES_COUNT_COMPARE))
+                    {
+                        throw new Exception($"There are {header.Length} column instead of {props.Length + DaysCsv.ADDITIONAL_PROPERTIES_COUNT_COMPARE}.");
+                    }
+
+                    string data = "";
+                    string[] item = null;
+
+                    while (reader.Peek() >= 0)
+                    {
+                        data += reader.ReadLine();
+                        item = data.Split(';');
+
+                        if (item.Length == header.Length)
+                        {
+                            lines.Add(item);
+                            data = "";
+                        }
+                        else
+                        {
+                            data += "\r\n";
+                        }
+                    }
+                }
+
+
+                foreach (var obj in lines)
+                {
+                    d = new DaysCsv();
+
+                    d.Day_20_Monday.Name = this.GetLabel("lbl_Monday");
+                    d.Day_20_Monday.Seqn = 1;
+
+                    d.Day_30_Tuesday.Name = this.GetLabel("lbl_Tuesday");
+                    d.Day_30_Tuesday.Seqn = 2;
+
+                    d.Day_40_Wednesday.Name = this.GetLabel("lbl_Wednesday");
+                    d.Day_40_Wednesday.Seqn = 3;
+
+                    d.Day_50_Thursday.Name = this.GetLabel("lbl_Thursday");
+                    d.Day_50_Thursday.Seqn = 4;
+
+                    d.Day_60_Friday.Name = this.GetLabel("lbl_Friday");
+                    d.Day_60_Friday.Seqn = 5;
+
+                    d.Day_70_Saturday.Name = this.GetLabel("lbl_Saturday");
+                    d.Day_70_Saturday.Seqn = 6;
+
+                    d.Day_10_Sunday.Name = this.GetLabel("lbl_Sunday");
+                    d.Day_10_Sunday.Seqn = 7;
+
+                    d.Day_80_PH.Name = this.GetLabel("lbl_pHoliday");
+                    d.Day_80_PH.Seqn = 8;
+
+                    foreach (var col in obj)
+                    {
+                        if (col != null && col.Contains(":"))
+                        {
+                            var colSplit = col.Split(':').Where(s => !string.IsNullOrEmpty(s)).Select(s => s.Trim()).ToArray();
+
+                            if (colSplit == null || colSplit.Length != 2)
+                            {
+                                d.ErrorMessage = "Invalid Row: " + col;
+                            }
+                            else
+                            {
+                                switch (colSplit[0])
+                                {
+                                    case "10":
+                                        d.Day_10_Sunday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "20":
+                                        d.Day_20_Monday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "30":
+                                        d.Day_30_Tuesday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "40":
+                                        d.Day_40_Wednesday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "50":
+                                        d.Day_50_Thursday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "60":
+                                        d.Day_60_Friday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "70":
+                                        d.Day_70_Saturday.CsvValue = colSplit[1];
+                                        break;
+
+                                    case "80":
+                                        d.Day_80_PH.CsvValue = colSplit[1];
+                                        break;
+
+                                    default:
+                                        d.ErrorMessage = "Invalid Day value found :" + colSplit[0];
+                                        break;
+                                }
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(col))
+                        {
+                            if (string.IsNullOrEmpty(d.AddressUUID))
+                            {
+                                d.AddressUUID = col.Trim();
+                            }
+                            else
+                            {
+                                d.ErrorMessage = "Invalid Day value found :" + col;
+                            }
+                        }
+                    }
+
+                    days.Add(d.Setup());
+                }
+
+                return days == null ? new DaysCsv[0] : days.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                props = null;
+                header = null;
+                d = null;
+
+                if (days != null)
+                {
+                    days.Clear();
+                    days = null;
                 }
 
                 if (lines != null)

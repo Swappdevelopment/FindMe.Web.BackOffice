@@ -3,7 +3,7 @@ using Swapp.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FindMe.Web.App.CSVObjects
+namespace FindMe.Web.App
 {
     public class AddressCSV
     {
@@ -52,7 +52,7 @@ namespace FindMe.Web.App.CSVObjects
             return value;
         }
 
-        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -2;
+        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -3;
 
 
         public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories)
@@ -103,6 +103,8 @@ namespace FindMe.Web.App.CSVObjects
 
 
         public int _CatgIndex { get; private set; }
+        public object[] _DaysCsv { get; set; }
+
         public string ErrorMessage { get; set; }
 
         public bool HasError()
