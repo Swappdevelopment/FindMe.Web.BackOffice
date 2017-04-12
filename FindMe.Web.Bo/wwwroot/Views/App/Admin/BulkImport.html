@@ -1,3 +1,59 @@
 ﻿<div id="bulkimportVw">
+    <form id="csv-form" method="post" enctype="multipart/form-data">
+        <label class="btn btn-bs-file btn-lg btn-findme">
+            {{vm.appProps.lbl_BrowseFile}}
+            <input type="file" id="files" name="files" />
+        </label>
+        <input class="btn btn-lg btn-default" type="button" id="upload" value="{{vm.appProps.lbl_Check}}" ng-show="vm.showUpload == true" ng-click="vm.uploadCSvForm()" disabled />
+        <input class="btn btn-lg btn-default" type="button" id="clear" value="Clear" ng-show="vm.showClear == true" ng-click="vm.clearForm()" />
+        <span class="findme-color-fc-dark"><b>{{vm.filename}}</b></span>
+    </form>
+    <br />
+    <br />
+    <div id="csv" ng-show="vm.showTable == true">
+        <div ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
+            <div ng-show="vm.errorCount > 0" class="panel-heading">
+                <span><b>{{vm.errorCount}} {{vm.appProps.lbl_Errors}}</b></span>
+                <button class="btn btn-danger btn-sm pull-right" ng-show="vm.hasSuccess == true" ng-click="vm.showAllErrors()">{{vm.appProps.lbl_VwError}}</button>
+                <button class="btn btn-success btn-sm pull-right" ng-show="vm.hasSuccess == true" ng-click="vm.showAllSuccess()">{{vm.appProps.lbl_VwSuccess}}</button>
+                <button class="btn btn-default btn-sm pull-right" ng-show="vm.hasSuccess == true" ng-click="vm.showAll()">{{vm.appProps.lbl_VwAll}}</button>
 
+            </div>
+            <div ng-show="vm.errorCount == 0 && errormsg =='' " class="panel-heading">
+                <span><b>{{vm.appProps.lbl_NoError}}</b></span>
+            </div>
+
+            <div ng-show="vm.errormsg != ''" class="panel-heading">
+                <span><b>{{vm.appProps.lbl_ErrorsMsg}} {{vm.errormsg}}</b></span>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="csv-table" class="table table-fixed-header table-striped">
+                <thead class='header'>
+                    <tr>
+                        <th ng-repeat="header in vm.tableHeaders" ng-show="header !== 'errorMessage'"><b>{{header}}</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="address in vm.csvItems" ng-class="address.errorMessage == null ? 'success' : 'error' ">
+                        <td ng-if="!address.errorMessage" ng-repeat="header in vm.tableHeaders" ng-show="header !== 'errorMessage'">
+                            <div>
+                                {{address[header]}}
+                            </div>
+                        </td>
+                        <td ng-if="address.errorMessage">
+                            <div>
+                                {{address.addressUUID}}
+                            </div>
+                        </td>
+                        <td ng-if="address.errorMessage" colspan="{{vm.tableHeaders.length - 1}}">
+                            <div>
+                                {{address.errorMessage}}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

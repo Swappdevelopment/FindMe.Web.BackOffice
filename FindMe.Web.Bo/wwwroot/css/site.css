@@ -38,7 +38,6 @@
     color: #424242;
 }
 
-
 .btn {
     text-transform: none !important;
 }
@@ -82,8 +81,6 @@
     min-width: 150px;
 }
 
-
-
 input,
 select,
 textarea {
@@ -94,12 +91,9 @@ textarea {
     cursor: pointer;
 }
 
-
-
 .navbar-toggle.btn-user {
     padding: 0;
 }
-
 
 .findme-lbl {
     color: #1a1a1a;
@@ -142,7 +136,6 @@ textarea {
 .inline-element {
     display: inline;
 }
-
 
 .ng-animate.no-animate {
     -moz-transition: 0s none;
