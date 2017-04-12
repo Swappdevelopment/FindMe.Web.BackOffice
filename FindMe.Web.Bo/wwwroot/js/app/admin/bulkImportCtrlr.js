@@ -10,7 +10,6 @@
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
-
         headerConfigService.reset();
         headerConfigService.title = appProps.lbl_Import;
         headerConfigService.showToolBar = false;
@@ -40,23 +39,47 @@
         vm.errormsg = '';
         vm.errorid = 0;
 
-        vm.filename = '';
+        vm.addrFilename = '';
+        vm.timeFilename = '';
 
         var table = $('#csv');
         var rows = document.getElementById('csv-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
 
+        vm.browseGo = function (elementName) {
+
+            if (elementName) {
+
+                $('#' + elementName).click();
+            }
+        };
+
+        var validateAddressUtfValues = function (addr) {
+
+            if (addr) {
+
+                addr.addressName = addr.addressName ? addr.addressName.encodeHtml() : addr.addressName;
+            }
+        };
+
+
         vm.uploadCSvForm = function () {
 
-            var fileUpload = $("#files").get(0);
-            var files = fileUpload.files;
+            var htmlElement = $('#addrCSV').get(0);
 
-            var data = new FormData();
-            for (var i = 0; i < files.length; i++) {
-                data.append(files[i].name, files[i]);
-            }
+            if (htmlElement && htmlElement.files.length === 1) {
 
-            if (files.length === 1) {
+                var data = new FormData();
+
+                data.append('ADDR_CSV', htmlElement.files[0]);
+
+                htmlElement = $('#timeCSV').get(0);
+
+                if (htmlElement && htmlElement.files.length === 1) {
+
+                    data.append('TIME_CSV', htmlElement.files[0]);
+                }
+
 
                 var successFunc = function (resp) {
 
@@ -71,7 +94,9 @@
                         }
                         else if (resp.data.addresses) {
 
-                            for (var i = 0; i < resp.data.addresses.length; i++) {
+                            var i;
+
+                            for (i = 0; i < resp.data.addresses.length; i++) {
 
                                 var addr = resp.data.addresses[i];
 
@@ -79,16 +104,22 @@
 
                                     for (var property in addr) {
 
-                                        vm.tableHeaders.push(property);
+                                        if (!property.startsWith('_')) {
+
+                                            vm.tableHeaders.push(property);
+                                        }
                                     }
                                 }
+
+
+                                validateAddressUtfValues(addr);
 
                                 vm.csvItems.push(addr);
                             }
 
                             var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
 
-                            for (var i = 0; i < errors.length; i++) {
+                            for (i = 0; i < errors.length; i++) {
 
                                 if (errors[i] === null) {
 
@@ -121,7 +152,18 @@
 
                 var finallyFunc = function () {
 
+                    toggleGlblWaitVisibility(false);
                 };
+
+
+                vm.errormsg = '';
+
+                vm.csvItems.length = 0;
+                vm.tableHeaders.length = 0;
+                vm.errorCount = 0;
+
+
+                toggleGlblWaitVisibility(true);
 
                 $http({
                     url: "/ApiBulkImport/UploadCSV",
@@ -131,21 +173,33 @@
                     transformRequest: angular.identity
                 }).then(successFunc, errorFunc)
                     .finally(finallyFunc);
-
-
-                vm.errormsg = '';
-
-                fileUpload.value = '';
-
-                vm.csvItems.length = 0;
-                vm.tableHeaders.length = 0;
-                vm.errorCount = 0;
             }
         };
 
-        vm.clearForm = function () {
 
-            $("#upload").prop("disabled", true);
+        var addrCSVFileInput = document.getElementById('addrCSV');
+
+        addrCSVFileInput.onchange = function () {
+
+            $scope.$apply(function () {
+
+                vm.addrFilename = addrCSVFileInput.files[0].name;
+            })
+        };
+
+        var timeCSVFileInput = document.getElementById('timeCSV');
+
+        timeCSVFileInput.onchange = function () {
+
+            $scope.$apply(function () {
+
+                vm.timeFilename = timeCSVFileInput.files[0].name;
+            })
+        };
+
+
+
+        vm.clearForm = function () {
 
             vm.hasSuccess = false;
 
@@ -153,8 +207,14 @@
             vm.showClear = false;
             vm.showUpload = true;
 
-            vm.filename = '';
+            vm.addrFilename = '';
+            vm.timeFilename = '';
 
+            addrCSVFileInput.value = '';
+            timeCSVFileInput.value = '';
+
+            vm.csvItems.length = 0;
+            vm.tableHeaders.length = 0;
         };
 
 
@@ -164,9 +224,9 @@
 
             for (var i = 0; i < errors.length; i++) {
 
-                for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < rows.length; j++) {
 
-                    var hideRow = rows[i];
+                    var hideRow = rows[j];
 
                     if (errors[i] === null) {
 
@@ -188,9 +248,9 @@
 
             for (var i = 0; i < errors.length; i++) {
 
-                for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < rows.length; j++) {
 
-                    var hideRow = rows[i];
+                    var hideRow = rows[j];
 
                     if (errors[i] === null) {
 
@@ -211,9 +271,9 @@
 
             for (var i = 0; i < errors.length; i++) {
 
-                for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < rows.length; j++) {
 
-                    var hideRow = rows[i];
+                    var hideRow = rows[j];
 
                     if (errors[i] === null) {
 
@@ -230,25 +290,16 @@
         };
 
 
-        document.getElementById('files').onchange = function () {
-            var fileInput = document.getElementById('files');
+        //$(addrCSVFileInput).change(function () {
+        //    if ($(this).val()) {
 
-            $scope.$apply(function () {
+        //        $("#upload").prop("disabled", false);
+        //    }
+        //    else {
 
-                vm.filename = fileInput.files[0].name;
-            })
-        };
-
-        $("#files").change(function () {
-            if ($(this).val()) {
-
-                $("#upload").prop("disabled", false);
-            }
-            else {
-
-                $("#upload").prop("disabled", true);
-            }
-        });
+        //        $("#upload").prop("disabled", true);
+        //    }
+        //});
     }
 
 

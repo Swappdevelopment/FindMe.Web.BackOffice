@@ -1,12 +1,114 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FindMe.Data;
+using Swapp.Data;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FindMe.Web.App.CSVObjects
 {
     public class AddressCSV
     {
-        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -1;
+        public static string Slugify(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                value = value.AccentFoldStr()
+                                .Replace("\r", "-")
+                                .Replace("\n", "-")
+                                .Replace("\t", "-")
+                                .Replace("\\", "-")
+                                .Replace("/", "-")
+                                .Replace(" ", "-")
+                                .Replace("(", "-")
+                                .Replace(")", "-")
+                                .Replace("[", "-")
+                                .Replace("]", "-")
+                                .Replace("{", "-")
+                                .Replace("}", "-")
+                                .Replace("_", "-")
+                                .Replace("=", "-")
+                                .Replace("+", "-")
+                                .Replace("&", "-")
+                                .Replace(",", "-")
+                                .Replace(".", "-")
+                                .Replace("!", "")
+                                .Replace("?", "")
+                                .Replace("'", "")
+                                .Replace("-----", "-")
+                                .Replace("----", "-")
+                                .Replace("---", "-")
+                                .Replace("--", "-");
 
+                if (value.StartsWith("-"))
+                {
+                    value = value.Substring(1);
+                }
+
+                if (value.EndsWith("-"))
+                {
+                    value = value.Substring(0, value.Length - 1);
+                }
+            }
+
+            return value;
+        }
+
+        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -2;
+
+
+        public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories)
+        {
+            if (!this.HasError())
+            {
+                if (!string.IsNullOrEmpty(this.DescriptionEN))
+                {
+                    if (this.DescriptionEN.StartsWith("\""))
+                    {
+                        this.DescriptionEN = this.DescriptionEN.Substring(1);
+                    }
+                    if (this.DescriptionEN.EndsWith("\""))
+                    {
+                        this.DescriptionEN = this.DescriptionEN.Substring(0, this.DescriptionEN.Length - 1);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(this.DescriptionFR))
+                {
+                    if (this.DescriptionFR.StartsWith("\""))
+                    {
+                        this.DescriptionFR = this.DescriptionFR.Substring(1);
+                    }
+                    if (this.DescriptionFR.EndsWith("\""))
+                    {
+                        this.DescriptionFR = this.DescriptionFR.Substring(0, this.DescriptionFR.Length - 1);
+                    }
+                }
+
+
+                if (!string.IsNullOrEmpty(this.CategoryName))
+                {
+                    var catg = CategoryCSV.AddCategory(this.CategoryName, csvCategories);
+
+                    if (catg != null)
+                    {
+                        this._CatgIndex = catg.Index;
+                        this.CategoryName = catg.GetPath();
+                    }
+                    catg = null;
+                }
+            }
+
+            return this;
+        }
+
+
+
+        public int _CatgIndex { get; private set; }
         public string ErrorMessage { get; set; }
+
+        public bool HasError()
+        {
+            return !string.IsNullOrEmpty(this.ErrorMessage);
+        }
 
 
         public string AddressUUID { get; set; }
