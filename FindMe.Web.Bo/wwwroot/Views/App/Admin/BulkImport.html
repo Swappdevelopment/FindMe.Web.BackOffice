@@ -29,26 +29,34 @@
     </form>
     <br />
 
-    <div ng-show="vm.catExist == false">
-        <span><b>{{vm.categoryCount}} error(s)</b></span>
-        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
+    <div ng-show="vm.categories && vm.categories.length > 0">
+        <span><b>{{vm.categoryErrorsCount}} Database Validation Error(s)</b></span>
+        <button data-toggle="collapse" class="btn btn-danger" ng-click="vm.showDbValErrors = !vm.showDbValErrors">{{vm.showDbValErrors ? 'Hide' : 'View'}}</button>
     </div>
 
-    <div ng-show="vm.catExist == true && vm.subCatExist == false">
-        <span><b>{{vm.subCategoryCount}} error(s)</b></span>
-        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
-    </div>
-
-    <div id="dbErros" class="collapse">
+    <div uib-collapse="!vm.showDbValErrors">
         <br />
-        <div ng-show="vm.catExist == false" class="catErrors" ng-repeat="cat in vm.categories">
-            The Category <b>"{{cat.name}}"</b> does not exist in the database.
-            <ul>
-                <li ng-repeat="subCat in vm.subCategories">The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.</li>
-            </ul>
-            <!--<button class="btn btn-sm btn-success">
-                <i class="fa fa-plus"></i>
-            </button>-->
+        <div ng-show="vm.categories && vm.categories.length > 0" class="catErrors" ng-repeat="cat in vm.categories">
+
+            <span class="fa crsr-pointer findme-color-fc-pink"
+                  ng-show="cat.subCategories && cat.subCategories.length > 0"
+                  ng-class="cat.showSubCatgs ? 'fa-minus' : 'fa-plus'"
+                  ng-click="cat.showSubCatgs = !cat.showSubCatgs">&nbsp;</span><b class="findme-color-fc-pink">({{cat.subCategories.length}} Sub-Categories)</b>&nbsp;The Category <b>"{{cat.name}}"</b> does not exist in the database.
+
+            <button class="btn btn-sm btn-success">
+                <b>Create !</b>
+            </button>
+
+            <div uib-collapse="!cat.showSubCatgs">
+                <ul>
+                    <li ng-repeat="subCat in cat.subCategories">
+                        <button class="btn btn-sm btn-success" ng-show="cat.foundInDb">
+                            <b>Create !</b>
+                        </button>
+                        The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div ng-show="vm.catExist == true && vm.subCatExist == false" class="catErrors" ng-repeat="subCat in vm.subCategories">
@@ -62,7 +70,7 @@
 
     <br />
 
-    <div id="csv" class="no-animate" ng-show="vm.showTable == true">
+    <div id="csv" class="no-animate" ng-show="vm.showTable">
         <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
             <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">
                 <span><b>{{vm.errorCount}} {{vm.appProps.lbl_Errors}}</b></span>
@@ -114,28 +122,31 @@
                             </div>
                         </td>
                     </tr>
-                    <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-repeat-end uib-collapse="!address.showHrs">
+                    <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-repeat-end>
+                        <!--uib-collapse="!address.showHrs">-->
                         <td></td>
                         <td colspan="{{vm.tableHeaders.length}}">
-                            <table class="table table-fixed-header table-striped" ng-repeat="day in address._DaysCsv" style="max-width: 450px;">
-                                <thead>
-                                    <tr>
-                                        <th class="col-md-4"><b>{{day.name}}</b></th>
-                                        <th class="col-md-4"><b>{{vm.appProps.lbl_From}}</b></th>
-                                        <th class="col-md-4"><b>{{vm.appProps.lbl_To}}</b></th>
-                                    </tr>
-                                </thead>
-                                <tbody ng-if="day.values && day.values.length > 0">
-                                    <tr ng-repeat="rng in day.values">
-                                        <td></td>
-                                        <td ng-if="!rng.errorMessage">{{(rng.hourFrom > 9? rng.hourFrom : ('0' + rng.hourFrom))}}&nbsp;<b>:</b>&nbsp;{{(rng.minFrom > 9? rng.minFrom : ('0' + rng.minFrom))}}</td>
-                                        <td ng-if="!rng.errorMessage">{{(rng.hourTo > 9? rng.hourTo : ('0' + rng.hourTo))}}&nbsp;<b>:</b>&nbsp;{{(rng.minTo > 9? rng.minTo : ('0' + rng.minTo))}}</td>
-                                        <td ng-if="rng.errorMessage" colspan="2">
-                                            <p>{{rng.errorMessage}}</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div uib-collapse="!address.showHrs">
+                                <table class="table table-fixed-header table-striped" ng-repeat="day in address._DaysCsv" style="max-width: 450px;">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-4"><b>{{day.name}}</b></th>
+                                            <th class="col-md-4"><b>{{vm.appProps.lbl_From}}</b></th>
+                                            <th class="col-md-4"><b>{{vm.appProps.lbl_To}}</b></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody ng-if="day.values && day.values.length > 0">
+                                        <tr ng-repeat="rng in day.values">
+                                            <td></td>
+                                            <td ng-if="!rng.errorMessage">{{(rng.hourFrom > 9? rng.hourFrom : ('0' + rng.hourFrom))}}&nbsp;<b>:</b>&nbsp;{{(rng.minFrom > 9? rng.minFrom : ('0' + rng.minFrom))}}</td>
+                                            <td ng-if="!rng.errorMessage">{{(rng.hourTo > 9? rng.hourTo : ('0' + rng.hourTo))}}&nbsp;<b>:</b>&nbsp;{{(rng.minTo > 9? rng.minTo : ('0' + rng.minTo))}}</td>
+                                            <td ng-if="rng.errorMessage" colspan="2">
+                                                <p>{{rng.errorMessage}}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
