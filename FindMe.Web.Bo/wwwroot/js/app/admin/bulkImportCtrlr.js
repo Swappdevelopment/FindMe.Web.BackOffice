@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('bulkImportCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', bulkImportCtrlrFunc]);
+           .controller('bulkImportCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', 'FileSaver', 'Blob', bulkImportCtrlrFunc]);
 
-    function bulkImportCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function bulkImportCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService, FileSaver, Blob) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -20,7 +20,7 @@
         headerConfigService.refreshBtnTltp = appProps.msg_RfrshClnts;
         headerConfigService.saveBtnTltp = appProps.msg_SaveClnts;
 
-        var vm = this;
+        var vm = this;   
 
         vm.appProps = appProps;
 
@@ -50,6 +50,9 @@
         vm.addrFilename = '';
         vm.timeFilename = '';
 
+        vm.log = {
+            text: '',
+        };
 
         var table = $('#csv');
         var rows = document.getElementById('csv-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -169,6 +172,7 @@
                                 else {
 
                                     vm.errorCount++;
+                                    vm.log.text = errors[i];
                                 }
                             }
 
@@ -334,6 +338,11 @@
 
                 }
             }
+        };
+
+        vm.download = function (text) {
+            var data = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            FileSaver.saveAs(data, 'log.txt');
         };
     }
 

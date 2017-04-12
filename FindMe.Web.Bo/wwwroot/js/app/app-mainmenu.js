@@ -4,7 +4,7 @@
     'use strict';
 
     //Creating the module
-    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.fontawesome', 'ngTouch', 'ngAnimate'])
+    angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.fontawesome', 'ngTouch', 'ngAnimate', 'ngFileSaver'])
 
         .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
@@ -157,8 +157,8 @@
             };
         }]);
 
-        //.run(function ($animate) {
+    //.run(function ($animate) {
 
-        //    $animate.enabled(true);
-        //});
+    //    $animate.enabled(true);
+    //});
 })();
