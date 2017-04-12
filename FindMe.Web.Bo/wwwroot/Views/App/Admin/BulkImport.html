@@ -4,7 +4,7 @@
         <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.addrFilename" ng-click="vm.browseGo('addrCSV')">
             {{vm.appProps.lbl_BrowseCsvAddrFile}}
         </button>
-        <input type="file" id="addrCSV" name="addrCSV" class="hidden"/>
+        <input type="file" id="addrCSV" name="addrCSV" class="hidden" />
 
         <span class="findme-color-fc-dark"><b>{{vm.addrFilename}}</b></span>
 
@@ -12,14 +12,14 @@
         <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.timeFilename" ng-click="vm.browseGo('timeCSV')">
             {{vm.appProps.lbl_BrowseCsvTimeFile}}
         </button>
-        <input type="file" id="timeCSV" name="timeCSV" class="hidden"/>
+        <input type="file" id="timeCSV" name="timeCSV" class="hidden" />
 
         <span class="findme-color-fc-dark"><b>{{vm.timeFilename}}</b></span>
 
 
         <button class="btn btn-lg btn-default no-animate" type="button"
-               ng-show="vm.showUpload" ng-disabled="!vm.addrFilename"
-               ng-click="vm.uploadCSvForm()">
+                ng-show="vm.showUpload" ng-disabled="!vm.addrFilename"
+                ng-click="vm.uploadCSvForm()">
             {{vm.appProps.lbl_Check}}
         </button>
 
@@ -28,7 +28,40 @@
         </button>
     </form>
     <br />
+
+    <div ng-show="vm.catExist == false">
+        <span><b>{{vm.categoryCount}} error(s)</b></span>
+        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
+    </div>
+
+    <div ng-show="vm.catExist == true && vm.subCatExist == false">
+        <span><b>{{vm.subCategoryCount}} error(s)</b></span>
+        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
+    </div>
+
+    <div id="dbErros" class="collapse">
+        <br />
+        <div ng-show="vm.catExist == false" class="catErrors" ng-repeat="cat in vm.categories">
+            The Category <b>"{{cat.name}}"</b> does not exist in the database.
+            <ul>
+                <li ng-repeat="subCat in vm.subCategories">The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.</li>
+            </ul>
+            <!--<button class="btn btn-sm btn-success">
+                <i class="fa fa-plus"></i>
+            </button>-->
+        </div>
+
+        <div ng-show="vm.catExist == true && vm.subCatExist == false" class="catErrors" ng-repeat="subCat in vm.subCategories">
+            The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.
+            <button class="btn btn-sm btn-success">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+
+
     <br />
+
     <div id="csv" class="no-animate" ng-show="vm.showTable == true">
         <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
             <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">
