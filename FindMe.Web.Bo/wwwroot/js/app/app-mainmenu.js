@@ -6,7 +6,7 @@
     //Creating the module
     angular.module('app-mainmenu', ['ngRoute', 'ui.bootstrap', 'ui.bootstrap.fontawesome', 'ngTouch', 'ngAnimate'])
 
-        .config(function ($routeProvider, $locationProvider) {
+        .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
             $routeProvider.when('/', {
                 controller: 'homeCtrlr',
@@ -71,7 +71,7 @@
             $routeProvider.otherwise({ redirecTo: '/' });
 
             //$locationProvider.html5Mode(true);
-        })
+        }])
 
         .service('headerConfigService', function () {
 

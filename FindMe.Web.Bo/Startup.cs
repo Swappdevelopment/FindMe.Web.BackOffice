@@ -68,19 +68,38 @@ namespace FindMe.Web.App
             {
                 services.AddTransient<IMailService, MailService>();
 
-                services.AddSingleton(ConnectionStringManager.Create(
-                    (type) =>
-                    {
-
-                        switch (type == null ? "" : type.ToLower())
+                if (this.Configuration.IsPublishEnvStaging())
+                {
+                    services.AddSingleton(ConnectionStringManager.Create(
+                        (type) =>
                         {
-                            case "mysql":
-                                return Configuration["ConnectionStrings:MySqlConnection"];
 
-                            default:
-                                return Configuration["ConnectionStrings:MsSqlConnection"];
-                        }
-                    }));
+                            switch (type == null ? "" : type.ToLower())
+                            {
+                                case "mysql":
+                                    return Configuration["ConnectionStrings:staging:MySqlConnection"];
+
+                                default:
+                                    return Configuration["ConnectionStrings:staging:MsSqlConnection"];
+                            }
+                        }));
+                }
+                else
+                {
+                    services.AddSingleton(ConnectionStringManager.Create(
+                        (type) =>
+                        {
+
+                            switch (type == null ? "" : type.ToLower())
+                            {
+                                case "mysql":
+                                    return Configuration["ConnectionStrings:production:MySqlConnection"];
+
+                                default:
+                                    return Configuration["ConnectionStrings:production:MsSqlConnection"];
+                            }
+                        }));
+                }
             }
 
             services.AddDbContext<AppDbContext>();

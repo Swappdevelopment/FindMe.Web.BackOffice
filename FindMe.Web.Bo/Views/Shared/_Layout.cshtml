@@ -26,8 +26,9 @@
     <title>@ViewBag.Title - @Html.GetLabel("lbl_AppName") B.O</title>
     
     <environment names="Development">
-        <link href="~/lib/bootstrap-themes/bootstrap-paper.min.css" rel="stylesheet" />
-        <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/lib/bootstrap-themes/bootstrap-paper.css" rel="stylesheet" />
+        <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+
         <link href="~/css/site.css" rel="stylesheet" swp-cache-version="true" />
         <link href="~/css/checkBox.css" rel="stylesheet" swp-cache-version="true" />
         <link href="~/css/colors.css" rel="stylesheet" swp-cache-version="true" />
@@ -36,25 +37,14 @@
     </environment>
 
     <environment names="Staging,Production">
-        @*<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />*@
+        <link href="~/lib/bootstrap-themes/bootstrap-paper.min.css" rel="stylesheet" />
+        <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
-        <link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap-themes/bootstrap-paper.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css"
-              asp-fallback-href="~/lib/bootstrap-table/dist/bootstrap-table.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-
-        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" asp-append-version="true" />
-
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/checkBox.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/colors.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/wait.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/footer.min.css" asp-append-version="true" />
+        <link href="~/css/site.min.css" rel="stylesheet" swp-cache-version="true" />
+        <link href="~/css/checkBox.min.css" rel="stylesheet" swp-cache-version="true" />
+        <link href="~/css/colors.min.css" rel="stylesheet" swp-cache-version="true" />
+        <link href="~/css/wait.min.css" rel="stylesheet" swp-cache-version="true" />
+        <link href="~/css/footer.min.css" rel="stylesheet" swp-cache-version="true" />
     </environment>
 
     @RenderSection("css", required: false)
@@ -75,7 +65,7 @@
 
                 @if (hasAccess)
                 {
-                    <button type="button" class="navbar-toggle btn-user findme-color-fc-white" data-toggle="collapse" data-target=".navbar-collapse">
+                    <button type="button" class="btn navbar-toggle btn-user findme-color-fc-white" data-toggle="collapse" data-target=".navbar-collapse">
                         <span class="fa fa-user-circle-o fa-2x"></span>
                     </button>
                 }

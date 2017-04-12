@@ -36,6 +36,28 @@ namespace FindMe.Web.App
                 return "";
             }
         }
+        public static bool IsPublishEnvStaging(this IConfigurationRoot obj)
+        {
+            try
+            {
+                return (obj["App:Publish:Env"].ToLower() == "staging");
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static bool IsPublishEnvProduction(this IConfigurationRoot obj)
+        {
+            try
+            {
+                return (obj["Publish:Env"].ToLower() == "production");
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
 
         public static ILoggerFactory AddDatabase(

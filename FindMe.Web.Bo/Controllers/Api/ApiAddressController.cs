@@ -293,7 +293,7 @@ namespace FindMe.Web.App
                         {
                             UrlManager.SetupApplicationHost(_config["UrlConfigs:development:webSite"]);
                         }
-                        else if (_env.IsDevelopment())
+                        else if (_config.IsPublishEnvStaging())
                         {
                             UrlManager.SetupApplicationHost(_config["UrlConfigs:staging:webSite"]);
                         }
@@ -344,7 +344,7 @@ namespace FindMe.Web.App
                 {
                     UrlManager.SetupApplicationHost(_config["UrlConfigs:development:webSite"]);
                 }
-                else if (_env.IsDevelopment())
+                else if (_config.IsPublishEnvStaging())
                 {
                     UrlManager.SetupApplicationHost(_config["UrlConfigs:staging:webSite"]);
                 }
@@ -538,7 +538,7 @@ namespace FindMe.Web.App
                     {
                         currentEnv = "development";
                     }
-                    else if (_env.IsStaging())
+                    else if (_config.IsPublishEnvStaging())
                     {
                         currentEnv = "staging";
                     }
@@ -724,7 +724,7 @@ namespace FindMe.Web.App
                 {
                     currentEnv = "development";
                 }
-                else if (_env.IsStaging())
+                else if (_config.IsPublishEnvStaging())
                 {
                     currentEnv = "staging";
                 }

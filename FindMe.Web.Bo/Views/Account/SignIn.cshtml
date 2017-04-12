@@ -12,18 +12,16 @@
 
     <environment names="Development">
         <script src="~/lib/angular/angular.js"></script>
-        <script src="@Url.GetResPath("~/js/account/app-signin.js", (string)ViewBag.WebRootPath)"></script>
-        <script src="@Url.GetResPath("~/js/account/signInCtrlr.js", (string)ViewBag.WebRootPath)"></script>
+
+        <script src="~/js/account/app-signin.js" swp-cache-version="true"></script>
+        <script src="~/js/account/signInCtrlr.js" swp-cache-version="true"></script>
     </environment>
 
     <environment names="Staging,Production">
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.9/angular.min.js"
-                asp-fallback-src="~/lib/angular/angular.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
+        <script src="~/lib/angular/angular.min.js"></script>
 
-        <script src="~/js/account/app-signin.min.js" asp-append-version="true"></script>
-        <script src="~/js/account/signInCtrlr.min.js" asp-append-version="true"></script>
+        <script src="~/js/account/app-signin.min.js" swp-cache-version="true"></script>
+        <script src="~/js/account/signInCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 }
 

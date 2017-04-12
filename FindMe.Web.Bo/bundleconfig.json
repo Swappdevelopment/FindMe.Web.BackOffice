@@ -20,5 +20,185 @@
     "inputFiles": [
       "wwwroot/css/customIcons/customicons.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/account/app-signin.min.js",
+    "inputFiles": [
+      "wwwroot/js/account/app-signin.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/account/signInCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/account/signInCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/accentFold.min.js",
+    "inputFiles": [
+      "wwwroot/js/accentFold.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/app-mainmenu.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/app-mainmenu.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/homeCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/homeCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/index.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/index.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/mainCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/mainCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/account/profileCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/account/profileCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/addressesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/addressesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/bulkImportCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/bulkImportCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/categoriesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/categoriesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/citiesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/citiesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/clientsCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/clientsCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/tagsCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/tagsCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/admin/usersCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/admin/usersCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/checkBox.min.css",
+    "inputFiles": [
+      "wwwroot/css/checkBox.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/colors.min.css",
+    "inputFiles": [
+      "wwwroot/css/colors.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/footer.min.css",
+    "inputFiles": [
+      "wwwroot/css/footer.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/wait.min.css",
+    "inputFiles": [
+      "wwwroot/css/wait.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/account/signin.min.css",
+    "inputFiles": [
+      "wwwroot/css/account/signin.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/account/profile.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/account/profile.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/home.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/home.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/pagination.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/pagination.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/search-bar.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/search-bar.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/side-bar.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/side-bar.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/wrapper.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/wrapper.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/admin/addresses.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/admin/addresses.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/admin/addresses-modal.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/admin/addresses-modal.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/admin/categories.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/admin/categories.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/admin/clients.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/admin/clients.css"
+    ]
   }
 ]
