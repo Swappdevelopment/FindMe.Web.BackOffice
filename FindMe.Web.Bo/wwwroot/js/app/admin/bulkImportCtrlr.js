@@ -29,11 +29,18 @@
         vm.showTable = false;
         vm.showError = false;
         vm.hasFile = false;
+        vm.catExist = true;
+        vm.subCatExist = true;
 
         vm.hasSuccess = false;
 
         vm.csvItems = [];
         vm.tableHeaders = [];
+        vm.categories = [];
+        vm.subCategories = [];
+
+        vm.categoryCount = 0;
+        vm.subCategoryCount = 0;
 
         vm.errorCount = 0;
         vm.errorstatus = '';
@@ -42,6 +49,7 @@
 
         vm.addrFilename = '';
         vm.timeFilename = '';
+
 
         var table = $('#csv');
         var rows = document.getElementById('csv-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -95,6 +103,37 @@
                         }
                         else if (resp.data.addresses) {
 
+                            for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+
+                                var category = resp.data.processedCsvCatgs;
+                                var subCategory = resp.data.processedCsvCatgs[i].subCategories;
+
+                                var categoryExist = resp.data.processedCsvCatgs[i].foundInDb;
+                                var subCategoryExist = resp.data.processedCsvCatgs[i].subCategories[i].foundInDb;
+
+
+                                if (categoryExist == false) {
+
+                                    vm.categoryCount++;
+                                    vm.catExist = false;
+                                }
+                                else {
+
+                                    if (subCategoryExist == false) {
+
+                                        vm.subCategoryCount++;
+                                        vm.subCatExist = false;
+
+                                    }
+                                    else {
+
+                                    }
+                                }
+
+                                vm.categories.push(category[i]);
+                                vm.subCategories.push(subCategory[i])
+                            }
+
                             var i;
 
                             for (i = 0; i < resp.data.addresses.length; i++) {
@@ -136,6 +175,9 @@
                             vm.showUpload = false;
                             vm.showClear = true;
                             vm.showTable = true;
+                            vm.catExist = false;
+                            vm.subCatExist = false;
+
                         }
                     }
                 };
@@ -162,6 +204,8 @@
                 vm.csvItems.length = 0;
                 vm.tableHeaders.length = 0;
                 vm.errorCount = 0;
+                vm.categoryCount = 0;
+                vm.subCategoryCount = 0;
 
 
                 toggleGlblWaitVisibility(true);
@@ -206,6 +250,8 @@
             vm.showTable = false;
             vm.showClear = false;
             vm.showUpload = true;
+            vm.catExist = true;
+            vm.subCatExist = true;
 
             vm.addrFilename = '';
             vm.timeFilename = '';
@@ -215,6 +261,7 @@
 
             vm.csvItems.length = 0;
             vm.tableHeaders.length = 0;
+            vm.categories.length = 0;
         };
 
 

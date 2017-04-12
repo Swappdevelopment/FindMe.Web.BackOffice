@@ -28,7 +28,40 @@
         </button>
     </form>
     <br />
+
+    <div ng-show="vm.catExist == false">
+        <span><b>{{vm.categoryCount}} error(s)</b></span>
+        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
+    </div>
+
+    <div ng-show="vm.catExist == true && vm.subCatExist == false">
+        <span><b>{{vm.subCategoryCount}} error(s)</b></span>
+        <button data-toggle="collapse" data-target="#dbErros" class="btn btn-danger">View</button>
+    </div>
+
+    <div id="dbErros" class="collapse">
+        <br />
+        <div ng-show="vm.catExist == false" class="catErrors" ng-repeat="cat in vm.categories">
+            The Category <b>"{{cat.name}}"</b> does not exist in the database.
+            <ul>
+                <li ng-repeat="subCat in vm.subCategories">The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.</li>
+            </ul>
+            <!--<button class="btn btn-sm btn-success">
+                <i class="fa fa-plus"></i>
+            </button>-->
+        </div>
+
+        <div ng-show="vm.catExist == true && vm.subCatExist == false" class="catErrors" ng-repeat="subCat in vm.subCategories">
+            The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.
+            <button class="btn btn-sm btn-success">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    </div>
+
+
     <br />
+
     <div id="csv" class="no-animate" ng-show="vm.showTable == true">
         <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
             <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">

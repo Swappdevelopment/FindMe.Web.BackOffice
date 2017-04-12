@@ -15,6 +15,10 @@
     margin: 0 10px;
 }
 
+#bulkimportVw .catErrors {
+    margin: 0 0 5px 0;
+}
+
 #bulkimportVw #csv table {
     margin: 0 !important;
 }
