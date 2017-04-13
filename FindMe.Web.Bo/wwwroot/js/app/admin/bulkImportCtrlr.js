@@ -48,7 +48,7 @@
         vm.timeFilename = '';
 
         vm.log = {
-            text: '',
+            text: ''
         };
 
         var table = $('#csv');
@@ -186,7 +186,6 @@
                                         }
                                     }
                                 }
-
 
                                 validateAddressUtfValues(addr);
 
