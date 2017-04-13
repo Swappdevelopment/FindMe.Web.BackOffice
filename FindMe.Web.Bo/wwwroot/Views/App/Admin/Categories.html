@@ -131,7 +131,9 @@
                         <b ng-show="category.id > 0" class="no-animate">{{category.id}}</b>
                     </td>
                     <td class="catg-icon">
-                        <span ng-hide="category.inEditMode" class="no-animate"><span class="findme-color-fc-pink fa fa-2x" ng-class="category.iconClass"></span>&nbsp;{{category.iconClass}}</span>
+                        <span ng-hide="category.inEditMode" class="no-animate">
+                            <span class="findme-color-fc-pink" ng-class="category.iconClass ? ('fa ' + category.iconClass + ' fa-2x') : ''"></span>&nbsp;{{category.iconClass}}
+                        </span>
                         <div>
                             <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Icon}}" type="text" class="form-control no-animate" ng-model="category.iconClass">
                         </div>
@@ -167,7 +169,7 @@
                             <div class="form-group">
                                 <label class="control-label col-lg-1 col-md-1"><b>EN:</b></label>
                                 <div class="col-lg-11 col-md-11">
-                                    <textarea type="text" class="form-control" elastic
+                                    <textarea type="text" class="form-control" elastic maxlength="512"
                                               ng-disabled="category.saving"
                                               placeholder="{{vm.appProps.lbl_Desc}}" ng-model="category.desc_en" />
                                 </div>
@@ -175,7 +177,7 @@
                             <div class="form-group">
                                 <label class="control-label col-lg-1 col-md-1"><b>FR:</b></label>
                                 <div class="col-lg-11 col-md-11">
-                                    <textarea type="text" class="form-control" elastic
+                                    <textarea type="text" class="form-control" elastic maxlength="512"
                                               ng-disabled="category.saving"
                                               placeholder="{{vm.appProps.lbl_Desc}}" ng-model="category.desc_fr" />
                                 </div>
