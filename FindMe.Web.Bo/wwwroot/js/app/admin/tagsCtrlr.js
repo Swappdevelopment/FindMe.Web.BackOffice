@@ -455,7 +455,7 @@
                     vm.errormsg = '';
                     vm.errorid = 0;
 
-                    $http.post(appProps.urlSaveTags, { catgs: toBeSavedTags })
+                    $http.post(appProps.urlSaveTags, { tags: toBeSavedTags })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }

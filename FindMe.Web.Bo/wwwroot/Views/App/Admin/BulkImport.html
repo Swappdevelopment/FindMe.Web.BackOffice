@@ -83,6 +83,114 @@
 
     </script>
 
+    <script type="text/ng-template" id="createTagModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">Create Keyword: {{vm.tag.name}}</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+
+            <form name="vm.frmCreateTag" novalidate ng-submit="vm.save()">
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Name EN</b>
+                        <input type="text" class="form-control" name="name_en" required
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="vm.tag.name_en">
+                        <p ng-show="vm.frmCreateTag.name_en.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Name FR</b>
+                        <input type="text" class="form-control" name="name_fr" required
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="vm.tag.name_fr">
+                        <p ng-show="vm.frmCreateTag.name_fr.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug EN</b>
+                        <input type="text" class="form-control" name="slug_en" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.tag.slug_en">
+                        <p ng-show="vm.frmCreateTag.slug_en.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug FR</b>
+                        <input type="text" class="form-control" name="slug_fr" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.tag.slug_fr">
+                        <p ng-show="vm.frmCreateTag.slug_fr.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-findme" type="submit" ng-disabled="vm.frmCreateTag.$invalid">
+                        <b>{{vm.appProps.lbl_Save}}</b>
+                    </button>
+                    <button class="btn btn-findme hollow" type="button" ng-click="vm.cancel()">
+                        <b>{{vm.appProps.lbl_Cancel}}</b>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </script>
+
+    <script type="text/ng-template" id="createCityDetailModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">Create City: {{vm.cityDetail.name}}</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+
+            <form name="vm.frmCreateTag" novalidate ng-submit="vm.save()">
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_Name}}</b>
+                        <input type="text" class="form-control" name="name" required
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="vm.cityDetail.name">
+                        <p ng-show="vm.frmCreateTag.name.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_Slug}}</b>
+                        <input type="text" class="form-control" name="slug" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.cityDetail.slug">
+                        <p ng-show="vm.frmCreateTag.slug.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <!--<div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug EN</b>
+                        <input type="text" class="form-control" name="slug_en" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.cityDetail.slug_en">
+                        <p ng-show="vm.frmCreateTag.slug_en.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug FR</b>
+                        <input type="text" class="form-control" name="slug_fr" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.cityDetail.slug_fr">
+                        <p ng-show="vm.frmCreateTag.slug_fr.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>-->
+
+                <div class="modal-footer">
+                    <button class="btn btn-findme" type="submit" ng-disabled="vm.frmCreateTag.$invalid">
+                        <b>{{vm.appProps.lbl_Save}}</b>
+                    </button>
+                    <button class="btn btn-findme hollow" type="button" ng-click="vm.cancel()">
+                        <b>{{vm.appProps.lbl_Cancel}}</b>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </script>
+
 
     <form id="csv-form" method="post" enctype="multipart/form-data">
 
@@ -121,15 +229,14 @@
 
     <br />
 
-    <div id="panelCat" class="panel panel-danger" ng-show="vm.categories && vm.categories.length > 0">
+    <div class="panel panel-danger" ng-show="vm.categories && vm.categories.length > 0">
         <div class="panel-heading">
-            <span><b>{{vm.categoryErrorsCount}} Database Validation Error(s)</b></span>
-            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showDbValErrors = !vm.showDbValErrors">{{vm.showDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
+            <span><b>{{vm.categoryErrorsCount}} Categories Database Validation Error(s)</b></span>
+            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showCatgDbValErrors = !vm.showCatgDbValErrors">{{vm.showCatgDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
         </div>
     </div>
 
-    <div uib-collapse="!vm.showDbValErrors">
-        <br />
+    <div uib-collapse="!vm.showCatgDbValErrors">
         <div ng-show="vm.categories && vm.categories.length > 0" class="catErrors" ng-repeat="cat in vm.categories">
 
             <span class="fa crsr-pointer findme-color-fc-pink"
@@ -152,19 +259,57 @@
                         <button class="btn btn-sm btn-success" ng-show="cat.foundInDb && !subCat.foundInDb" ng-click="vm.createCatgModal(subCat)">
                             <b>Create !</b>
                         </button>
-                        The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+                        &nbsp;The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
                         <span class="fa" ng-class="subCat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
                     </li>
                 </ul>
             </div>
         </div>
+        <br />
+    </div>
 
-        <div ng-show="vm.catExist == true && vm.subCatExist == false" class="catErrors" ng-repeat="subCat in vm.subCategories">
-            The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.
-            <button class="btn btn-sm btn-success">
-                <i class="fa fa-plus"></i>
-            </button>
+
+    <div class="panel panel-danger" ng-show="vm.tags && vm.tags.length > 0">
+        <div class="panel-heading">
+            <span><b>{{vm.tagErrorsCount}} Keywords Database Validation Error(s)</b></span>
+            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showTagDbValErrors = !vm.showTagDbValErrors">{{vm.showTagDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
         </div>
+    </div>
+
+    <div uib-collapse="!vm.showTagDbValErrors">
+        <div class="catErrors" ng-repeat="tag in vm.tags" ng-show="vm.tags && vm.tags.length > 0 && !tag.foundInDb">
+
+            <button class="btn btn-sm btn-success" ng-click="vm.createTagModal(tag)" ng-hide="tag.foundInDb">
+                <b>Create !</b>
+            </button>
+
+            &nbsp;The Keyword <b>"{{tag.name}}"</b> {{(tag.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+            <span class="fa" ng-class="tag.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
+
+        </div>
+        <br />
+    </div>
+
+
+    <div class="panel panel-danger" ng-show="vm.cityDetails && vm.cityDetails.length > 0">
+        <div class="panel-heading">
+            <span><b>{{vm.cityDetailErrorsCount}} Cities Database Validation Error(s)</b></span>
+            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showCityDetailDbValErrors = !vm.showCityDetailDbValErrors">{{vm.showCityDetailDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
+        </div>
+    </div>
+
+    <div uib-collapse="!vm.showCityDetailDbValErrors">
+        <div class="catErrors" ng-repeat="city in vm.cityDetails" ng-show="vm.cityDetails && vm.cityDetails.length > 0 && !city.foundInDb">
+
+            <button class="btn btn-sm btn-success" ng-click="vm.createCityDetailModal(city)" ng-hide="city.foundInDb">
+                <b>Create !</b>
+            </button>
+
+            &nbsp;The City <b>"{{city.name}}"</b> {{(city.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+            <span class="fa" ng-class="city.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
+
+        </div>
+        <br />
     </div>
 
 

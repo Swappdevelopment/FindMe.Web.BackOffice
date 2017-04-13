@@ -1,4 +1,5 @@
 ﻿using FindMe.Data;
+using FindMe.Data.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -59,7 +60,7 @@ namespace FindMe.Web.App
 
                 if (typeof(T) == typeof(string))
                 {
-                    value = strValue;
+                    value = strValue == null ? null : (strValue == "0" ? null : strValue);
                 }
                 else if (typeof(T) == typeof(bool))
                 {
@@ -126,9 +127,11 @@ namespace FindMe.Web.App
 
             List<CategoryCSV> csvCategories = null;
             List<TagCSV> csvTags = null;
+            List<CityDetailCSV> csvCityDetails = null;
 
             CategoryCSV[] processedCsvCatgs = null;
             TagCSV[] processedCsvTags = null;
+            CityDetailCSV[] processedCsvCityDetails = null;
 
             try
             {
@@ -180,6 +183,7 @@ namespace FindMe.Web.App
                 {
                     csvCategories = new List<CategoryCSV>();
                     csvTags = new List<TagCSV>();
+                    csvCityDetails = new List<CityDetailCSV>();
 
                     foreach (var item in lines)
                     {
@@ -277,7 +281,7 @@ namespace FindMe.Web.App
                             addr.ErrorMessage = $"Error caught for Row {addr.AddressUUID}:\r\n{ex.Message}";
                         }
 
-                        addresses.Add(addr.AutoCorrectProperties(csvCategories, csvTags));
+                        addresses.Add(addr.AutoCorrectProperties(csvCategories, csvTags, csvCityDetails));
                     }
 
                     processedCsvCatgs = await _repo.Execute<CategoryCSV[]>(
@@ -289,6 +293,11 @@ namespace FindMe.Web.App
                                                 "ValidateCsvTags",
                                                 Helper.JSonCamelSerializeObject(
                                                             csvTags.Select(l => l.Simplify()).ToArray()));
+
+                    processedCsvCityDetails = await _repo.Execute<CityDetailCSV[]>(
+                                                "ValidateCsvCityDetails",
+                                                Helper.JSonCamelSerializeObject(
+                                                            csvCityDetails.Select(l => l.Simplify()).ToArray()));
 
                     daysCsv = this.GetCsvDays(fileTimeCSV);
 
@@ -313,7 +322,8 @@ namespace FindMe.Web.App
                         addresses = addresses.ToArray(),
                         error = errorMessage,
                         processedCsvCatgs = processedCsvCatgs == null ? null : processedCsvCatgs.Select(l => l.Simplify()).ToArray(),
-                        processedCsvTags = processedCsvTags == null ? null : processedCsvTags.Select(l => l.Simplify()).ToArray()
+                        processedCsvTags = processedCsvTags == null ? null : processedCsvTags.Select(l => l.Simplify()).ToArray(),
+                        processedCsvCityDetails = processedCsvCityDetails == null ? null : processedCsvCityDetails.Select(l => l.Simplify()).ToArray()
                     });
             }
             catch (Exception ex)
@@ -338,6 +348,18 @@ namespace FindMe.Web.App
                     csvCategories = null;
                 }
 
+                if (csvTags != null)
+                {
+                    csvTags.Clear();
+                    csvTags = null;
+                }
+
+                if (csvCityDetails != null)
+                {
+                    csvCityDetails.Clear();
+                    csvCityDetails = null;
+                }
+
                 if (addresses != null)
                 {
                     addresses.Clear();
@@ -349,6 +371,50 @@ namespace FindMe.Web.App
                     lines.Clear();
                     lines = null;
                 }
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GetRegionsDistrictsGroups()
+        {
+            object[] regions = null;
+            CityGroup[] groups = null;
+            CityDistrict[] districts = null;
+
+            try
+            {
+                await Task.WhenAll(
+                       Task.Run(async () =>
+                       {
+                           regions = await _repo.Execute<object[]>("GetPivotRegions", 0, null, null, false, true, 0, 0);
+                       }),
+                       Task.Run(async () =>
+                       {
+                           groups = await _repo.Execute<CityGroup[]>("GetCityGroups", 0, null, null, false, 0, 0);
+                       }),
+                       Task.Run(async () =>
+                       {
+                           districts = await _repo.Execute<CityDistrict[]>("GetCityDistricts", 0, null, null, false, 0, 0);
+                       }));
+
+                return Ok(
+                    new
+                    {
+                        regions = regions,
+                        groups = groups == null ? null : groups.Select(l => l.Simplify()).ToArray(),
+                        districts = districts == null ? null : districts.Select(l => l.Simplify()).ToArray()
+                    });
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+            finally
+            {
+                regions = null;
+                groups = null;
+                districts = null;
             }
         }
 

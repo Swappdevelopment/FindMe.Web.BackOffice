@@ -9,10 +9,10 @@ namespace FindMe.Web.App
     public class AddressCSV
     {
 
-        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -5;
+        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -6;
 
 
-        public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories, List<TagCSV> csvTags)
+        public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories, List<TagCSV> csvTags, List<CityDetailCSV> csvCityDetails)
         {
             if (!this.HasError())
             {
@@ -65,6 +65,16 @@ namespace FindMe.Web.App
 
                     tagsIndexes.Clear();
                 }
+
+
+                if (!string.IsNullOrEmpty(this.CityName))
+                {
+                    int index;
+
+                    this.CityName = CityDetailCSV.CreateCityDetail(this.CityName, csvCityDetails, out index);
+
+                    this._CityDetailIndex = index;
+                }
             }
 
             return this;
@@ -72,6 +82,7 @@ namespace FindMe.Web.App
 
 
 
+        public int _CityDetailIndex { get; private set; }
         public int[] _TagsIndexes { get; private set; }
         public int _ParentCatgIndex { get; private set; }
         public int _CatgIndex { get; private set; }

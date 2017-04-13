@@ -113,7 +113,7 @@ namespace FindMe.Web.App
             {
                 if (param != null)
                 {
-                    tags = param.JGetPropVal<object[]>("catgs");
+                    tags = param.JGetPropVal<object[]>("tags");
 
                     if (tags != null
                         && tags.Length > 0)
