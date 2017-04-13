@@ -7,50 +7,6 @@ namespace FindMe.Web.App
 {
     public class AddressCSV
     {
-        public static string Slugify(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                value = value.AccentFoldStr()
-                                .Replace("\r", "-")
-                                .Replace("\n", "-")
-                                .Replace("\t", "-")
-                                .Replace("\\", "-")
-                                .Replace("/", "-")
-                                .Replace(" ", "-")
-                                .Replace("(", "-")
-                                .Replace(")", "-")
-                                .Replace("[", "-")
-                                .Replace("]", "-")
-                                .Replace("{", "-")
-                                .Replace("}", "-")
-                                .Replace("_", "-")
-                                .Replace("=", "-")
-                                .Replace("+", "-")
-                                .Replace("&", "-")
-                                .Replace(",", "-")
-                                .Replace(".", "-")
-                                .Replace("!", "")
-                                .Replace("?", "")
-                                .Replace("'", "")
-                                .Replace("-----", "-")
-                                .Replace("----", "-")
-                                .Replace("---", "-")
-                                .Replace("--", "-");
-
-                if (value.StartsWith("-"))
-                {
-                    value = value.Substring(1);
-                }
-
-                if (value.EndsWith("-"))
-                {
-                    value = value.Substring(0, value.Length - 1);
-                }
-            }
-
-            return value;
-        }
 
         public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -3;
 

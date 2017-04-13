@@ -188,7 +188,7 @@ namespace FindMe.Web.App
                             addr.AddressName = GetColumnValue<string>(true, "Address Name", item[1]);
                             addr.ClientName = GetColumnValue<string>(false, "Client Name", item[2], addr.AddressName);
                             addr.CategoryName = GetColumnValue<string>(true, "Category Name", item[3]);
-                            addr.AddressSlug = GetColumnValue<string>(true, "Address Slug", item[4], AddressCSV.Slugify(addr.AddressName));
+                            addr.AddressSlug = GetColumnValue<string>(true, "Address Slug", item[4], CategoryCSV.Slugify(addr.AddressName));
                             addr.CityName = GetColumnValue<string>(true, "City Name", item[5]);
                             addr.Latitude = GetColumnValue<double>(false, "Latitude", item[6]);
                             addr.Longitude = GetColumnValue<double>(false, "Longitude", item[7]);

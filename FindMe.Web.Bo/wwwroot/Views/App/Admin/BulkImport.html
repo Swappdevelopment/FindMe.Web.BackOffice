@@ -1,7 +1,92 @@
 ﻿<div id="bulkimportVw">
+
+    <script type="text/ng-template" id="createCategoryModal.html">
+        <div class="modal-header">
+
+            <div>
+                <h3 class="findme-color-fc-pink">Create Category: {{vm.category.name}}</h3>
+            </div>
+
+        </div>
+        <div class="modal-body" id="modal-body">
+
+            <div class="row" ng-show="vm.category.parentUID && vm.category.parentName">
+                <h4>Parent Category: &nbsp;<span class="findme-color-fc-pink">{{vm.category.parentName}}</span></h4>
+            </div>
+            <br />
+
+            <form name="vm.frmCreateCatg" novalidate ng-submit="vm.save()">
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Name EN</b>
+                        <input type="text" class="form-control" name="name_en" required
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="vm.category.name_en">
+                        <p ng-show="vm.frmCreateCatg.name_en.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Name FR</b>
+                        <input type="text" class="form-control" name="name_fr" required
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="vm.category.name_fr">
+                        <p ng-show="vm.frmCreateCatg.name_fr.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug EN</b>
+                        <input type="text" class="form-control" name="slug_en" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.category.slug_en">
+                        <p ng-show="vm.frmCreateCatg.slug_en.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Slug FR</b>
+                        <input type="text" class="form-control" name="slug_fr" required
+                               placeholder="{{vm.appProps.lbl_Slug}}" ng-model="vm.category.slug_fr">
+                        <p ng-show="vm.frmCreateCatg.slug_fr.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_Icon}}</b>&nbsp;<span class="findme-color-fc-pink" ng-class="vm.category.iconClass ? ('fa ' + vm.category.iconClass + ' fa-2x') : ''"></span>
+                        <input ng-if="!vm.category.parentUID" type="text" class="form-control" name="iconClass" required
+                               placeholder="{{vm.appProps.lbl_Icon}}" ng-model="vm.category.iconClass">
+                        <p ng-if="!vm.category.parentUID" ng-show="vm.frmCreateCatg.iconClass.$invalid" class="help-block">**Required</p>
+                        <input ng-if="vm.category.parentUID" type="text" class="form-control"
+                               placeholder="{{vm.appProps.lbl_Icon}}" ng-model="vm.category.iconClass">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Description EN</b>
+                        <textarea type="text" class="form-control" maxlength="512"
+                                  placeholder="{{vm.appProps.lbl_Desc}}" ng-model="vm.category.desc_en"></textarea>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>Description FR</b>
+                        <textarea type="text" class="form-control" maxlength="512"
+                                  placeholder="{{vm.appProps.lbl_Desc}}" ng-model="vm.category.desc_fr"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-findme" type="submit" ng-disabled="vm.frmCreateCatg.$invalid">
+                        <b>{{vm.appProps.lbl_Save}}</b>
+                    </button>
+                    <button class="btn btn-findme hollow" type="button" ng-click="vm.cancel()">
+                        <b>{{vm.appProps.lbl_Cancel}}</b>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </script>
+
+
     <form id="csv-form" method="post" enctype="multipart/form-data">
 
-        <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.addrFilename" ng-click="vm.browseGo('addrCSV')">
+        <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.addrFilename || (vm.csvItems && vm.csvItems.length > 0)" ng-click="vm.browseGo('addrCSV')">
             {{vm.appProps.lbl_BrowseCsvAddrFile}}
         </button>
         <input type="file" id="addrCSV" name="addrCSV" class="hidden" />
@@ -9,7 +94,7 @@
         <span class="findme-color-fc-dark"><b>{{vm.addrFilename}}</b></span>
 
 
-        <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.timeFilename" ng-click="vm.browseGo('timeCSV')">
+        <button type="button" class="btn btn-bs-file btn-lg btn-findme" ng-disabled="vm.timeFilename || (vm.csvItems && vm.csvItems.length > 0)" ng-click="vm.browseGo('timeCSV')">
             {{vm.appProps.lbl_BrowseCsvTimeFile}}
         </button>
         <input type="file" id="timeCSV" name="timeCSV" class="hidden" />
@@ -27,6 +112,7 @@
             {{vm.appProps.lbl_Clear}}
         </button>
     </form>
+
     <br />
 
     <div ng-show="vm.categories && vm.categories.length > 0">
@@ -41,19 +127,25 @@
             <span class="fa crsr-pointer findme-color-fc-pink"
                   ng-show="cat.subCategories && cat.subCategories.length > 0"
                   ng-class="cat.showSubCatgs ? 'fa-minus' : 'fa-plus'"
-                  ng-click="cat.showSubCatgs = !cat.showSubCatgs">&nbsp;</span><b class="findme-color-fc-pink">({{cat.subCategories.length}} Sub-Categories)</b>&nbsp;The Category <b>"{{cat.name}}"</b> does not exist in the database.
+                  ng-click="cat.showSubCatgs = !cat.showSubCatgs">
+                &nbsp;
+            </span>
+            <b class="findme-color-fc-pink">({{cat.subCategories.length}} Sub-Categories)</b>
+            &nbsp;The Category <b>"{{cat.name}}"</b> {{(cat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+            <span class="fa" ng-class="cat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
 
-            <button class="btn btn-sm btn-success">
+            <button class="btn btn-sm btn-success" ng-click="vm.createCatgModal(cat)" ng-hide="cat.foundInDb">
                 <b>Create !</b>
             </button>
 
             <div uib-collapse="!cat.showSubCatgs">
                 <ul>
                     <li ng-repeat="subCat in cat.subCategories">
-                        <button class="btn btn-sm btn-success" ng-show="cat.foundInDb">
+                        <button class="btn btn-sm btn-success" ng-show="cat.foundInDb && !subCat.foundInDb" ng-click="vm.createCatgModal(subCat)">
                             <b>Create !</b>
                         </button>
-                        The Sub Category <b>"{{subCat.name}}"</b> does not exist in the database.
+                        The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+                        <span class="fa" ng-class="subCat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
                     </li>
                 </ul>
             </div>
@@ -158,4 +250,7 @@
             </a>
         </div>
     </div>
+
+
+    <div class="modal-container"></div>
 </div>
