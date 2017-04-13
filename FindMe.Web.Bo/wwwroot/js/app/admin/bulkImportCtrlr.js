@@ -202,7 +202,7 @@
                                 var addr = resp.data.addresses[i];
 
                                 addr._linkParentCatg = $.grep(vm.categories, function (v) {
-                                    return v.index == addr._ParentCatgIndex;
+                                    return v.index === addr._ParentCatgIndex;
                                 });
 
                                 if (Array.isArray(addr._linkParentCatg)) {
@@ -307,11 +307,11 @@
 
                             var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
 
-                            for (var i = 0; i < errors.length; i++) {
+                            for (i = 0; i < errors.length; i++) {
 
                                 var error = errors[i];
 
-                                if (error != null) {
+                                if (error !== null) {
 
                                     vm.errorCount++;
                                 }
@@ -476,7 +476,11 @@
             }
         };
 
+        vm.downloadingPreSaveLog = false;
+
         vm.download = function () {
+
+            vm.downloadingPreSaveLog = true;
 
             $.each(vm.csvItems, function (index, addr) {
 
@@ -559,6 +563,54 @@
 
             var data = new Blob([vm.log.row], { type: 'text/plain;charset=utf-8' });
             FileSaver.saveAs(data, 'log.txt');
+
+            //vm.downloadingPreSaveLog = false;
+        };
+
+
+        vm.downloadingPostSaveLog = false;
+
+        vm.downloadPostSaveLog = function () {
+
+            vm.downloadingPostSaveLog = true;
+
+            if (vm.postSaveLogs && vm.postSaveLogs.length > 0) {
+
+                var logFile = '';
+
+                $.each(vm.postSaveLogs, function (index, value) {
+
+                    if (logFile !== '') {
+
+                        logFile += '\r\n\r\n';
+                    }
+
+                    logFile += value.value;
+                });
+
+                var data = new Blob([logFile], { type: 'text/plain;charset=utf-8' });
+
+                var now = new Date();
+
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var date = now.getDate();
+
+                var hours = now.getHours();
+                var mins = now.getMinutes();
+                var secs = now.getSeconds();
+
+                month = month > 9 ? String(month) : ('0' + month);
+                date = date > 9 ? String(date) : ('0' + date);
+                hours = hours > 9 ? String(hours) : ('0' + hours);
+                mins = mins > 9 ? String(mins) : ('0' + mins);
+                secs = secs > 9 ? String(secs) : ('0' + secs);
+
+
+                FileSaver.saveAs(data, 'Post-Save-Log_' + year + '-' + month + '-' + date + '_' + hours + ':' + mins + ':' + secs + '.log');
+            }
+
+            vm.downloadingPostSaveLog = false;
         };
 
         vm.createCatgModal = function (category) {
@@ -735,13 +787,7 @@
 
             //if (!vm.addressesHaveErrors()) {
 
-            var temp = $.grep(vm.csvItems, function (v) { return !hasErrors(v); });
-
-            if (temp.length > 0) {
-
                 var successFunc = function (resp) {
-
-                    var logFile = '';
 
                     if (resp && resp.data && resp.data.logs) {
 
@@ -751,12 +797,7 @@
 
                             vm.postSaveLogs.push(value);
 
-                            if (logFile != '') {
-
-                                logFile += '\r\n\r\n';
-                            }
-
-                            logFile += value.value;
+                            
 
                             var arr = $.grep(vm.csvItems, function (v) { return v.addressUUID === value.key; });
 
@@ -795,10 +836,10 @@
 
                 toggleGlblWaitVisibility(true);
 
-                $http.post('/ApiBulkImport/SaveCsvAddresses', { csvs: temp })
+                $http.post('/ApiBulkImport/SaveCsvAddresses', { csvs: vm.csvItems })
                      .then(successFunc, errorFunc)
                      .finally(finallyFunc);
-            }
+            //}
         };
     }
 
