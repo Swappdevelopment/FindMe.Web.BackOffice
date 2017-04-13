@@ -35,6 +35,7 @@
         vm.csvItems = [];
         vm.tableHeaders = [];
         vm.categories = [];
+        vm.subCategories = [];
         vm.categoryErrorsCount = 0;
 
         vm.showDbValErrors = false;
@@ -105,31 +106,25 @@
                         }
                         else if (resp.data.addresses) {
 
-                            for (i = 0; i < resp.data.addresses.length; i++) {
+                            for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
 
-                                var addr = resp.data.addresses[i];
-                                var _catIndex = addr._CatgIndex;
+                                var category = resp.data.processedCsvCatgs[i];
 
-                                for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+                                vm.categories.push(category);
+                                vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
 
-                                    var category = resp.data.processedCsvCatgs[i];
+                                category.showSubCatgs = true;
 
-                                    if (_catIndex == category.index) {
+                                if (category.subCategories) {
 
-                                    vm.categories.push(category);
-                                    vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
+                                    for (var j = 0; j < category.subCategories.length; j++) {
 
-                                    category.showSubCatgs = true;
+                                        var subCatg = category.subCategories[j];
+                                        subCatg.parentUID = category.uid;
+                                        subCatg.parentName = category.name;
+                                        vm.categoryErrorsCount += subCatg.foundInDb ? 0 : 1;
 
-                                    if (category.subCategories) {
-
-                                        for (var j = 0; j < category.subCategories.length; j++) {
-
-                                            var subCatg = category.subCategories[j];
-                                            subCatg.parentUID = category.uid;
-                                            subCatg.parentName = category.name;
-                                            vm.categoryErrorsCount += subCatg.foundInDb ? 0 : 1;
-                                        }
+                                        vm.subCategories.push(subCatg);
                                     }
                                 }
                             }
@@ -156,21 +151,52 @@
                                 vm.csvItems.push(addr);
                             }
 
-                            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
+                            var csvErrors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
+                            var catErrors = vm.categories.map(function (cat) { return cat.foundInDb; });
+                            var subCatErrors = vm.subCategories.map(function (subCat) { return subCat.foundInDb; });
 
-                            for (i = 0; i < errors.length; i++) {
+                            for (i = 0; i < resp.data.addresses.length; i++) {
 
-                                if (errors[i] === null) {
+                                var address = resp.data.addresses[i];
 
-                                    vm.hasSuccess = true;
+                                for (i = 0; i < csvErrors.length; i++) {
 
+                                    if (csvErrors[i] === null) {
+
+                                        vm.hasSuccess = true;
+                                    }
+
+                                    else {
+
+                                        vm.errorCount++;
+                                        vm.log.text += csvErrors[i] + "\r\n\r\n";
+
+                                        for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+
+                                            var category = resp.data.processedCsvCatgs[i];
+
+                                            if (address._CatgIndex == category.index) {
+
+                                            }
+                                        }
+                                    }
                                 }
-                                else {
 
-                                    vm.errorCount++;
-                                    vm.log.text = errors[i];
-                                }
+                                //for (i = 0; i < csvErrors.length; i++) {
+
+                                //    if (csvErrors[i] === null) {
+
+                                //        vm.hasSuccess = true;
+                                //    }
+                                //    else {
+                                //        vm.errorCount++;
+                                //        vm.log.text += csvErrors[i] + "\r\n\r\n";
+
+                                //    }
+                                //}
                             }
+
+
 
                             vm.showUpload = false;
                             vm.showClear = true;
