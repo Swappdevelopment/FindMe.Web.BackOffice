@@ -35,6 +35,7 @@
         vm.cityRegions = [];
         vm.cityDistricts = [];
         vm.cityGroups = [];
+        vm.postSaveLogs = [];
 
         vm.csvItems = [];
         vm.tableHeaders = [];
@@ -47,8 +48,9 @@
         vm.cityDetailErrorsCount = 0;
 
         vm.showCatgDbValErrors = false;
-        vm.showTagDbValErrors = false;
+        vm.showTagDbValErrors = false; 
         vm.showCityDetailDbValErrors = false;
+        vm.showPostSaveErrors = false;
 
         vm.errorCount = 0;
         vm.errorstatus = '';
@@ -82,10 +84,11 @@
             }
         };
 
-        var hasErrors = function (addr) {
+        var hasErrors = function (addr, skipPostSaveErrors) {
 
             if (addr) {
 
+                if (addr.hasPostSaveError && !skipPostSaveErrors) return true;
                 if (addr.errorMessage) return true;
 
                 if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) return true;
@@ -94,7 +97,7 @@
 
                 if (addr._linkTags && !addr._linkTags.length > 0) {
 
-                    return addr._linkParentCatg = $.grep(addr._linkTags, function (v) {
+                    return $.grep(addr._linkTags, function (v) {
                         return !v.foundInDb;
                     }) > 0;
 
@@ -191,7 +194,7 @@
                                 var addr = resp.data.addresses[i];
 
                                 addr._linkParentCatg = $.grep(vm.categories, function (v) {
-                                    return v.index === addr._ParentCatgIndex;
+                                    return v.index == addr._ParentCatgIndex;
                                 });
 
                                 if (Array.isArray(addr._linkParentCatg)) {
@@ -274,6 +277,11 @@
 
 
                                 vm.csvItems.push(addr);
+
+                                addr.hasErrors = function () {
+
+                                    return this && hasErrors(this);
+                                };
                             }
 
                             vm.showUpload = false;
@@ -367,6 +375,7 @@
             vm.showCatgDbValErrors = false;
             vm.showTagDbValErrors = false;
             vm.showCityDetailDbValErrors = false;
+            vm.showPostSaveErrors = false;
 
             vm.addrFilename = '';
             vm.timeFilename = '';
@@ -378,79 +387,60 @@
             vm.tableHeaders.length = 0;
             vm.categories.length = 0;
 
+            vm.postSaveLogs.length = 0;
+
             vm.categoryErrorsCount = 0;
             vm.tagErrorsCount = 0;
             vm.cityDetailErrorsCount = 0;
+
+            vm.errormsg = null;
         };
 
 
-        vm.showAll = function () {
 
-            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
+        vm.showRows = function (mode) {
 
-            for (var i = 0; i < errors.length; i++) {
+            if (vm.csvItems) {
 
-                for (var j = 0; j < rows.length; j++) {
+                switch (mode) {
 
-                    var hideRow = rows[j];
+                    case 'errors':
 
-                    if (errors[i] === null) {
+                        $.each(vm.csvItems, function (index, value) {
 
-                        hideRow.hidden = false;
+                            if (hasErrors(value)) {
 
-                    }
-                    else {
+                                value.forceHide = false;
+                            }
+                            else {
 
-                        hideRow.hidden = false;
-                    }
+                                value.forceHide = true;
+                            }
+                        });
+                        break;
 
-                }
-            }
-        };
+                    case 'success':
 
-        vm.showAllSuccess = function () {
+                        $.each(vm.csvItems, function (index, value) {
 
-            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
+                            if (hasErrors(value)) {
 
-            for (var i = 0; i < errors.length; i++) {
+                                value.forceHide = true;
+                            }
+                            else {
 
-                for (var j = 0; j < rows.length; j++) {
+                                value.forceHide = false;
+                            }
+                        });
+                        break;
 
-                    var hideRow = rows[j];
+                    default:
 
-                    if (errors[i] === null) {
+                        $.each(vm.csvItems, function (index, value) {
 
-                        hideRow.hidden = false;
-                    }
-                    else {
-
-                        hideRow.hidden = true;
-                    }
-
-                }
-            }
-        };
-
-        vm.showAllErrors = function () {
-
-            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
-
-            for (var i = 0; i < errors.length; i++) {
-
-                for (var j = 0; j < rows.length; j++) {
-
-                    var hideRow = rows[j];
-
-                    if (errors[i] === null) {
-
-                        hideRow.hidden = true;
-
-                    }
-                    else {
-
-                        hideRow.hidden = false;
-                    }
-
+                            value.forceHide = false;
+                        });
+                        break;
                 }
             }
         };
@@ -658,6 +648,96 @@
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 }
+            }
+        };
+
+        vm.addressesHaveErrors = function (skipPostSaveErrors) {
+
+            return (vm.csvItems
+                        && $.grep(vm.csvItems, function (v) { return hasErrors(v, skipPostSaveErrors); }).length > 0);
+        };
+
+        vm.addressesHaveSuccess = function () {
+
+            return (vm.csvItems
+                        && $.grep(vm.csvItems, function (v) { return !hasErrors(v); }).length > 0);
+        };
+
+        vm.getErrorCount = function () {
+
+            return $.grep(vm.csvItems, function (v) { return hasErrors(v); }).length;
+        };
+
+
+        vm.saveAddressCsvs = function () {
+
+            vm.postSaveLogs.length = 0;
+
+            //if (!vm.addressesHaveErrors()) {
+
+            var temp = $.grep(vm.csvItems, function (v) { return !hasErrors(v); });
+
+            if (temp.length > 0) {
+
+                var successFunc = function (resp) {
+
+                    var logFile = '';
+
+                    if (resp && resp.data && resp.data.logs) {
+
+                        var temp = [];
+
+                        $.each(resp.data.logs, function (index, value) {
+
+                            vm.postSaveLogs.push(value);
+
+                            if (logFile != '') {
+
+                                logFile += '\r\n\r\n';
+                            }
+
+                            logFile += value.value;
+
+                            var arr = $.grep(vm.csvItems, function (v) { return v.addressUUID === value.key; });
+
+                            if (arr.length > 0) {
+
+                                temp.push(arr[0]);
+                            }
+                        });
+
+                        vm.csvItems.length = 0;
+
+                        $.each(temp, function (index, value) {
+
+                            value.postLogValue = value.value;
+                            value.hasPostSaveError = true;
+                            vm.csvItems.push(value);
+                        });
+                    }
+                };
+
+                var errorFunc = function (error) {
+
+                    if (error.data) {
+
+                        vm.errorstatus = error.status + ' - ' + error.statusText;
+                        vm.errormsg = error.data.msg;
+                        vm.errorid = error.data.id;
+                        vm.showError = true;
+                    }
+                };
+
+                var finallyFunc = function () {
+
+                    toggleGlblWaitVisibility(false);
+                };
+
+                toggleGlblWaitVisibility(true);
+
+                $http.post('/ApiBulkImport/SaveCsvAddresses', { csvs: temp })
+                     .then(successFunc, errorFunc)
+                     .finally(finallyFunc);
             }
         };
     }

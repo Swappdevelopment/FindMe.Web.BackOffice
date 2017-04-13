@@ -270,11 +270,11 @@ namespace FindMe.Web.App
                             addr.AddressVideoUrl10 = GetColumnValue<string>(false, "Address Video Url 10", item[74]);
                             addr.AddressTags = GetColumnValue<string>(false, "Address Tags", item[75]);
 
-                            if (_env.IsDevelopment()
-                                && string.IsNullOrEmpty(addr.AddressTags))
-                            {
-                                addr.AddressTags = addr.CategoryName + "|" + CsvTools.Slugify(addr.AddressName).Replace("-", "|");
-                            }
+                            //if (_env.IsDevelopment()
+                            //    && string.IsNullOrEmpty(addr.AddressTags))
+                            //{
+                            //    addr.AddressTags = addr.CategoryName + "|" + CsvTools.Slugify(addr.AddressName).Replace("-", "|");
+                            //}
 
                         }
                         catch (Exception ex)
@@ -594,13 +594,20 @@ namespace FindMe.Web.App
         [HttpPost]
         public async Task<IActionResult> SaveCsvAddresses([FromBody]JObject param)
         {
+            string csvs;
+
+            Dictionary<string, string> errors;
 
             try
             {
-                await Task.CompletedTask;
+                if (param == null) throw new NullReferenceException(nameof(param));
 
 
-                return Ok();
+                csvs = param.JGetPropVal<string>("csvs");
+
+                errors = await _repo.Execute<Dictionary<string, string>>("SaveCsvAddresses", csvs);
+
+                return Ok(new { logs = errors == null ? new KeyValuePair<string, string>[0] : errors.ToArray() });
             }
             catch (Exception ex)
             {
@@ -608,6 +615,8 @@ namespace FindMe.Web.App
             }
             finally
             {
+                csvs = null;
+                errors = null;
             }
         }
     }

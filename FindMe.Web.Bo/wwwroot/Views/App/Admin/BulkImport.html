@@ -248,9 +248,14 @@
         </button>
 
         <div class="pull-right">
-            <a href="" class="btn btn-lg btn-danger" ng-click="vm.download(vm.log.row)">
-                Download Log
-            </a>
+            <div class="btn-toolbar">
+                <button type="button" class="btn btn-lg btn-findme" ng-click="vm.saveAddressCsvs()" ng-show="vm.csvItems && vm.csvItems.length > 0"> <!--ng-disabled="vm.addressesHaveErrors()">-->
+                    Save Addresses
+                </button>
+                <button type="button" class="btn btn-lg btn-findme hollow" ng-click="vm.download(vm.log.row)">
+                    Download Log
+                </button>
+            </div>
         </div>
     </form>
 
@@ -342,22 +347,33 @@
     </div>
 
 
+    <div class="panel panel-danger" ng-show="vm.postSaveLogs && vm.postSaveLogs.length > 0">
+        <div class="panel-heading">
+            <span><b>{{vm.postSaveLogs.length}} Post Save Error(s)</b></span>
+            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showPostSaveErrors = !vm.showPostSaveErrors">{{vm.showPostSaveErrors ? 'Hide' : 'View Error(s)'}}</button>
+        </div>
+    </div>
+
+    <div uib-collapse="!vm.postSaveLogs || vm.postSaveLogs.length == 0 || !vm.showPostSaveErrors">
+        <p class="catErrors" ng-repeat="log in vm.postSaveLogs">
+            {{log.value}}
+        </p>
+        <br />
+    </div>
+
     <br />
 
-    <div id="csv" class="no-animate" ng-show="vm.showTable">
-        <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
-            <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">
-                <span><b>{{vm.errorCount}} CSV Validation Error(s)</b></span>
-                <button class="btn btn-danger btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllErrors()">{{vm.appProps.lbl_VwError}}</button>
-                <button class="btn btn-success btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllSuccess()">{{vm.appProps.lbl_VwSuccess}}</button>
-                <button class="btn btn-default btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAll()">{{vm.appProps.lbl_VwAll}}</button>
+    <div id="csv" class="no-animate" ng-show="vm.addressesHaveErrors(true) || vm.errormsg">
+        <div class="panel panel-danger">
+            <div class="panel-heading no-animate">
+                <span><b>{{vm.getErrorCount()}} Row(s) with Error(s)</b></span>
+                <button class="btn btn-danger btn-sm pull-right no-animate" ng-show="vm.addressesHaveErrors(true)" ng-click="vm.showRows('errors')">{{vm.appProps.lbl_VwError}}</button>
+                <button class="btn btn-success btn-sm pull-right no-animate" ng-show="vm.addressesHaveSuccess()" ng-click="vm.showRows('success')">{{vm.appProps.lbl_VwSuccess}}</button>
+                <button class="btn btn-default btn-sm pull-right no-animate" ng-click="vm.showRows()">{{vm.appProps.lbl_VwAll}}</button>
 
             </div>
-            <div ng-show="vm.errorCount == 0 && errormsg =='' " class="panel-heading no-animate">
-                <span><b>{{vm.appProps.lbl_NoError}}</b></span>
-            </div>
 
-            <div ng-show="vm.errormsg != ''" class="panel-heading no-animate">
+            <div ng-show="vm.errormsg" class="panel-heading no-animate">
                 <span><b>{{vm.appProps.lbl_ErrorsMsg}} {{vm.errormsg}}</b></span>
             </div>
         </div>
@@ -370,7 +386,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat-start="address in vm.csvItems" ng-class="address.errorMessage == null ? 'success' : 'error' ">
+                    <tr ng-repeat-start="address in vm.csvItems" ng-class="address.hasErrors() ? 'error' : ''" ng-hide="address.forceHide">
                         <td>
                             <div ng-if="!address.errorMessage" ng-hide="!address._DaysCsv || address._DaysCsv.length === 0">
                                 <button type="button" class="btn btn-sm btn-findme" style="width: 32px; height: 32px; border-radius: 50%; outline: none;"
@@ -396,7 +412,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-repeat-end>
+                    <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-hide="address.forceHide" ng-repeat-end>
                         <!--uib-collapse="!address.showHrs">-->
                         <td></td>
                         <td colspan="{{vm.tableHeaders.length}}">
