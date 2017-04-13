@@ -2,16 +2,17 @@
 using Swapp.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FindMe.Web.App
 {
     public class AddressCSV
     {
 
-        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -3;
+        public const int ADDITIONAL_PROPERTIES_COUNT_COMPARE = -5;
 
 
-        public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories)
+        public AddressCSV AutoCorrectProperties(List<CategoryCSV> csvCategories, List<TagCSV> csvTags)
         {
             if (!this.HasError())
             {
@@ -47,9 +48,22 @@ namespace FindMe.Web.App
                     if (catg != null)
                     {
                         this._CatgIndex = catg.Index;
+                        this._ParentCatgIndex = catg.ParentIndex;
                         this.CategoryName = catg.GetPath();
                     }
                     catg = null;
+                }
+
+
+                if (!string.IsNullOrEmpty(this.AddressTags))
+                {
+                    List<int> tagsIndexes;
+
+                    this.AddressTags = TagCSV.CreateTags(this.AddressTags, csvTags, out tagsIndexes);
+
+                    this._TagsIndexes = tagsIndexes.ToArray();
+
+                    tagsIndexes.Clear();
                 }
             }
 
@@ -58,7 +72,10 @@ namespace FindMe.Web.App
 
 
 
+        public int[] _TagsIndexes { get; private set; }
+        public int _ParentCatgIndex { get; private set; }
         public int _CatgIndex { get; private set; }
+
         public object[] _DaysCsv { get; set; }
 
         public string ErrorMessage { get; set; }

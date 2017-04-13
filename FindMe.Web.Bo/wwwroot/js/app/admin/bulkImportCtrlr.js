@@ -105,7 +105,9 @@
                         }
                         else if (resp.data.addresses) {
 
-                            for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+                            var i;
+
+                            for (i = 0; i < resp.data.processedCsvCatgs.length; i++) {
 
                                 var category = resp.data.processedCsvCatgs[i];
 
@@ -129,11 +131,50 @@
                                 }
                             }
 
-                            var i;
-
                             for (i = 0; i < resp.data.addresses.length; i++) {
 
                                 var addr = resp.data.addresses[i];
+
+                                addr._linkParentCatg = $.grep(vm.categories, function (v) {
+                                    return v.index === addr._ParentCatgIndex;
+                                });
+
+                                if (Array.isArray(addr._linkParentCatg)) {
+
+                                    if (addr._linkParentCatg.length > 0) {
+                                        addr._linkParentCatg = addr._linkParentCatg[0];
+                                    }
+                                    else {
+
+                                        addr._linkParentCatg = null;
+                                    }
+                                }
+
+                                if (addr._linkParentCatg) {
+
+                                    addr._linkCatg = $.grep(addr._linkParentCatg.subCategories, function (v) {
+                                        return v.index === addr._CatgIndex;
+                                    });
+                                }
+                                else {
+
+                                    addr._linkCatg = $.grep(vm.categories, function (v) {
+                                        return v.index === addr._CatgIndex;
+                                    });
+                                }
+
+                                if (Array.isArray(addr._linkCatg)) {
+
+                                    if (addr._linkCatg.length > 0) {
+                                        addr._linkCatg = addr._linkCatg[0];
+                                    }
+                                    else {
+
+                                        addr._linkCatg = null;
+                                    }
+                                }
+
+
 
                                 if (i === 0) {
 

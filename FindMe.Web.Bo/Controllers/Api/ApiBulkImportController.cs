@@ -125,8 +125,10 @@ namespace FindMe.Web.App
             PropertyInfo[] props;
 
             List<CategoryCSV> csvCategories = null;
+            List<TagCSV> csvTags = null;
 
             CategoryCSV[] processedCsvCatgs = null;
+            TagCSV[] processedCsvTags = null;
 
             try
             {
@@ -177,6 +179,7 @@ namespace FindMe.Web.App
                 if (string.IsNullOrEmpty(errorMessage))
                 {
                     csvCategories = new List<CategoryCSV>();
+                    csvTags = new List<TagCSV>();
 
                     foreach (var item in lines)
                     {
@@ -188,7 +191,7 @@ namespace FindMe.Web.App
                             addr.AddressName = GetColumnValue<string>(true, "Address Name", item[1]);
                             addr.ClientName = GetColumnValue<string>(false, "Client Name", item[2], addr.AddressName);
                             addr.CategoryName = GetColumnValue<string>(true, "Category Name", item[3]);
-                            addr.AddressSlug = GetColumnValue<string>(true, "Address Slug", item[4], CategoryCSV.Slugify(addr.AddressName));
+                            addr.AddressSlug = GetColumnValue<string>(true, "Address Slug", item[4], CsvTools.Slugify(addr.AddressName));
                             addr.CityName = GetColumnValue<string>(true, "City Name", item[5]);
                             addr.Latitude = GetColumnValue<double>(false, "Latitude", item[6]);
                             addr.Longitude = GetColumnValue<double>(false, "Longitude", item[7]);
@@ -261,6 +264,12 @@ namespace FindMe.Web.App
                             addr.AddressVideoUrl10 = GetColumnValue<string>(false, "Address Video Url 10", item[74]);
                             addr.AddressTags = GetColumnValue<string>(false, "Address Tags", item[75]);
 
+                            if (_env.IsDevelopment()
+                                && string.IsNullOrEmpty(addr.AddressTags))
+                            {
+                                addr.AddressTags = addr.CategoryName + "|" + addr.AddressName.Replace(" ", "|");
+                            }
+
                         }
                         catch (Exception ex)
                         {
@@ -268,13 +277,18 @@ namespace FindMe.Web.App
                             addr.ErrorMessage = $"Error caught for Row {addr.AddressUUID}:\r\n{ex.Message}";
                         }
 
-                        addresses.Add(addr.AutoCorrectProperties(csvCategories));
+                        addresses.Add(addr.AutoCorrectProperties(csvCategories, csvTags));
                     }
 
                     processedCsvCatgs = await _repo.Execute<CategoryCSV[]>(
                                                 "ValidateCsvCategories",
                                                 Helper.JSonCamelSerializeObject(
                                                             csvCategories.Select(l => l.Simplify()).ToArray()));
+
+                    processedCsvTags = await _repo.Execute<TagCSV[]>(
+                                                "ValidateCsvTags",
+                                                Helper.JSonCamelSerializeObject(
+                                                            csvTags.Select(l => l.Simplify()).ToArray()));
 
                     daysCsv = this.GetCsvDays(fileTimeCSV);
 
@@ -298,7 +312,8 @@ namespace FindMe.Web.App
                     {
                         addresses = addresses.ToArray(),
                         error = errorMessage,
-                        processedCsvCatgs = processedCsvCatgs == null ? null : processedCsvCatgs.Select(l => l.Simplify()).ToArray()
+                        processedCsvCatgs = processedCsvCatgs == null ? null : processedCsvCatgs.Select(l => l.Simplify()).ToArray(),
+                        processedCsvTags = processedCsvTags == null ? null : processedCsvTags.Select(l => l.Simplify()).ToArray()
                     });
             }
             catch (Exception ex)
