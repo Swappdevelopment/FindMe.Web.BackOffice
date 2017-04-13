@@ -86,6 +86,15 @@
 
                 if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) return true;
                 if (addr._linkCatg && !addr._linkCatg.foundInDb) return true;
+                if (addr._linkCityDetail && !addr._linkCityDetail.foundInDb) return true;
+
+                if (addr._linkTags && !addr._linkTags.length > 0) {
+
+                    return addr._linkParentCatg = $.grep(addr._linkTags, function (v) {
+                        return !v.foundInDb;
+                    }) > 0;
+
+                } 
             }
 
             return false;
@@ -448,6 +457,8 @@
                     vm.log.row += addr.errorMessage + "\r\n\r\n";
                 }
                 else {
+
+
 
                     if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) {
 
