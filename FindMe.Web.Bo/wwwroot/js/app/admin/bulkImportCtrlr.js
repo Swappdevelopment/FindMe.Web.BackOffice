@@ -35,6 +35,7 @@
         vm.csvItems = [];
         vm.tableHeaders = [];
         vm.categories = [];
+        vm.subCategories = [];
         vm.categoryErrorsCount = 0;
 
         vm.showDbValErrors = false;
@@ -116,11 +117,11 @@
                                     vm.categories.push(category);
                                     vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
 
-                                    category.showSubCatgs = true;
+                                category.showSubCatgs = true;
 
-                                    if (category.subCategories) {
+                                if (category.subCategories) {
 
-                                        for (var j = 0; j < category.subCategories.length; j++) {
+                                    for (var j = 0; j < category.subCategories.length; j++) {
 
                                             var subCatg = category.subCategories[j];
                                             subCatg.parentUID = category.uid;
