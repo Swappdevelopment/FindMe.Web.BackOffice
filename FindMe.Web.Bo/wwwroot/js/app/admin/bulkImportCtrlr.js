@@ -20,7 +20,7 @@
         headerConfigService.refreshBtnTltp = appProps.msg_RfrshClnts;
         headerConfigService.saveBtnTltp = appProps.msg_SaveClnts;
 
-        var vm = this;   
+        var vm = this;
 
         vm.appProps = appProps;
 
@@ -46,7 +46,7 @@
         vm.timeFilename = '';
 
         vm.log = {
-            text: '',
+            text: ''
         };
 
         var table = $('#csv');
@@ -103,14 +103,27 @@
                         }
                         else if (resp.data.addresses) {
 
+                            for (i = 0; i < resp.data.addresses.length; i++) {
+
+                                var addr = resp.data.addresses[i];
+                                var _catIndex = addr._CatgIndex;
+
+                                for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+
+                                    var category = resp.data.processedCsvCatgs[i];
+
+                                    if (_catIndex == category.index) {
+
+                                    }
+                                }
+                            }
+
+
                             for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
 
                                 var category = resp.data.processedCsvCatgs[i];
 
                                 if (category) {
-
-                                    vm.categories.push(category);
-                                    vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
 
                                     category.showSubCatgs = true;
 
@@ -118,39 +131,12 @@
 
                                         for (var j = 0; j < category.subCategories.length; j++) {
 
-                                            var subCatg = category.subCategories[i];
+                                            var subCatg = category.subCategories[j];
                                             vm.categoryErrorsCount += subCatg.foundInDb ? 0 : 1;
+
                                         }
                                     }
                                 }
-
-                                //var category = resp.data.processedCsvCatgs;
-                                //var subCategory = resp.data.processedCsvCatgs[i].subCategories;
-
-                                //var categoryExist = resp.data.processedCsvCatgs[i].foundInDb;
-                                //var subCategoryExist = resp.data.processedCsvCatgs[i].subCategories[i].foundInDb;
-
-
-                                //if (categoryExist == false) {
-
-                                //    vm.categoryCount++;
-                                //    vm.catExist = false;
-                                //}
-                                //else {
-
-                                //    if (subCategoryExist == false) {
-
-                                //        vm.subCategoryCount++;
-                                //        vm.subCatExist = false;
-
-                                //    }
-                                //    else {
-
-                                //    }
-                                //}
-
-                                //vm.categories.push(category[i]);
-                                //vm.subCategories.push(subCategory[i]);
                             }
 
                             var i;
@@ -169,7 +155,6 @@
                                         }
                                     }
                                 }
-
 
                                 validateAddressUtfValues(addr);
 

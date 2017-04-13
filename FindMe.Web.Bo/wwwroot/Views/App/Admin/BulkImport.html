@@ -26,12 +26,20 @@
         <button class="btn btn-lg btn-default no-animate" type="button" ng-show="vm.addrFilename || vm.timeFilename" ng-click="vm.clearForm()">
             {{vm.appProps.lbl_Clear}}
         </button>
+
+        <div class="pull-right">
+            <a href="" class="btn btn-lg btn-danger" ng-click="vm.download(vm.log.text)" ng-hide="vm.log.text == ''">
+                Download Log
+            </a>
+        </div>
     </form>
     <br />
 
-    <div ng-show="vm.categories && vm.categories.length > 0">
-        <span><b>{{vm.categoryErrorsCount}} Database Validation Error(s)</b></span>
-        <button data-toggle="collapse" class="btn btn-danger" ng-click="vm.showDbValErrors = !vm.showDbValErrors">{{vm.showDbValErrors ? 'Hide' : 'View'}}</button>
+    <div id="panelCat" class="panel panel-danger" ng-show="vm.categories && vm.categories.length > 0">
+        <div class="panel-heading">
+            <span><b>{{vm.categoryErrorsCount}} Database Validation Error(s)</b></span>
+            <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showDbValErrors = !vm.showDbValErrors">{{vm.showDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
+        </div>
     </div>
 
     <div uib-collapse="!vm.showDbValErrors">
@@ -73,7 +81,7 @@
     <div id="csv" class="no-animate" ng-show="vm.showTable">
         <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
             <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">
-                <span><b>{{vm.errorCount}} {{vm.appProps.lbl_Errors}}</b></span>
+                <span><b>{{vm.errorCount}} CSV Validation Error(s)</b></span>
                 <button class="btn btn-danger btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllErrors()">{{vm.appProps.lbl_VwError}}</button>
                 <button class="btn btn-success btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllSuccess()">{{vm.appProps.lbl_VwSuccess}}</button>
                 <button class="btn btn-default btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAll()">{{vm.appProps.lbl_VwAll}}</button>
@@ -152,10 +160,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="pull-right">
-            <a href="" class="btn btn-dark btn-small" ng-click="vm.download(vm.log.text)">
-                Download Log
-            </a>
-        </div>
+
     </div>
 </div>
