@@ -267,7 +267,7 @@ namespace FindMe.Web.App
                             if (_env.IsDevelopment()
                                 && string.IsNullOrEmpty(addr.AddressTags))
                             {
-                                addr.AddressTags = addr.CategoryName + "|" + addr.AddressName.Replace(" ", "|");
+                                addr.AddressTags = addr.CategoryName + "|" + CsvTools.Slugify(addr.AddressName).Replace("-", "|");
                             }
 
                         }
