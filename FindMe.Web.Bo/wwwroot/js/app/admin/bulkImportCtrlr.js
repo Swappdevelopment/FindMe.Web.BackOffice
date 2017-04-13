@@ -94,7 +94,7 @@
                         return !v.foundInDb;
                     }) > 0;
 
-                } 
+                }
             }
 
             return false;
@@ -452,88 +452,57 @@
 
             $.each(vm.csvItems, function (index, addr) {
 
-                if (addr.errorMessage) {
+                if (hasErrors(addr)) {
 
-                    vm.log.row += addr.errorMessage + "\r\n\r\n";
-                }
-                else {
+                    if (addr.errorMessage) {
 
+                        vm.log.row += addr.errorMessage + "\r\n\r\n";
+                    }
+                    else {
 
+                        if (addr._linkParentCatg.foundInDb == false) {
 
-                    if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) {
+                            if (addr._linkCatg.foundInDb == false) {
 
-                        vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
-                        vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n"
+                                vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
+                                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
+                                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                            }
+                            else {
 
-                        if (addr._linkCatg && !addr._linkCatg.foundInDb) {
+                                vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
+                                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n\r\n";
+                            }
+                        }
 
-                            vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                        if (addr._linkCityDetail.foundInDb == false) {
+
+                            vm.log.row == "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n\r\n"
                         }
                     }
 
-                    if (addr._linkCatg && !addr._linkCatg.foundInDb) {
 
-                        vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
-                    }
+
+                    //if (addr._linkParentCatg) {
+
+                    //    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n"
+                    //}
+
+                    //if (addr._linkCatg) {
+
+                    //    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                    //}
+
+                    //if (addr._linkCityDetail) {
+
+                    //    vm.log.row == "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n"
+                    //}
                 }
-
             });
-
-
-
-            //for (j = 0; j < errors.length; j++) {
-
-            //    if (errors[j] === null) {
-
-
-            //        if (addr._linkParentCatg.foundInDb === false || addr._linkParentCatg.foundInDb != null) {
-
-            //            if (addr._linkCatg.foundInDb === false || addr._linkCatg.foundInDb != null) {
-
-            //                vm.log.row += "Error caught for Row " + [j] + ":\r\n";
-            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n"
-            //                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database\r\n\r\n"
-            //            }
-
-            //            else {
-
-            //                vm.log.row += "Error caught for Row " + [j] + ":\r\n";
-            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n\r\n"
-            //            }
-
-            //        }
-            //    }
-            //    else {
-
-            //        if (addr._linkParentCatg.foundInDb === false || addr._linkParentCatg.foundInDb != null) {
-
-            //            if (addr._linkCatg.foundInDb === false || addr._linkCatg.foundInDb != null) {
-
-            //                vm.log.row += errors[j] + "\r\n";
-            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n"
-            //                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database\r\n\r\n"
-            //            }
-            //            else {
-
-            //                vm.log.row += errors[j] + "\r\n";
-            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n\r\n"
-            //            }
-            //        }
-
-            //        vm.errorCount++;
-
-            //    }
-            //}
-
-            //if (!$scope.$$phase) {
-
-            //    $scope.$apply();
-            //}
 
             var data = new Blob([vm.log.row], { type: 'text/plain;charset=utf-8' });
             FileSaver.saveAs(data, 'log.txt');
         };
-
 
         vm.createCatgModal = function (category) {
 
