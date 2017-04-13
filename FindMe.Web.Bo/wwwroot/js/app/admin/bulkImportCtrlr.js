@@ -49,7 +49,7 @@
         vm.timeFilename = '';
 
         vm.log = {
-            text: ''
+            row: ''
         };
 
         var table = $('#csv');
@@ -72,6 +72,18 @@
             }
         };
 
+        var hasErrors = function (addr) {
+
+            if (addr) {
+
+                if (addr.errorMessage) return true;
+
+                if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) return true;
+                if (addr._linkCatg && !addr._linkCatg.foundInDb) return true;
+            }
+
+            return false;
+        }
 
         vm.uploadCSvForm = function () {
 
@@ -117,11 +129,11 @@
                                     vm.categories.push(category);
                                     vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
 
-                                category.showSubCatgs = true;
+                                    category.showSubCatgs = true;
 
-                                if (category.subCategories) {
+                                    if (category.subCategories) {
 
-                                    for (var j = 0; j < category.subCategories.length; j++) {
+                                        for (var j = 0; j < category.subCategories.length; j++) {
 
                                             var subCatg = category.subCategories[j];
                                             subCatg.parentUID = category.uid;
@@ -175,8 +187,6 @@
                                     }
                                 }
 
-
-
                                 if (i === 0) {
 
                                     for (var property in addr) {
@@ -190,23 +200,8 @@
 
                                 validateAddressUtfValues(addr);
 
+
                                 vm.csvItems.push(addr);
-                            }
-
-                            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
-
-                            for (i = 0; i < errors.length; i++) {
-
-                                if (errors[i] === null) {
-
-                                    vm.hasSuccess = true;
-
-                                }
-                                else {
-
-                                    vm.errorCount++;
-                                    vm.log.text = errors[i];
-                                }
                             }
 
                             vm.showUpload = false;
@@ -370,8 +365,87 @@
             }
         };
 
-        vm.download = function (text) {
-            var data = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        vm.download = function () {
+
+            $.each(vm.csvItems, function (index, addr) {
+
+                if (addr.errorMessage) {
+
+                    vm.log.row += addr.errorMessage + "\r\n\r\n";
+                }
+                else {
+
+                    if (addr._linkParentCatg && !addr._linkParentCatg.foundInDb) {
+
+                        vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
+                        vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n"
+
+                        if (addr._linkCatg && !addr._linkCatg.foundInDb) {
+
+                            vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                        }
+                    }
+
+                    if (addr._linkCatg && !addr._linkCatg.foundInDb) {
+
+                        vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                    }
+                }
+
+            });
+
+
+
+            //for (j = 0; j < errors.length; j++) {
+
+            //    if (errors[j] === null) {
+
+
+            //        if (addr._linkParentCatg.foundInDb === false || addr._linkParentCatg.foundInDb != null) {
+
+            //            if (addr._linkCatg.foundInDb === false || addr._linkCatg.foundInDb != null) {
+
+            //                vm.log.row += "Error caught for Row " + [j] + ":\r\n";
+            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n"
+            //                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database\r\n\r\n"
+            //            }
+
+            //            else {
+
+            //                vm.log.row += "Error caught for Row " + [j] + ":\r\n";
+            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n\r\n"
+            //            }
+
+            //        }
+            //    }
+            //    else {
+
+            //        if (addr._linkParentCatg.foundInDb === false || addr._linkParentCatg.foundInDb != null) {
+
+            //            if (addr._linkCatg.foundInDb === false || addr._linkCatg.foundInDb != null) {
+
+            //                vm.log.row += errors[j] + "\r\n";
+            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n"
+            //                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database\r\n\r\n"
+            //            }
+            //            else {
+
+            //                vm.log.row += errors[j] + "\r\n";
+            //                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database\r\n\r\n"
+            //            }
+            //        }
+
+            //        vm.errorCount++;
+
+            //    }
+            //}
+
+            //if (!$scope.$$phase) {
+
+            //    $scope.$apply();
+            //}
+
+            var data = new Blob([vm.log.row], { type: 'text/plain;charset=utf-8' });
             FileSaver.saveAs(data, 'log.txt');
         };
 
