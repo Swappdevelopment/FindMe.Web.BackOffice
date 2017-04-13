@@ -29,6 +29,8 @@
         vm.showTable = false;
         vm.showError = false;
         vm.hasFile = false;
+        vm.Errors = false;
+        vm.CsvErrors = false;
 
         vm.hasSuccess = false;
 
@@ -276,6 +278,31 @@
                                 vm.csvItems.push(addr);
                             }
 
+                            $.each(vm.csvItems, function (index, addr) {
+
+                                if (hasErrors(addr)) {
+
+                                    vm.Errors = true;
+                                }
+
+                                if (addr.errorMessage) {
+
+                                    vm.CsvErrors = true;                            
+                                }
+                            });
+
+                            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
+
+                            for (var i = 0; i < errors.length; i++) {
+
+                                var error = errors[i];
+
+                                if (error != null) {
+
+                                    vm.errorCount++;
+                                }
+                            }
+
                             vm.showUpload = false;
                             vm.showClear = true;
                             vm.showTable = true;
@@ -349,14 +376,12 @@
                 $scope.$apply();
             }
 
-            //$scope.$apply(function () {
-
-            //    vm.timeFilename = timeCSVFileInput.files[0].name;
-            //});
         };
 
-
         vm.clearForm = function () {
+
+            vm.Errors = false;
+            vm.CsvErrors = false;
 
             vm.hasSuccess = false;
 
@@ -459,6 +484,18 @@
 
             $.each(vm.csvItems, function (index, addr) {
 
+                var tags = [];
+
+                for (var i = 0; i < addr._linkTags.length; i++) {
+
+                    var tag = addr._linkTags[i];
+
+                    if (tag.foundInDb === false) {
+
+                        tags.push(tag.name);
+                    }
+                }
+
                 if (hasErrors(addr)) {
 
                     if (addr.errorMessage) {
@@ -467,13 +504,23 @@
                     }
                     else {
 
-                        if (addr._linkParentCatg.foundInDb == false) {
+                        if (addr._linkParentCatg.foundInDb === false) {
 
-                            if (addr._linkCatg.foundInDb == false) {
+                            if (addr._linkCatg.foundInDb === false) {
 
-                                vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
-                                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
-                                vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
+                                if (addr._linkCityDetail.foundInDb === false) {
+
+                                    vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
+                                    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
+                                    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n";
+                                    vm.log.row += "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n\r\n";
+                                }
+
+                                else {
+                                    vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
+                                    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
+                                    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n";
+                                }
                             }
                             else {
 
@@ -482,28 +529,12 @@
                             }
                         }
 
-                        if (addr._linkCityDetail.foundInDb == false) {
+                        if (tags.length > 0) {
 
-                            vm.log.row == "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n\r\n"
+                            vm.log.row += "The Tags '" + tags + "' does not exist in the database.\r\n\r\n";
+
                         }
                     }
-
-
-
-                    //if (addr._linkParentCatg) {
-
-                    //    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n"
-                    //}
-
-                    //if (addr._linkCatg) {
-
-                    //    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n"
-                    //}
-
-                    //if (addr._linkCityDetail) {
-
-                    //    vm.log.row == "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n"
-                    //}
                 }
             });
 

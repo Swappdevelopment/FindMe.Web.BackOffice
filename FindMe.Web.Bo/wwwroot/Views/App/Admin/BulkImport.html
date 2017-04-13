@@ -248,7 +248,7 @@
         </button>
 
         <div class="pull-right">
-            <a href="" class="btn btn-lg btn-danger" ng-click="vm.download(vm.log.row)">
+            <a href="" class="btn btn-lg btn-findme hollow" ng-show="vm.Errors == true" ng-click="vm.download(vm.log.row)">
                 Download Log
             </a>
         </div>
@@ -290,7 +290,7 @@
                     &nbsp;The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
                     <span class="fa" ng-class="subCat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
                 </div>
-                    <!--</li>
+                <!--</li>
                 </ul>-->
             </div>
         </div>
@@ -341,25 +341,9 @@
         <br />
     </div>
 
-
-    <br />
-
-    <div id="csv" class="no-animate" ng-show="vm.showTable">
-        <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
-            <div ng-show="vm.errorCount > 0" class="panel-heading no-animate">
-                <span><b>{{vm.errorCount}} CSV Validation Error(s)</b></span>
-                <button class="btn btn-danger btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllErrors()">{{vm.appProps.lbl_VwError}}</button>
-                <button class="btn btn-success btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllSuccess()">{{vm.appProps.lbl_VwSuccess}}</button>
-                <button class="btn btn-default btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAll()">{{vm.appProps.lbl_VwAll}}</button>
-
-            </div>
-            <div ng-show="vm.errorCount == 0 && errormsg =='' " class="panel-heading no-animate">
-                <span><b>{{vm.appProps.lbl_NoError}}</b></span>
-            </div>
-
-            <div ng-show="vm.errormsg != ''" class="panel-heading no-animate">
-                <span><b>{{vm.appProps.lbl_ErrorsMsg}} {{vm.errormsg}}</b></span>
-            </div>
+    <div id="csv" class="panel panel-danger" ng-show="vm.errorCount > 0">
+        <div class="panel-heading">
+            <span><b>{{vm.errorCount}} CSV Validation Error(s)</b></span>
         </div>
         <div class="table-responsive">
             <table id="csv-table" class="table table-fixed-header table-striped">
@@ -397,7 +381,6 @@
                         </td>
                     </tr>
                     <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-repeat-end>
-                        <!--uib-collapse="!address.showHrs">-->
                         <td></td>
                         <td colspan="{{vm.tableHeaders.length}}">
                             <div uib-collapse="!address.showHrs">
@@ -427,8 +410,91 @@
             </table>
         </div>
 
+        <!--<div id="csv" class="no-animate" ng-show="vm.showTable">
+            <div class="no-animate" ng-class="vm.errorCount > 0 || vm.errormsg != '' ? 'panel panel-danger' : 'panel panel-success'">
+                <div ng-show="vm.CsvErrors == true" class="panel-heading no-animate">
+                    <span><b>{{vm.errorCount}} CSV Validation Error(s)</b></span>
+                    <button class="btn btn-danger btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllErrors()">{{vm.appProps.lbl_VwError}}</button>
+                    <button class="btn btn-success btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAllSuccess()">{{vm.appProps.lbl_VwSuccess}}</button>
+                    <button class="btn btn-default btn-sm pull-right no-animate" ng-show="vm.hasSuccess == true" ng-click="vm.showAll()">{{vm.appProps.lbl_VwAll}}</button>
+
+                </div>
+                <div ng-show="vm.errorCount == 0 && errormsg =='' " class="panel-heading no-animate">
+                    <span><b>{{vm.appProps.lbl_NoError}}</b></span>
+                </div>
+
+                <div ng-show="vm.errormsg != ''" class="panel-heading no-animate">
+                    <span><b>{{vm.appProps.lbl_ErrorsMsg}} {{vm.errormsg}}</b></span>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="csv-table" class="table table-fixed-header table-striped">
+                    <thead class='header'>
+                        <tr>
+                            <th></th>
+                            <th class="no-animate" ng-repeat="header in vm.tableHeaders" ng-show="header !== 'errorMessage'"><b>{{header}}</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat-start="address in vm.csvItems" ng-class="address.errorMessage == null ? 'success' : 'error' ">
+                            <td>
+                                <div ng-if="!address.errorMessage" ng-hide="!address._DaysCsv || address._DaysCsv.length === 0">
+                                    <button type="button" class="btn btn-sm btn-findme" style="width: 32px; height: 32px; border-radius: 50%; outline: none;"
+                                            ng-click="address.showHrs = !address.showHrs"
+                                            title="{{(address.showHrs ? vm.appProps.msg_HideHrs : vm.appProps.msg_ShwHrs)}}">
+                                        <span class="fa" ng-class="address.showHrs ? 'fa-minus' : 'fa-plus'"></span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="no-animate" ng-if="!address.errorMessage" ng-repeat="header in vm.tableHeaders" ng-show="header !== 'errorMessage'">
+                                <div>
+                                    {{address[header]}}
+                                </div>
+                            </td>
+                            <td ng-if="address.errorMessage">
+                                <div>
+                                    {{address.addressUUID}}
+                                </div>
+                            </td>
+                            <td ng-if="address.errorMessage" colspan="{{vm.tableHeaders.length - 1}}">
+                                <div>
+                                    {{address.errorMessage}}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-if="address._DaysCsv && address._DaysCsv.length > 0" ng-repeat-end>
+                            uib-collapse="!address.showHrs">
+                            <td></td>
+                            <td colspan="{{vm.tableHeaders.length}}">
+                                <div uib-collapse="!address.showHrs">
+                                    <table class="table table-fixed-header table-striped" ng-repeat="day in address._DaysCsv" style="max-width: 450px;">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-4"><b>{{day.name}}</b></th>
+                                                <th class="col-md-4"><b>{{vm.appProps.lbl_From}}</b></th>
+                                                <th class="col-md-4"><b>{{vm.appProps.lbl_To}}</b></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-if="day.values && day.values.length > 0">
+                                            <tr ng-repeat="rng in day.values">
+                                                <td></td>
+                                                <td ng-if="!rng.errorMessage">{{(rng.hourFrom > 9? rng.hourFrom : ('0' + rng.hourFrom))}}&nbsp;<b>:</b>&nbsp;{{(rng.minFrom > 9? rng.minFrom : ('0' + rng.minFrom))}}</td>
+                                                <td ng-if="!rng.errorMessage">{{(rng.hourTo > 9? rng.hourTo : ('0' + rng.hourTo))}}&nbsp;<b>:</b>&nbsp;{{(rng.minTo > 9? rng.minTo : ('0' + rng.minTo))}}</td>
+                                                <td ng-if="rng.errorMessage" colspan="2">
+                                                    <p>{{rng.errorMessage}}</p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>-->
+
+
+        <div class="modal-container"></div>
     </div>
-
-
-    <div class="modal-container"></div>
-</div>
