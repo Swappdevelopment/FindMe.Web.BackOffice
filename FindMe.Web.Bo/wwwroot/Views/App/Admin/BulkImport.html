@@ -163,6 +163,33 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_Region}}</b>
+                        <select class="form-control" name="region" required
+                                ng-model="vm.cityDetail.region" ng-change="vm.regionChanged()"
+                                ng-options="region.name for region in vm.cityRegions"></select>
+                        <p ng-show="vm.frmCreateTag.region.$invalid" class="help-block">**Required</p>
+                    </div>
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_District}}</b>
+                        <select class="form-control" name="district" required
+                                ng-model="vm.cityDetail.district" ng-change="vm.districtChanged()"
+                                ng-options="district.name for district in vm.cityDistricts"></select>
+                        <p ng-show="vm.frmCreateTag.district.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <b>{{vm.appProps.lbl_CityGroup}}</b>
+                        <select class="form-control" name="group" required
+                                ng-model="vm.cityDetail.group" ng-change="vm.groupChanged()"
+                                ng-options="group.name for group in vm.cityGroups"></select>
+                        <p ng-show="vm.frmCreateTag.group.$invalid" class="help-block">**Required</p>
+                    </div>
+                </div>
+
                 <!--<div class="row">
                     <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                         <b>Slug EN</b>
@@ -229,14 +256,14 @@
 
     <br />
 
-    <div class="panel panel-danger" ng-show="vm.categories && vm.categories.length > 0">
+    <div class="panel panel-danger" ng-show="vm.categoryErrorsCount > 0">
         <div class="panel-heading">
             <span><b>{{vm.categoryErrorsCount}} Categories Database Validation Error(s)</b></span>
             <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showCatgDbValErrors = !vm.showCatgDbValErrors">{{vm.showCatgDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
         </div>
     </div>
 
-    <div uib-collapse="!vm.showCatgDbValErrors">
+    <div uib-collapse="!vm.showCatgDbValErrors || vm.categoryErrorsCount <= 0">
         <div ng-show="vm.categories && vm.categories.length > 0" class="catErrors" ng-repeat="cat in vm.categories">
 
             <span class="fa crsr-pointer findme-color-fc-pink"
@@ -253,30 +280,32 @@
                 <b>Create !</b>
             </button>
 
-            <div uib-collapse="!cat.showSubCatgs">
-                <ul>
-                    <li ng-repeat="subCat in cat.subCategories">
-                        <button class="btn btn-sm btn-success" ng-show="cat.foundInDb && !subCat.foundInDb" ng-click="vm.createCatgModal(subCat)">
-                            <b>Create !</b>
-                        </button>
-                        &nbsp;The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
-                        <span class="fa" ng-class="subCat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
-                    </li>
-                </ul>
+            <div uib-collapse="!cat.showSubCatgs" style="padding-left: 40px;">
+                <!--<ul>
+                    <li ng-repeat="subCat in cat.subCategories">-->
+                <div ng-repeat="subCat in cat.subCategories" style="padding-bottom: 5px;">
+                    <button class="btn btn-sm btn-success" ng-show="cat.foundInDb && !subCat.foundInDb" ng-click="vm.createCatgModal(subCat)">
+                        <b>Create !</b>
+                    </button>
+                    &nbsp;The Sub Category <b>"{{subCat.name}}"</b> {{(subCat.foundInDb ? 'is VALID!' : 'does not exist in the database.')}}&nbsp;
+                    <span class="fa" ng-class="subCat.foundInDb ? 'fa-check text-success' : 'fa-times text-danger'"></span>
+                </div>
+                    <!--</li>
+                </ul>-->
             </div>
         </div>
         <br />
     </div>
 
 
-    <div class="panel panel-danger" ng-show="vm.tags && vm.tags.length > 0">
+    <div class="panel panel-danger" ng-show="vm.tagErrorsCount > 0">
         <div class="panel-heading">
             <span><b>{{vm.tagErrorsCount}} Keywords Database Validation Error(s)</b></span>
             <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showTagDbValErrors = !vm.showTagDbValErrors">{{vm.showTagDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
         </div>
     </div>
 
-    <div uib-collapse="!vm.showTagDbValErrors">
+    <div uib-collapse="!vm.showTagDbValErrors || vm.tagErrorsCount <= 0">
         <div class="catErrors" ng-repeat="tag in vm.tags" ng-show="vm.tags && vm.tags.length > 0 && !tag.foundInDb">
 
             <button class="btn btn-sm btn-success" ng-click="vm.createTagModal(tag)" ng-hide="tag.foundInDb">
@@ -291,14 +320,14 @@
     </div>
 
 
-    <div class="panel panel-danger" ng-show="vm.cityDetails && vm.cityDetails.length > 0">
+    <div class="panel panel-danger" ng-show="vm.cityDetailErrorsCount > 0">
         <div class="panel-heading">
             <span><b>{{vm.cityDetailErrorsCount}} Cities Database Validation Error(s)</b></span>
             <button data-toggle="collapse" class="btn btn-sm btn-danger pull-right" ng-click="vm.showCityDetailDbValErrors = !vm.showCityDetailDbValErrors">{{vm.showCityDetailDbValErrors ? 'Hide' : 'View Error(s)'}}</button>
         </div>
     </div>
 
-    <div uib-collapse="!vm.showCityDetailDbValErrors">
+    <div uib-collapse="!vm.showCityDetailDbValErrors || vm.cityDetailErrorsCount <= 0">
         <div class="catErrors" ng-repeat="city in vm.cityDetails" ng-show="vm.cityDetails && vm.cityDetails.length > 0 && !city.foundInDb">
 
             <button class="btn btn-sm btn-success" ng-click="vm.createCityDetailModal(city)" ng-hide="city.foundInDb">

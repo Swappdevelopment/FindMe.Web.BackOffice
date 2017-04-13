@@ -32,6 +32,10 @@
 
         vm.hasSuccess = false;
 
+        vm.cityRegions = [];
+        vm.cityDistricts = [];
+        vm.cityGroups = [];
+
         vm.csvItems = [];
         vm.tableHeaders = [];
         vm.categories = [];
@@ -104,6 +108,7 @@
                 data.append('ADDR_CSV', htmlElement.files[0]);
 
                 htmlElement = $('#timeCSV').get(0);
+
 
                 if (htmlElement && htmlElement.files.length === 1) {
 
@@ -365,6 +370,8 @@
             vm.categories.length = 0;
 
             vm.categoryErrorsCount = 0;
+            vm.tagErrorsCount = 0;
+            vm.cityDetailErrorsCount = 0;
         };
 
 
@@ -574,25 +581,104 @@
 
         vm.createCityDetailModal = function (cityDetail) {
 
-            $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: 'createCityDetailModal.html',
-                controller: 'createCityDetailInstanceCtrlr',
-                controllerAs: 'vm',
-                size: 'lg',
-                appendTo: $('#bulkimportVw .modal-container'),
-                resolve: {
-                    param: function () {
+            if (cityDetail) {
 
-                        return {
-                            cityDetail: cityDetail,
-                            rootVm: vm
-                        };
-                    }
+                var funcOpen = function () {
+
+                    $uibModal.open({
+                        animation: true,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        templateUrl: 'createCityDetailModal.html',
+                        controller: 'createCityDetailInstanceCtrlr',
+                        controllerAs: 'vm',
+                        size: 'lg',
+                        appendTo: $('#bulkimportVw .modal-container'),
+                        resolve: {
+                            param: function () {
+
+                                return {
+                                    cityDetail: cityDetail,
+                                    cityRegions: vm.cityRegions,
+                                    cityGroups: vm.cityGroups,
+                                    cityDistricts: vm.cityDistricts,
+                                    rootVm: vm
+                                };
+                            }
+                        }
+                    });
+                };
+
+                if (vm.cityRegions && vm.cityRegions.length > 0
+                    && vm.cityDistricts && vm.cityDistricts.length > 0
+                    && vm.cityGroups && vm.cityGroups.length > 0) {
+
+                    funcOpen();
                 }
-            });
+                else {
+
+                    var successFunc = function (resp) {
+
+                        if (resp && resp.data) {
+
+                            if (resp.data.regions) {
+
+                                vm.cityRegions = vm.cityRegions ? vm.cityRegions : [];
+
+                                $.each(resp.data.regions, function (index, value) {
+
+                                    value.name = appProps.currentLang.startsWith('en') ? value.name_en : value.name_fr;
+                                    vm.cityRegions.push(value);
+                                });
+                            }
+
+                            if (resp.data.districts) {
+
+                                vm.cityDistricts = vm.cityDistricts ? vm.cityDistricts : [];
+
+                                $.each(resp.data.districts, function (index, value) {
+
+                                    vm.cityDistricts.push(value);
+                                });
+                            }
+
+                            if (resp.data.groups) {
+
+                                vm.cityGroups = vm.cityGroups ? vm.cityGroups : [];
+
+                                $.each(resp.data.groups, function (index, value) {
+
+                                    vm.cityGroups.push(value);
+                                });
+                            }
+                        }
+                    };
+
+                    var errorFunc = function (error) {
+
+                        if (error.data) {
+
+                            vm.errorstatus = error.status + ' - ' + error.statusText;
+                            vm.errormsg = error.data.msg;
+                            vm.errorid = error.data.id;
+                            vm.showError = true;
+                        }
+                    };
+
+                    var finallyFunc = function () {
+
+                        toggleGlblWaitVisibility(false);
+
+                        funcOpen();
+                    };
+
+                    toggleGlblWaitVisibility(true);
+
+                    $http.get('/ApiBulkImport/GetRegionsDistrictsGroups')
+                         .then(successFunc, errorFunc)
+                         .finally(finallyFunc);
+                }
+            }
         };
     }
 
@@ -800,6 +886,30 @@
         var vm = this;
         vm.appProps = appProps;
 
+        var region = $.grep(param.cityRegions, function (v) { return v.id === param.cityDetail.region_Id; });
+        var district = $.grep(param.cityDistricts, function (v) { return v.id === param.cityDetail.district_Id; });
+        var group = $.grep(param.cityGroups, function (v) { return v.id === param.cityDetail.group_Id; });
+
+        vm.cityRegions = param.cityRegions;
+        vm.cityDistricts = param.cityDistricts;
+        vm.cityGroups = param.cityGroups;
+
+        vm.regionChanged = function () {
+
+            vm.cityDetail.region_Id = vm.cityDetail.region ? vm.cityDetail.region.id : 0;
+        };
+
+        vm.districtChanged = function () {
+
+            vm.cityDetail.district_Id = vm.cityDetail.district ? vm.cityDetail.district.id : 0;
+        };
+
+        vm.groupChanged = function () {
+
+            vm.cityDetail.group_Id = vm.cityDetail.group ? vm.cityDetail.group.id : 0;
+        };
+
+
         vm.cityDetail = {
             name: param.cityDetail.name,
             slug: param.cityDetail.slug,
@@ -807,9 +917,16 @@
             name_fr: '',
             slug_en: param.cityDetail.slug,
             slug_fr: '',
+
             region_Id: param.cityDetail.region_Id,
+            region: region && region.length > 0 ? region[0] : null,
+
             district_Id: param.cityDetail.region_Id,
+            district: district && district.length > 0 ? district[0] : null,
+
             group_Id: param.cityDetail.region_Id,
+            group: group && group.length > 0 ? group[0] : null,
+
             id: 0,
             active: true,
             status: 1,

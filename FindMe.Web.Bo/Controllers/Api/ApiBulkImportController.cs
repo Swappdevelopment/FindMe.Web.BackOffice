@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Swapp.Data;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,8 @@ namespace FindMe.Web.App
 
                 if (typeof(T) == typeof(string))
                 {
-                    value = strValue == null ? null : (strValue == "0" ? null : strValue);
+                    strValue = strValue == null ? null : (strValue == "0" ? null : strValue);
+                    value = strValue;
                 }
                 else if (typeof(T) == typeof(bool))
                 {
@@ -375,7 +377,7 @@ namespace FindMe.Web.App
         }
 
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetRegionsDistrictsGroups()
         {
             object[] regions = null;
@@ -585,6 +587,27 @@ namespace FindMe.Web.App
                     lines.Clear();
                     lines = null;
                 }
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SaveCsvAddresses([FromBody]JObject param)
+        {
+
+            try
+            {
+                await Task.CompletedTask;
+
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+            finally
+            {
             }
         }
     }
