@@ -106,12 +106,16 @@
                         }
                         else if (resp.data.addresses) {
 
-                            for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
+                            var i;
+
+                            for (i = 0; i < resp.data.processedCsvCatgs.length; i++) {
 
                                 var category = resp.data.processedCsvCatgs[i];
 
-                                vm.categories.push(category);
-                                vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
+                                if (category) {
+
+                                    vm.categories.push(category);
+                                    vm.categoryErrorsCount += category.foundInDb ? 0 : 1;
 
                                 category.showSubCatgs = true;
 
@@ -119,21 +123,59 @@
 
                                     for (var j = 0; j < category.subCategories.length; j++) {
 
-                                        var subCatg = category.subCategories[j];
-                                        subCatg.parentUID = category.uid;
-                                        subCatg.parentName = category.name;
-                                        vm.categoryErrorsCount += subCatg.foundInDb ? 0 : 1;
-
-                                        vm.subCategories.push(subCatg);
+                                            var subCatg = category.subCategories[j];
+                                            subCatg.parentUID = category.uid;
+                                            subCatg.parentName = category.name;
+                                            vm.categoryErrorsCount += subCatg.foundInDb ? 0 : 1;
+                                        }
                                     }
                                 }
                             }
 
-                            var i;
-
                             for (i = 0; i < resp.data.addresses.length; i++) {
 
                                 var addr = resp.data.addresses[i];
+
+                                addr._linkParentCatg = $.grep(vm.categories, function (v) {
+                                    return v.index === addr._ParentCatgIndex;
+                                });
+
+                                if (Array.isArray(addr._linkParentCatg)) {
+
+                                    if (addr._linkParentCatg.length > 0) {
+                                        addr._linkParentCatg = addr._linkParentCatg[0];
+                                    }
+                                    else {
+
+                                        addr._linkParentCatg = null;
+                                    }
+                                }
+
+                                if (addr._linkParentCatg) {
+
+                                    addr._linkCatg = $.grep(addr._linkParentCatg.subCategories, function (v) {
+                                        return v.index === addr._CatgIndex;
+                                    });
+                                }
+                                else {
+
+                                    addr._linkCatg = $.grep(vm.categories, function (v) {
+                                        return v.index === addr._CatgIndex;
+                                    });
+                                }
+
+                                if (Array.isArray(addr._linkCatg)) {
+
+                                    if (addr._linkCatg.length > 0) {
+                                        addr._linkCatg = addr._linkCatg[0];
+                                    }
+                                    else {
+
+                                        addr._linkCatg = null;
+                                    }
+                                }
+
+
 
                                 if (i === 0) {
 
@@ -151,52 +193,21 @@
                                 vm.csvItems.push(addr);
                             }
 
-                            var csvErrors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
-                            var catErrors = vm.categories.map(function (cat) { return cat.foundInDb; });
-                            var subCatErrors = vm.subCategories.map(function (subCat) { return subCat.foundInDb; });
+                            var errors = vm.csvItems.map(function (csv) { return csv.errorMessage; });
 
-                            for (i = 0; i < resp.data.addresses.length; i++) {
+                            for (i = 0; i < errors.length; i++) {
 
-                                var address = resp.data.addresses[i];
+                                if (errors[i] === null) {
 
-                                for (i = 0; i < csvErrors.length; i++) {
+                                    vm.hasSuccess = true;
 
-                                    if (csvErrors[i] === null) {
-
-                                        vm.hasSuccess = true;
-                                    }
-
-                                    else {
-
-                                        vm.errorCount++;
-                                        vm.log.text += csvErrors[i] + "\r\n\r\n";
-
-                                        for (var i = 0; i < resp.data.processedCsvCatgs.length; i++) {
-
-                                            var category = resp.data.processedCsvCatgs[i];
-
-                                            if (address._CatgIndex == category.index) {
-
-                                            }
-                                        }
-                                    }
                                 }
+                                else {
 
-                                //for (i = 0; i < csvErrors.length; i++) {
-
-                                //    if (csvErrors[i] === null) {
-
-                                //        vm.hasSuccess = true;
-                                //    }
-                                //    else {
-                                //        vm.errorCount++;
-                                //        vm.log.text += csvErrors[i] + "\r\n\r\n";
-
-                                //    }
-                                //}
+                                    vm.errorCount++;
+                                    vm.log.text = errors[i];
+                                }
                             }
-
-
 
                             vm.showUpload = false;
                             vm.showClear = true;
