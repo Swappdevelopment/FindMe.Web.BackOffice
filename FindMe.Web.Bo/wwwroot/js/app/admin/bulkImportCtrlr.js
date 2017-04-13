@@ -50,7 +50,7 @@
         vm.cityDetailErrorsCount = 0;
 
         vm.showCatgDbValErrors = false;
-        vm.showTagDbValErrors = false; 
+        vm.showTagDbValErrors = false;
         vm.showCityDetailDbValErrors = false;
         vm.showPostSaveErrors = false;
 
@@ -97,12 +97,18 @@
                 if (addr._linkCatg && !addr._linkCatg.foundInDb) return true;
                 if (addr._linkCityDetail && !addr._linkCityDetail.foundInDb) return true;
 
-                if (addr._linkTags && !addr._linkTags.length > 0) {
+                if (addr._linkTags && addr._linkTags.length > 0) {
 
                     return $.grep(addr._linkTags, function (v) {
                         return !v.foundInDb;
                     }) > 0;
+                }
 
+                if (addr._DaysCsv && addr._DaysCsv.length > 0) {
+
+                    return $.grep(addr._DaysCsv, function (v) {
+                        return (v.errorMessage && v.errorMessage.length > 0);
+                    }) > 0;
                 }
             }
 
@@ -295,7 +301,7 @@
 
                                 if (addr.errorMessage) {
 
-                                    vm.CsvErrors = true;                            
+                                    vm.CsvErrors = true;
                                 }
                             });
 
@@ -475,14 +481,32 @@
             $.each(vm.csvItems, function (index, addr) {
 
                 var tags = [];
+                var days = [];
 
-                for (var i = 0; i < addr._linkTags.length; i++) {
+                var i;
+
+                for (i = 0; i < addr._linkTags.length; i++) {
 
                     var tag = addr._linkTags[i];
 
                     if (tag.foundInDb === false) {
 
                         tags.push(tag.name);
+                    }
+                }
+
+                for (i = 0; i < addr._DaysCsv.length; i++) {
+
+                    var day = addr._DaysCsv[i].values;
+
+                    for (var j = 0; j < day.length; j++) {
+
+                        var dayErrorMessage = day[j];
+
+                        if (dayErrorMessage.errorMessage !== null) {
+
+                            days.push(dayErrorMessage.errorMessage);
+                        }
                     }
                 }
 
@@ -523,6 +547,11 @@
 
                             vm.log.row += "The Tags '" + tags + "' does not exist in the database.\r\n\r\n";
 
+                        }
+
+                        if (days.length > 0) {
+
+                            vm.log.row += days;
                         }
                     }
                 }
