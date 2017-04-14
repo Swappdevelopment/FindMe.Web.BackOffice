@@ -62,10 +62,6 @@
         vm.addrFilename = '';
         vm.timeFilename = '';
 
-        vm.log = {
-            row: ''
-        };
-
         var table = $('#csv');
         var rows = document.getElementById('csv-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
@@ -106,9 +102,17 @@
 
                 if (addr._DaysCsv && addr._DaysCsv.length > 0) {
 
-                    return $.grep(addr._DaysCsv, function (v) {
-                        return (v.errorMessage && v.errorMessage.length > 0);
-                    }) > 0;
+                    var hasDayError = false;
+
+                    $.each(addr._DaysCsv, function (index, day) {
+
+                        if ($.grep(day.values, function (t) { return (t.errorMessage && t.errorMessage.length > 0) }).length > 0) {
+
+                            hasDayError = true;
+                        }
+                    });
+
+                    if (hasDayError) return true;
                 }
             }
 
@@ -478,93 +482,125 @@
 
         vm.downloadingPreSaveLog = false;
 
-        vm.download = function () {
+        vm.downloadPreSaveLog = function () {
 
             vm.downloadingPreSaveLog = true;
 
+            var logRow = '';
+
             $.each(vm.csvItems, function (index, addr) {
-
-                var tags = [];
-                var days = [];
-
-                var i;
-
-                for (i = 0; i < addr._linkTags.length; i++) {
-
-                    var tag = addr._linkTags[i];
-
-                    if (tag.foundInDb === false) {
-
-                        tags.push(tag.name);
-                    }
-                }
-
-                for (i = 0; i < addr._DaysCsv.length; i++) {
-
-                    var day = addr._DaysCsv[i].values;
-
-                    for (var j = 0; j < day.length; j++) {
-
-                        var dayErrorMessage = day[j];
-
-                        if (dayErrorMessage.errorMessage !== null) {
-
-                            days.push(dayErrorMessage.errorMessage);
-                        }
-                    }
-                }
 
                 if (hasErrors(addr)) {
 
                     if (addr.errorMessage) {
 
-                        vm.log.row += addr.errorMessage + "\r\n\r\n";
+                        logRow += addr.errorMessage + "\r\n\r\n";
                     }
                     else {
 
+                        logRow += "Error caught for Row " + addr.addressUUID + ":\r\n";
+
                         if (addr._linkParentCatg.foundInDb === false) {
 
-                            if (addr._linkCatg.foundInDb === false) {
+                            logRow += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
+                        }
 
-                                if (addr._linkCityDetail.foundInDb === false) {
+                        if (addr._linkCatg.foundInDb === false) {
 
-                                    vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
-                                    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
-                                    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n";
-                                    vm.log.row += "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n\r\n";
+                            logRow += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n";
+                        }
+
+                        if (addr._linkCityDetail.foundInDb === false) {
+
+                            logRow += "The City '" + addr._linkCityDetail.name + "' does not exist in the database.\r\n\r\n";
+                        }
+
+                        if (addr._linkTags && addr._linkTags.length > 0) {
+
+                            var tempTags = '';
+
+                            $.each(addr._linkTags, function (index, value) {
+
+                                if (!value.foundInDb) {
+
+                                    if (tempTags != '') {
+
+                                        tempTags += ', ';
+                                    }
+                                    tempTags += value.name;
                                 }
+                            });
 
-                                else {
-                                    vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
-                                    vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n";
-                                    vm.log.row += "The Sub Category '" + addr._linkCatg.name + "' does not exist in the database.\r\n\r\n";
-                                }
-                            }
-                            else {
+                            if (tempTags.length > 0) {
 
-                                vm.log.row += "Error caught for Row " + (index + 1) + ":\r\n";
-                                vm.log.row += "The Category '" + addr._linkParentCatg.name + "' does not exist in the database.\r\n\r\n";
+                                logRow += "The Tags '" + tempTags + "' does not exist in the database.\r\n\r\n";
                             }
                         }
 
-                        if (tags.length > 0) {
+                        if (addr._DaysCsv && addr._DaysCsv.length > 0) {
 
-                            vm.log.row += "The Tags '" + tags + "' does not exist in the database.\r\n\r\n";
+                            var tempDays = '';
 
-                        }
+                            $.each(addr._DaysCsv, function (index, day) {
 
-                        if (days.length > 0) {
+                                if (day.values && day.values.length > 0) {
 
-                            vm.log.row += days;
+                                    var tempTimes = $.grep(day.values, function (rng) { return (rng.errorMessage && rng.errorMessage.length > 0); });
+
+                                    if (tempTimes.length > 0) {
+
+                                        tempDays += '[' + day.name + ']:\r\n';
+
+                                        $.each(tempTimes, function (index, rng) {
+
+                                            if (index > 0) {
+
+                                                tempDays += '\r\n';
+                                            }
+
+                                            tempDays += '\t' + rng.errorMessage;
+                                        });
+
+                                        tempDays += '\r\n';
+                                    }
+                                }
+                            });
+
+                            if (tempDays.length > 0) {
+
+                                logRow += tempDays + '\r\n';
+                            }
                         }
                     }
                 }
             });
 
-            var data = new Blob([vm.log.row], { type: 'text/plain;charset=utf-8' });
-            FileSaver.saveAs(data, 'log.txt');
+            if (logRow.length > 0) {
 
-            //vm.downloadingPreSaveLog = false;
+                var data = new Blob([logRow], { type: 'text/plain;charset=utf-8' });
+
+
+                var now = new Date();
+
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var date = now.getDate();
+
+                var hours = now.getHours();
+                var mins = now.getMinutes();
+                var secs = now.getSeconds();
+
+                month = month > 9 ? String(month) : ('0' + month);
+                date = date > 9 ? String(date) : ('0' + date);
+                hours = hours > 9 ? String(hours) : ('0' + hours);
+                mins = mins > 9 ? String(mins) : ('0' + mins);
+                secs = secs > 9 ? String(secs) : ('0' + secs);
+
+
+                FileSaver.saveAs(data, 'Pre-Save-Log_' + year + '-' + month + '-' + date + '_' + hours + ':' + mins + ':' + secs + '.log');
+
+                vm.downloadingPreSaveLog = false;
+            }
         };
 
 
@@ -787,58 +823,58 @@
 
             //if (!vm.addressesHaveErrors()) {
 
-                var successFunc = function (resp) {
+            var successFunc = function (resp) {
 
-                    if (resp && resp.data && resp.data.logs) {
+                if (resp && resp.data && resp.data.logs) {
 
-                        var temp = [];
+                    var temp = [];
 
-                        $.each(resp.data.logs, function (index, value) {
+                    $.each(resp.data.logs, function (index, value) {
 
-                            vm.postSaveLogs.push(value);
+                        vm.postSaveLogs.push(value);
 
-                            
 
-                            var arr = $.grep(vm.csvItems, function (v) { return v.addressUUID === value.key; });
 
-                            if (arr.length > 0) {
+                        var arr = $.grep(vm.csvItems, function (v) { return v.addressUUID === value.key; });
 
-                                temp.push(arr[0]);
-                            }
-                        });
+                        if (arr.length > 0) {
 
-                        vm.csvItems.length = 0;
+                            temp.push(arr[0]);
+                        }
+                    });
 
-                        $.each(temp, function (index, value) {
+                    vm.csvItems.length = 0;
 
-                            value.postLogValue = value.value;
-                            value.hasPostSaveError = true;
-                            vm.csvItems.push(value);
-                        });
-                    }
-                };
+                    $.each(temp, function (index, value) {
 
-                var errorFunc = function (error) {
+                        value.postLogValue = value.value;
+                        value.hasPostSaveError = true;
+                        vm.csvItems.push(value);
+                    });
+                }
+            };
 
-                    if (error.data) {
+            var errorFunc = function (error) {
 
-                        vm.errorstatus = error.status + ' - ' + error.statusText;
-                        vm.errormsg = error.data.msg;
-                        vm.errorid = error.data.id;
-                        vm.showError = true;
-                    }
-                };
+                if (error.data) {
 
-                var finallyFunc = function () {
+                    vm.errorstatus = error.status + ' - ' + error.statusText;
+                    vm.errormsg = error.data.msg;
+                    vm.errorid = error.data.id;
+                    vm.showError = true;
+                }
+            };
 
-                    toggleGlblWaitVisibility(false);
-                };
+            var finallyFunc = function () {
 
-                toggleGlblWaitVisibility(true);
+                toggleGlblWaitVisibility(false);
+            };
 
-                $http.post('/ApiBulkImport/SaveCsvAddresses', { csvs: vm.csvItems })
-                     .then(successFunc, errorFunc)
-                     .finally(finallyFunc);
+            toggleGlblWaitVisibility(true);
+
+            $http.post('/ApiBulkImport/SaveCsvAddresses', { csvs: vm.csvItems })
+                 .then(successFunc, errorFunc)
+                 .finally(finallyFunc);
             //}
         };
     }
