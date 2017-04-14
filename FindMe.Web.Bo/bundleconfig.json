@@ -200,5 +200,11 @@
     "inputFiles": [
       "wwwroot/css/app/admin/clients.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/admin/csv.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/admin/csv.css"
+    ]
   }
 ]
