@@ -183,6 +183,10 @@ input.three-quarter {
     min-width: 40px;
 }
 
+input.no-maxwidth {
+    max-width: none;
+}
+
 .bold-text {
     font-weight: bold;
 }

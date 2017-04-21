@@ -26,6 +26,7 @@
         vm.appProps = appProps;
 
         vm.clients = [];
+        vm.parentCategorys = [];
         vm.categorys = [];
         vm.cityDetails = [];
         vm.tags = [];
@@ -294,6 +295,66 @@
             }
         };
 
+        var checkContactsRecordState = function (contacts) {
+
+            if (contacts) {
+
+
+                if (!Array.isArray(contacts)) {
+
+                    contacts = [contacts];
+                }
+
+                var func = function (ctcRow) {
+
+                    if (ctcRow) {
+
+                        ctcRow.status = ctcRow.active ? 1 : 0;
+
+                        if (ctcRow.__comp
+                            && (!ctcRow.recordState || ctcRow.recordState <= 0)) {
+
+                            if (ctcRow.id > 0) {
+
+                                if (ctcRow.text !== ctcRow.__comp.text
+                                    || ctcRow.link !== ctcRow.__comp.link
+                                    || ctcRow.status !== ctcRow.__comp.status
+                                    || ctcRow.active !== ctcRow.__comp.active) {
+
+                                    ctcRow.recordState = 20;
+                                }
+                                else {
+
+                                    ctcRow.recordState = 0;
+                                }
+                            }
+                            else {
+
+                                ctcRow.recordState = 10;
+                            }
+                        }
+                    }
+                };
+
+                for (var i = 0; i < contacts.length; i++) {
+
+                    var ctcRow = contacts[i];
+
+                    if (ctcRow.contacts) {
+
+                        $.each(ctcRow.contacts, function (index, value) {
+
+                            func(value);
+                        });
+                    }
+                    else {
+
+                        func(ctcRow);
+                    }
+                }
+            }
+        };
+
         var checkRecordState = function (address, compAddress, toBeDeleted) {
 
             if (address
@@ -335,6 +396,7 @@
                 checkFilesRecordState(address.documents);
                 checkOpenHoursRecordState(address.openHours);
                 checkTripAdWidgetRecordState(address.tripAdWidget);
+                checkContactsRecordState(address.contacts);
             }
         };
 
@@ -359,7 +421,7 @@
                     }
                 }
 
-                if (vm.categorys.length > 0) {
+                if (vm.categorys.length > 0 && vm.parentCategorys.length > 0) {
 
                     tempName = $.grep(vm.categorys, function (v) {
                         return v.id === address.category_Id;
@@ -367,7 +429,20 @@
 
                     if (tempName && tempName.length > 0) {
 
+                        address.parentCategory = tempName[0].parent;
                         address.category = tempName[0];
+                    }
+                    else {
+
+                        tempName = $.grep(vm.parentCategorys, function (v) {
+                            return v.id === address.category_Id;
+                        });
+
+                        if (tempName && tempName.length > 0) {
+
+                            address.parentCategory = tempName[0];
+                            address.category = null;
+                        }
                     }
                 }
 
@@ -405,14 +480,17 @@
                     param: function () {
 
                         return {
+                            vmRoot: vm,
                             address: address,
                             save: vm.save,
                             deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
                             checkFilesRecordState: checkFilesRecordState,
                             checkOpenHoursRecordState: checkOpenHoursRecordState,
+                            checkContactsRecordState: checkContactsRecordState,
                             checkTripAdWidgetRecordState: checkTripAdWidgetRecordState,
                             clients: vm.clients,
+                            parentCategorys: vm.parentCategorys,
                             categorys: vm.categorys,
                             cityDetails: vm.cityDetails,
                             tags: vm.tags
@@ -516,6 +594,19 @@
                     });
                 }
 
+                if (value.contacts) {
+
+                    $.each(value.contacts, function (i, grp) {
+
+                        $.each(grp.contacts, function (index, ctc) {
+
+                            ctc.name = grp.name;
+                            ctc.active = ctc.status === 1;
+                            ctc.__comp = jQuery.extend(false, {}, ctc);
+                        });
+                    });
+                }
+
                 if (!value.tripAdWidget) {
 
                     value.tripAdWidget = {
@@ -540,6 +631,128 @@
                     return $sce.trustAsHtml(value.tripAdWidget.smallValue);
                 };
             }
+        };
+
+        var duplicateContent = function (value) {
+
+            if (value) {
+
+                var temp, i;
+
+                if (value.ratingOverrides) {
+
+                    temp = value.ratingOverrides;
+
+                    value.ratingOverrides = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.ratingOverrides.push(val);
+                    }
+                }
+
+                if (value.tags) {
+
+                    temp = value.tags;
+
+                    value.tags = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.tags.push(val);
+                    }
+                }
+
+                if (value.images) {
+
+                    temp = value.images;
+
+                    value.images = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.images.push(val);
+                    }
+                }
+
+                if (value.logos) {
+
+                    temp = value.logos;
+
+                    value.logos = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.logos.push(val);
+                    }
+                }
+
+                if (value.documents) {
+
+                    temp = value.documents;
+
+                    value.documents = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.documents.push(val);
+                    }
+                }
+
+                if (value.openHours) {
+
+                    temp = value.openHours;
+
+                    value.openHours = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.openHours.push(val);
+                    }
+                }
+
+                if (value.contacts) {
+
+                    temp = value.contacts;
+
+                    value.contacts = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        var val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+
+                        $.each(val.contacts, function () {
+
+                            delete this.__comp;
+                        });
+
+                        value.contacts.push(val);
+                    }
+                }
+
+                if (value.tripAdWidget) {
+
+                    value.tripAdWidget = jQuery.extend(true, {}, value.tripAdWidget);
+                    delete value.tripAdWidget.__comp;
+                    delete value.tripAdWidget.trustLargeValue;
+                    delete value.tripAdWidget.trustSmallValue;
+                }
+            }
+
+            return value;
         };
 
 
@@ -697,18 +910,20 @@
 
                     if (resp.data.categorys && resp.data.categorys.length > 0) {
 
+                        vm.parentCategorys.length = 0;
                         vm.categorys.length = 0;
 
                         $.each(resp.data.categorys, function (index, value) {
 
                             value.name = value.name.encodeHtml();
 
-                            vm.categorys.push(value);
+                            vm.parentCategorys.push(value);
 
                             if (value.children && value.children.length > 0) {
 
                                 $.each(value.children, function (i, v) {
 
+                                    v.parent = value;
                                     v.name = v.name.encodeHtml();
                                     vm.categorys.push(v);
                                 });
@@ -789,17 +1004,19 @@
                     address.name = org.name;
                     address.slug = org.slug;
                     address.client_Id = org.client_Id;
+                    address.client = org.client;
                     address.cityDetail_Id = org.cityDetail_Id;
+                    address.cityDetail = org.cityDetail;
                     address.category_Id = org.category_Id;
+                    address.parentCategory = org.parentCategory;
+                    address.category = org.category;
                     address.latitude = org.latitude;
                     address.longitude = org.longitude;
                     address.flgRecByFbFans = org.flgRecByFbFans;
                     address.rateOverride = org.rateOverride;
                     address.rateOverrideCount = org.rateOverrideCount;
-                    address.client = org.client;
-                    address.category = org.category;
-                    address.cityDetail = org.cityDetail;
 
+                    address.status = org.status;
                     address.active = org.active;
 
                     address.inEditMode = false;
@@ -975,21 +1192,26 @@
                     if (address
                         && address.__comp) {
 
-                        var toBeSaved = jQuery.extend(true, {}, address);
+                        var toBeSaved = duplicateContent(jQuery.extend(false, {}, address));
+
                         delete toBeSaved.__comp;
+
 
                         toBeSaved.status = toBeSaved.active ? 1 : 0;
 
                         toBeSaved.client_Id = toBeSaved.client ? toBeSaved.client.id : 0;
                         delete toBeSaved.client;
 
-                        toBeSaved.category_Id = toBeSaved.category ? toBeSaved.category.id : 0;
+                        toBeSaved.category_Id = toBeSaved.category ? toBeSaved.category.id : (toBeSaved.parentCategory ? toBeSaved.parentCategory.id : 0);
+                        delete toBeSaved.parentCategory;
                         delete toBeSaved.category;
 
                         toBeSaved.cityDetail_Id = toBeSaved.cityDetail ? toBeSaved.cityDetail.id : 0;
                         delete toBeSaved.cityDetail;
 
                         checkRecordState(toBeSaved, address.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+
+                        toBeSaved.status = toBeSaved.active ? 1 : 0;
 
 
                         if (toBeSaved.ratingOverrides) {
@@ -1109,6 +1331,16 @@
                                             }
                                         }
 
+                                        if (value.contacts && tempValue.contacts) {
+
+                                            tempValue.contacts.length = 0;
+
+                                            for (i = 0; i < value.contacts.length; i++) {
+
+                                                tempValue.contacts.push(value.contacts[i]);
+                                            }
+                                        }
+
                                         if (tempValue.tripAdWidget) {
 
                                             if (value.tripAdWidget) {
@@ -1214,10 +1446,22 @@
 
             if ($btn.hasClass('refresh')) {
 
-                $scope.$apply(function () {
+                var activePg = $.grep(vm.pgsCollection, function (pg) { return pg.isActive; });
 
-                    vm.populateAddresses();
-                });
+                if (activePg && Array.isArray(activePg)) {
+
+                    activePg = activePg.length > 0 ? activePg[0] : null;
+                }
+
+                if (activePg) {
+
+                    var offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                    $scope.$apply(function () {
+
+                        vm.populateAddresses(appProps.resultItemsPerPg, offset);
+                    });
+                }
             }
             else if ($btn.hasClass('add')) {
 
@@ -1228,8 +1472,12 @@
                         name: '',
                         slug: '',
                         client_Id: 0,
+                        client: null,
                         cityDetail_Id: 0,
+                        cityDetail: null,
                         category_Id: 0,
+                        parentCategory: null,
+                        category: null,
                         latitude: 0,
                         longitude: 0,
                         flgRecByFbFans: false,
@@ -1286,15 +1534,19 @@
         var vm = this;
         vm.appProps = appProps;
 
+        vm.vmRoot = param.vmRoot;
+
         vm.address = param.address;
 
         vm.clients = param.clients;
+        vm.parentCategorys = param.parentCategorys;
         vm.categorys = param.categorys;
         vm.cityDetails = param.cityDetails;
         vm.tags = param.tags;
 
-        vm.checkFilesRecordState = param.checkFilesRecordState; 
+        vm.checkFilesRecordState = param.checkFilesRecordState;
         vm.checkOpenHoursRecordState = param.checkOpenHoursRecordState;
+        vm.checkContactsRecordState = param.checkContactsRecordState;
 
         vm.checkTripAdWidget = function (tripAd) {
 
@@ -1662,6 +1914,27 @@
         };
 
 
+        vm.revertContact = function (ctcRow) {
+
+            if (ctcRow && ctcRow.__comp) {
+
+                ctcRow.text = ctcRow.__comp.text;
+                ctcRow.link = ctcRow.__comp.link;
+
+                ctcRow.status = ctcRow.__comp.status;
+                ctcRow.active = ctcRow.__comp.active;
+
+                ctcRow.recordState = 0;
+            }
+
+            vm.checkContactsRecordState(ctcRow);
+        };
+        vm.contactValueChanged = function (ctcRow) {
+
+            vm.checkContactsRecordState(ctcRow);
+        };
+
+
         vm.revertDayRow = function (dayRow) {
 
             if (dayRow && dayRow.__comp) {
@@ -1681,7 +1954,7 @@
             }
 
             vm.checkOpenHoursRecordState(dayRow);
-        }
+        };
         vm.timeFromChanged = function (dayRow) {
 
             if (dayRow) {
@@ -1845,6 +2118,24 @@
                 };
 
                 day.openHours.insert(0, newRecord);
+            }
+        };
+
+        vm.addContact = function (ctcGrp) {
+
+            if (ctcGrp && ctcGrp.contacts) {
+
+                var newRecord = {
+                    recordState: 10,
+                    id: 0,
+                    name: ctcGrp.name,
+                    link: null,
+                    text: null,
+                    status: 1,
+                    active: true
+                };
+
+                ctcGrp.contacts.insert(0, newRecord);
             }
         };
 

@@ -469,10 +469,22 @@
 
             if ($btn.hasClass('refresh')) {
 
-                $scope.$apply(function () {
+                var activePg = $.grep(vm.pgsCollection, function (pg) { return pg.isActive; });
 
-                    vm.populateTags();
-                });
+                if (activePg && Array.isArray(activePg)) {
+
+                    activePg = activePg.length > 0 ? activePg[0] : null;
+                }
+
+                if (activePg) {
+
+                    var offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                    $scope.$apply(function () {
+
+                        vm.populateTags(appProps.resultItemsPerPg, offset);
+                    });
+                }
             }
             else if ($btn.hasClass('add')) {
 

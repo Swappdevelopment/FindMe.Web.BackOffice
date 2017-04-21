@@ -192,13 +192,27 @@
 
                 $scope.$apply(function () {
 
+                    var activePg, offset;
+
                     switch (vm.tabIndex) {
 
                         case 0:
 
                             if (vm.cVm && vm.cVm.populateCityDetails) {
 
-                                vm.cVm.populateCityDetails();
+                                activePg = $.grep(vm.cVm.pgsCollection, function (pg) { return pg.isActive; });
+
+                                if (activePg && Array.isArray(activePg)) {
+
+                                    activePg = activePg.length > 0 ? activePg[0] : null;
+                                }
+
+                                if (activePg) {
+
+                                    offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                                    vm.cVm.populateCityDetails(appProps.resultItemsPerPg, offset);
+                                }
                             }
                             break;
 
@@ -206,7 +220,19 @@
 
                             if (vm.rVm && vm.rVm.populateRegions) {
 
-                                vm.rVm.populateRegions();
+                                activePg = $.grep(vm.rVm.pgsCollection, function (pg) { return pg.isActive; });
+
+                                if (activePg && Array.isArray(activePg)) {
+
+                                    activePg = activePg.length > 0 ? activePg[0] : null;
+                                }
+
+                                if (activePg) {
+
+                                    offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                                    vm.rVm.populateRegions(appProps.resultItemsPerPg, offset);
+                                }
                             }
                             break;
 
@@ -214,7 +240,19 @@
 
                             if (vm.dVm && vm.dVm.populateDistricts) {
 
-                                vm.dVm.populateDistricts();
+                                activePg = $.grep(vm.dVm.pgsCollection, function (pg) { return pg.isActive; });
+
+                                if (activePg && Array.isArray(activePg)) {
+
+                                    activePg = activePg.length > 0 ? activePg[0] : null;
+                                }
+
+                                if (activePg) {
+
+                                    offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                                    vm.dVm.populateDistricts(appProps.resultItemsPerPg, offset);
+                                }
                             }
                             break;
 
@@ -222,7 +260,19 @@
 
                             if (vm.gVm && vm.gVm.populateCityGroups) {
 
-                                vm.gVm.populateCityGroups();
+                                activePg = $.grep(vm.gVm.pgsCollection, function (pg) { return pg.isActive; });
+
+                                if (activePg && Array.isArray(activePg)) {
+
+                                    activePg = activePg.length > 0 ? activePg[0] : null;
+                                }
+
+                                if (activePg) {
+
+                                    offset = (appProps.resultItemsPerPg * activePg.index) - 1;
+
+                                    vm.gVm.populateCityGroups(appProps.resultItemsPerPg, offset);
+                                }
                             }
                             break;
                     }

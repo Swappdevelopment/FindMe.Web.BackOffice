@@ -337,7 +337,6 @@ namespace FindMe.Web.App
 
             Func<JObject, Address> func;
 
-
             try
             {
                 if (_env.IsDevelopment())
@@ -402,6 +401,17 @@ namespace FindMe.Web.App
 
                         jFiles.Clear();
                         jFiles = null;
+
+
+                        jObjects = jobj.JGetPropVal<JObject[]>("contacts");
+
+                        if (jObjects != null)
+                        {
+                            addr.Contacts = new ObjectCollection<AddressContact>(
+                                                 jObjects
+                                                     .SelectMany(j => j.JGetPropVal<JObject[]>("contacts"))
+                                                     .Select(j => Helper.JSonCamelDeserializeObject<AddressContact>(j)));
+                        }
 
 
                         jObjects = jobj.JGetPropVal<JObject[]>("openHours");

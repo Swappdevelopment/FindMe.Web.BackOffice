@@ -19,6 +19,9 @@
 
             if (headerConfigService) {
 
+                $('#searchBar input.input-search').val('');
+                $('#searchBar span.input-bg button.clear').addClass('hidden');
+
                 if (headerConfigService.showSearchCtrl) {
                     showMainSearchCtrl();
                 }
