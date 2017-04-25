@@ -18,7 +18,7 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Microsoft.EntityFrameworkCore.Tools.DotNet": "1.1.0-preview4-final",
-    "Newtonsoft.Json": "10.0.1",
+    "Newtonsoft.Json": "10.0.2",
     "Swapp.Data": "1.0.0-*",
     "Swapp.Data.Db": "1.0.0-*",
     "Microsoft.EntityFrameworkCore.Design": "1.1.0",
@@ -33,7 +33,9 @@
     "Microsoft.EntityFrameworkCore.Tools": "1.1.0-preview4-final",
     "Microsoft.ApplicationInsights.AspNetCore": "2.0.0-beta1",
     "FindMe.Data.Db.MySql": "1.0.0-*",
-    "CoreFtp": "1.3.4"
+    "CoreFtp": "1.3.4",
+    "ImageSharp": "1.0.0-alpha7-00006",
+    "CoreCompat.System.Drawing": "1.0.0-beta006"
   },
 
   "tools": {
