@@ -28,43 +28,49 @@
             $routeProvider.when('/users', {
                 controller: 'usersCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/Users.html',
+                templateUrl: '/Views/App/Users.html',
             });
 
             $routeProvider.when('/clients', {
                 controller: 'clientsCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/Clients.html',
+                templateUrl: '/Views/App/Clients.html',
             });
 
             $routeProvider.when('/categories', {
                 controller: 'categoriesCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/Categories.html',
+                templateUrl: '/Views/App/Categories.html',
             });
 
             $routeProvider.when('/cities', {
                 controller: 'citiesCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/cities.html',
+                templateUrl: '/Views/App/cities.html',
             });
 
             $routeProvider.when('/tags', {
                 controller: 'tagsCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/tags.html',
+                templateUrl: '/Views/App/tags.html',
             });
 
             $routeProvider.when('/addresses', {
                 controller: 'addressesCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/Addresses.html',
+                templateUrl: '/Views/App/Addresses.html',
             });
 
             $routeProvider.when('/bulkimport', {
                 controller: 'bulkImportCtrlr',
                 controllerAs: 'vm',
-                templateUrl: '/Views/App/Admin/BulkImport.html',
+                templateUrl: '/Views/App/BulkImport.html',
+            });
+
+            $routeProvider.when('/exceptions', {
+                controller: 'exceptionsCtrlr',
+                controllerAs: 'vm',
+                templateUrl: '/Views/App/Exceptions.html',
             });
 
 

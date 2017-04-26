@@ -1,0 +1,33 @@
+﻿
+
+<div id="exceptionsVw">
+
+    <div uib-collapse="!vm.showError" style="padding: 20px;">
+
+        <div uib-alert class="alert alert-danger" close="vm.showError = false;">
+            <h4>
+                {{vm.errorstatus}}
+            </h4>
+            <p>
+                {{vm.errormsg}}
+            </p>
+        </div>
+    </div>
+
+
+    <div class="header" ng-init="vm.getAllAddressIDs()">
+
+        <div class="button-container">
+            <button type="button" class="btn btn-findme btn-lg">
+                <span class="fa fa-xing-square"></span>
+                {{vm.appProps.lbl_GetExptns}}
+            </button>
+        </div>
+
+        <p ng-show="vm.gettingAddressesCount && !vm.verifyingAddresses"><span class="fa fa-circle-o-notch fa-spin"></span></p>
+        <p ng-hide="vm.gettingAddressesCount || vm.hideWarning || vm.verifyingAddresses">{{vm.appProps.lbl_Warning.toUpperCase()}}: {{vm.getAddressesCountMessage()}}</p>
+        <p ng-show="vm.verifyingAddresses">{{vm.getVerifyAddrMessage()}}</p>
+        
+    </div>
+
+</div>

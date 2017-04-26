@@ -206,5 +206,89 @@
     "inputFiles": [
       "wwwroot/css/app/admin/csv.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/exceptionsCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/exceptionsCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/addressesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/addressesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/bulkImportCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/bulkImportCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/categoriesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/categoriesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/citiesCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/citiesCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/clientsCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/clientsCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/tagsCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/tagsCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/usersCtrlr.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/usersCtrlr.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/addresses.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/addresses.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/addresses-modal.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/addresses-modal.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/categories.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/categories.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/clients.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/clients.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/csv.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/csv.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/app/exceptions.min.css",
+    "inputFiles": [
+      "wwwroot/css/app/exceptions.css"
+    ]
   }
 ]

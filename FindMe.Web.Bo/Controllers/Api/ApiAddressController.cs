@@ -155,6 +155,175 @@ namespace FindMe.Web.App
 
 
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllAddressIDs()
+        {
+            long[] ids = null;
+
+            try
+            {
+                ids = await _repo.Execute<long[]>("GetAllAddressIDs");
+            }
+            catch (ExceptionID ex)
+            {
+                switch (ex.ErrorID)
+                {
+                    default:
+                        return BadRequestEx(ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+
+            return Ok(new { result = ids });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyAddress([FromBody]JObject param)
+        {
+            List<AddrException> addrExceptions = null;
+
+            Address addr;
+
+            object result = null;
+
+            try
+            {
+                if (param == null) throw new NullReferenceException(nameof(param));
+
+
+                string currentEnv = "production";
+
+                if (_env.IsDevelopment())
+                {
+                    currentEnv = "development";
+                }
+                else if (_config.IsPublishEnvStaging())
+                {
+                    currentEnv = "staging";
+                }
+
+                UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
+
+
+                long addrID = param.GetPropVal<long>("addrID");
+                string addrUID = param.GetPropVal<string>("addrUID");
+
+                addr = await _repo.Execute<Address>("GetAddress", addrID, addrUID, null, 0, 0, 0, true);
+
+                if (addr == null) throw new NullReferenceException(nameof(addr));
+
+
+                if (addr.Files == null
+                    || addr.Files.Count == 0)
+                {
+
+                }
+                else
+                {
+                    string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
+                    string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
+                    string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
+                    bool ftpIgnoreCertificateErrors = true;
+
+
+                    using (var ftpClient = new FtpClient(
+                                                       new FtpClientConfiguration()
+                                                       {
+                                                           Host = ftpHost,
+                                                           Username = ftpUserName,
+                                                           Password = ftppassword,
+                                                           EncryptionType = FtpEncryption.Implicit,
+                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                       }))
+                    {
+                        await ftpClient.LoginAsync();
+
+                        addrExceptions = new List<AddrException>();
+
+
+                        foreach (var af in addr.Files)
+                        {
+                            string afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
+
+                            using (var afStream = await ftpClient.OpenFileReadStreamAsync(afPath))
+                            {
+                                switch (af.Type)
+                                {
+                                    case AddressFileType.Images:
+                                    case AddressFileType.Logos:
+
+                                        ImageSharp.Image img;
+
+                                        try
+                                        {
+                                            img = ImageSharp.Image.Load(afStream);
+
+                                            img = (img.Width > 0 && img.Height > 0) ? img : null;
+                                        }
+                                        catch
+                                        {
+                                            img = null;
+                                        }
+
+                                        if (img == null)
+                                        {
+                                            addrExceptions.Add(new AddrException()
+                                            {
+                                                Status = AddressVerifiedStatus.InvalidFiles,
+                                                Info = af.Simplify(false)
+                                            });
+                                        }
+                                        else
+                                        {
+                                            foreach (var size in UrlManager.GetThumnailSizes)
+                                            {
+                                                string thumnailPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
+
+                                                using (var thStream = await ftpClient.OpenFileReadStreamAsync(thumnailPath))
+                                                {
+
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (ExceptionID ex)
+            {
+                switch (ex.ErrorID)
+                {
+                    default:
+                        return BadRequestEx(ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+            finally
+            {
+                addr = null;
+
+                if (addrExceptions != null)
+                {
+                    addrExceptions.Clear();
+                    addrExceptions = null;
+                }
+            }
+
+            return Ok(new { exceptions = result });
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> GetAddresses([FromBody]JObject param)
         {

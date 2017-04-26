@@ -1,5 +1,4 @@
 ﻿
-@using Microsoft.Extensions.Options;
 @using Microsoft.Extensions.Configuration;
 
 @{
@@ -10,6 +9,7 @@
 
 
 @section css {
+
     <environment names="Development">
         <link rel="stylesheet" href="~/css/customIcons/customicons.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/wrapper.css" swp-cache-version="true" />
@@ -17,11 +17,12 @@
         <link rel="stylesheet" href="~/css/app/search-bar.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/pagination.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/home.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/clients.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/categories.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/addresses.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/clients.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/categories.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/addresses.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/csv.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/csv.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/exceptions.css" swp-cache-version="true" />
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/css/customIcons/customicons.min.css" swp-cache-version="true" />
@@ -30,11 +31,12 @@
         <link rel="stylesheet" href="~/css/app/search-bar.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/pagination.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/home.min.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/clients.min.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/categories.min.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/addresses.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/clients.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/categories.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/addresses.min.css" swp-cache-version="true" />
         <link rel="stylesheet" href="~/css/app/account/profile.min.css" swp-cache-version="true" />
-        <link rel="stylesheet" href="~/css/app/admin/csv.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/csv.min.css" swp-cache-version="true" />
+        <link rel="stylesheet" href="~/css/app/exceptions.min.css" swp-cache-version="true" />
     </environment>
 }
 
@@ -107,6 +109,7 @@
             urlSaveCityGroups: '@Url.Action("SaveCityGroups", "ApiCity")',
             urlGetAllCityStuff: '@Url.Action("GetAllCityStuff", "ApiCity")',
             urlGetAddresses: '@Url.Action("GetAddresses", "ApiAddress")',
+            urlGetAllAddressIDs: '@Url.Action("GetAllAddressIDs", "ApiAddress")',
             urlSaveAddresses: '@Url.Action("SaveAddresses", "ApiAddress")',
             urlGetAddressContent: '@Url.Action("GetAddressContent", "ApiAddress")',
             urlUploadAddressFiles: '@Url.Action("UploadAddressFiles", "ApiAddress")',
@@ -205,6 +208,8 @@
             lbl_SubCatg: ('@Html.GetLabel("lbl_SubCatg")').encodeHtml(),
             lbl_Contacts: ('@Html.GetLabel("lbl_Contacts")').encodeHtml(),
             lbl_InputHr: ('@Html.GetLabel("lbl_InputHr")').encodeHtml(),
+            lbl_GetExptns: ('@Html.GetLabel("lbl_GetExptns")').encodeHtml(),
+            lbl_Warning: ('@Html.GetLabel("lbl_Warning")').encodeHtml(),
 
             lbl_Import: ('@Html.GetLabel("lbl_Import")').encodeHtml(),
             lbl_BrowseCsvAddrFile: ('@Html.GetLabel("lbl_BrowseCsvAddrFile")').encodeHtml(),
@@ -251,6 +256,8 @@
             msg_Use24HrFrmt: ('@Html.GetMessage("msg_Use24HrFrmt")').encodeHtml(),
             msg_ShwHrs: ('@Html.GetMessage("msg_ShwHrs")').encodeHtml(),
             msg_HideHrs: ('@Html.GetMessage("msg_HideHrs")').encodeHtml(),
+            msg_LkngExptnsTime: ('@Html.GetMessage("msg_LkngExptnsTime")').encodeHtml(),
+            msg_ExAddrVrfd: ('@Html.GetMessage("msg_ExAddrVrfd")').encodeHtml(),
 
             msg_AddCty: ('@Html.GetMessage("msg_AddCty")').encodeHtml(),
             msg_RfrshCtys: ('@Html.GetMessage("msg_RfrshCtys")').encodeHtml(),
@@ -286,13 +293,14 @@
         <script src="~/js/app/mainCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.js" swp-cache-version="true"></script>
         <script src="~/js/app/account/profileCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/usersCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/clientsCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/categoriesCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/citiesCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/tagsCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/addressesCtrlr.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/bulkImportCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/usersCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/clientsCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/categoriesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/citiesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/tagsCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/addressesCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/bulkImportCtrlr.js" swp-cache-version="true"></script>
+        <script src="~/js/app/exceptionsCtrlr.js" swp-cache-version="true"></script>
     </environment>
     <environment names="Staging,Production">
 
@@ -312,13 +320,14 @@
         <script src="~/js/app/mainCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/homeCtrlr.min.js" swp-cache-version="true"></script>
         <script src="~/js/app/account/profileCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/usersCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/clientsCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/categoriesCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/citiesCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/tagsCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/addressesCtrlr.min.js" swp-cache-version="true"></script>
-        <script src="~/js/app/admin/bulkImportCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/usersCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/clientsCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/categoriesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/citiesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/tagsCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/addressesCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/bulkImportCtrlr.min.js" swp-cache-version="true"></script>
+        <script src="~/js/app/exceptionsCtrlr.min.js" swp-cache-version="true"></script>
     </environment>
 
 }
@@ -338,6 +347,7 @@
                     <li><a href="#!/cities"><span>@Html.GetLabel("lbl_Cities")</span></a></li>
                     <li><a href="#!/addresses"><span>@Html.GetLabel("lbl_Addresses")</span></a></li>
                     <li><a href="#!/bulkimport"><span>@Html.GetLabel("lbl_Import")</span></a></li>
+                    <li><a href="#!/exceptions"><span>@Html.GetLabel("lbl_Exceptions")</span></a></li>
                 </ul>
             </div>
 
@@ -350,6 +360,7 @@
                     <li><a href="#!/cities"><div><span class="fa fa-building-o fa-2x"></span></div></a></li>
                     <li><a href="#!/addresses"><div><span class="fa fa-address-book-o fa-2x"></span></div></a></li>
                     <li><a href="#!/bulkimport"><div><span class="fa fa-file fa-2x"></span></div></a></li>
+                    <li><a href="#!/exceptions"><div><span class="fa fa-xing fa-2x"></span></div></a></li>
                 </ul>
             </div>
         </div>
