@@ -203,3 +203,7 @@ input.no-maxwidth {
     color: red;
     font-weight: bold;
 }
+
+.btn.round {
+    border-radius: 50%;
+}

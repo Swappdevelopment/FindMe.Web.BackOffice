@@ -18,7 +18,7 @@
     <div class="header" ng-init="vm.getAllAddressIDs()">
 
         <div class="button-container">
-            <button type="button" class="btn btn-findme btn-lg">
+            <button type="button" class="btn btn-findme btn-lg" ng-click="vm.verifyAddresses()">
                 <span class="fa fa-xing-square"></span>
                 {{vm.appProps.lbl_GetExptns}}
             </button>
@@ -26,8 +26,104 @@
 
         <p ng-show="vm.gettingAddressesCount && !vm.verifyingAddresses"><span class="fa fa-circle-o-notch fa-spin"></span></p>
         <p ng-hide="vm.gettingAddressesCount || vm.hideWarning || vm.verifyingAddresses">{{vm.appProps.lbl_Warning.toUpperCase()}}: {{vm.getAddressesCountMessage()}}</p>
-        <p ng-show="vm.verifyingAddresses">{{vm.getVerifyAddrMessage()}}</p>
-        
+        <p ng-show="vm.verifyingAddresses">
+            <span class="fa fa-circle-o-notch fa-spin"></span>
+            &nbsp;&nbsp;&nbsp;{{vm.getVerifyAddrMessage()}}&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-findme round btn-xs" style="width: 37px; height: 37px;"
+                    ng-click="vm.cancelVerification = true" ng-disabled="vm.cancelVerification" title="{{vm.cancelVerification ? 'Cancelling Verification' : 'Press to cancel Verification'}}">
+                <span class="fa fa-times"></span>
+            </button>
+        </p>
+
+    </div>
+
+    <div class="table-container" ng-show="vm.hideWarning">
+
+        <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+            <tr>
+                <td class="findme-color-fc-pink">
+                    <span>{{vm.appProps.lbl_Pg}}: {{vm.currentPgNmbr + 1}} {{vm.appProps.lbl_of}} {{vm.totalPgs}}</span>
+                    &nbsp;&nbsp;<b>{{vm.appProps.lbl_TtlRows}}: {{vm.addrExceptionsCount}}</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <ul class="pagination">
+
+                        <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                            <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                                <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
+
+        <div class="main-table-container">
+            <table class="table table-striped table-hover data" ng-init="vm.populateTags()">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <b>{{vm.appProps.lbl_Name}}</b>
+                        </td>
+                        <td>
+                            <b>{{vm.appProps.lbl_Slug}}</b>
+                        </td>
+                        <td>
+                            <b>{{vm.appProps.lbl_Exceptions}}</b>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="addrEx in vm.addrExceptionsPage">
+                    <tr class="findme-color-bc-lgray">
+                        <td>
+                            <button type="button" class="btn btn-findme btn-xs" ng-click="addrEx.showMsgs = !addrEx.showMsgs">
+                                <span ng-class="addrEx.showMsgs ? 'fa fa-minus' : 'fa fa-plus'"></span>
+                            </button>
+                        </td>
+                        <td></td>
+                        <td>
+                            <b>{{addrEx.name}}</b>
+                        </td>
+                        <td>
+                            <b>{{addrEx.slug}}</b>
+                        </td>
+                        <td>
+                            <b>{{addrEx.status}}</b>
+                        </td>
+                    </tr>
+
+                    <tr ng-show="addrEx.showMsgs" ng-repeat="data in addrEx.data">
+                        <td></td>
+                        <td colspan="4">
+                            <p>
+                                <b>{{data.msg}}</b>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <table class="pages col-sm-12 col-xs-12 no-animate" ng-hide="vm.isBusy">
+            <tr>
+                <td>
+                    <ul class="pagination">
+
+                        <li ng-repeat="pg in vm.pgsCollection" ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '') + ' crsr-pointer'">
+                            <a ng-class="(pg.isActive ? 'active' : '') + ' ' + (pg.disabled ? 'disabled' : '')" ng-click="vm.gotoPage(pg, true)">
+                                <span class="{{pg.icon}} no-animate" ng-show="(pg.icon.length > 0)"></span><span>{{pg.text}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+
     </div>
 
 </div>

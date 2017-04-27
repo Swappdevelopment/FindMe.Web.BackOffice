@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using CoreFtp;
+using CoreFtp.Infrastructure;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,11 +9,33 @@ using Microsoft.Extensions.Logging;
 using Swapp.Data;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
     public static class Extensions
     {
+        public static async Task<bool> FileExistsASync(this FtpClient ftpClient, string fileName)
+        {
+            try
+            {
+                long fileSize = await ftpClient.GetFileSizeAsync(fileName);
+
+                return fileSize >= 0;
+            }
+            catch (FtpException ex)
+            {
+                if (ex == null) throw new NullReferenceException();
+
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static bool IsMigration(this IConfigurationRoot obj)
         {
             try
