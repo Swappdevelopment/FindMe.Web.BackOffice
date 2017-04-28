@@ -136,13 +136,13 @@
 
 
 
-        vm.addrExceptionsCount = 0;
-
         var addrIDs;
         vm.addrIDsCount = 0;
 
         vm.addrExceptions = [];
         vm.addrExceptionsPage = [];
+
+        var thumbnailToGen = [];
 
         vm.hideWarning = false;
         vm.gettingAddressesCount = false;
@@ -210,6 +210,73 @@
         };
 
 
+        var isGeneneratingThumbnail = false;
+
+        var pushToGenThumbnail = function (ex) {
+
+            if (ex && ex.raw && ex.raw.status === 30 && ex.data && ex.data.length > 0) {
+
+                ex.isGeneneratingThumbnail = true;
+
+                for (var i = 0; i < ex.data.length; i++) {
+
+                    var af = ex.data[i];
+
+                    af.isGeneneratingThumbnail = true;
+
+                    thumbnailToGen.push({
+                        id: af.file.id,
+                        dimensions: af.th,
+                        af: af,
+                        ex: ex
+                    });
+                }
+
+                var genFunc = function (th) {
+
+                    var successFunc = function (resp) {
+
+                        th.ex.data.remove(th.af);
+
+                        if (th.ex.data.length === 0) {
+
+                            vm.addrExceptions.remove(th.ex);
+                            vm.addrExceptionsPage.remove(th.ex);
+
+                            setupPages();
+                        }
+                    };
+
+                    var errorFunc = function (error) {
+
+                        th.af.thumbnailGenerationFailed = true;
+                    };
+
+                    var finallyFunc = function () {
+
+                        th.af.isGeneneratingThumbnail = false;
+
+                        thumbnailToGen.remove(th);
+
+                        if (thumbnailToGen.length > 0) {
+
+                            genFunc(thumbnailToGen[0]);
+                        }
+                    };
+
+                    $http.post(appProps.urlGenerateAddressFile, { addrFileID: th.id, dimensions: th.dimensions, optimizedMedia: true })
+                         .then(successFunc, errorFunc)
+                         .finally(finallyFunc);
+                };
+
+                if (!isGeneneratingThumbnail) {
+
+                    genFunc(thumbnailToGen[0]);
+                }
+            }
+        };
+
+
         var readyException = function (raw) {
 
             if (raw) {
@@ -223,9 +290,19 @@
                         status = 'File Missing';
                         break;
 
+                    case 11:
+
+                        status = 'Optimized File Missing';
+                        break;
+
                     case 20:
 
                         status = 'Invalid File';
+                        break;
+
+                    case 21:
+
+                        status = 'Invalid Optimized File';
                         break;
 
                     case 30:
@@ -301,10 +378,12 @@
             if (addrIDIndex === 0) {
 
                 vm.verifiedAddrs = 0;
-                vm.addrExceptionsCount = 0;
+
                 vm.addrExceptions.length = 0;
                 vm.addrExceptionsPage.length = 0;
                 vm.cancelVerification = false;
+
+                thumbnailToGen.length = 0;
             }
 
             if (vm.cancelVerification || !addrIDs || addrIDIndex < 0 || addrIDIndex >= addrIDs.length) {
@@ -336,7 +415,7 @@
                                 vm.addrExceptionsPage.push(processedEx);
                             }
 
-                            vm.addrExceptionsCount += 1;
+                            pushToGenThumbnail(processedEx);
                         });
                     }
                 };
@@ -356,16 +435,14 @@
 
                             vm.addrExceptionsPage.push(exErr);
                         }
-
-                        vm.addrExceptionsCount += 1;
                     }
                 };
 
                 var finallyFunc = function () {
 
-                    var ttlPgs = parseInt(vm.addrExceptionsCount / appProps.resultItemsPerPg);
+                    var ttlPgs = parseInt(vm.addrExceptions.length / appProps.resultItemsPerPg);
 
-                    ttlPgs += ((vm.addrExceptionsCount % appProps.resultItemsPerPg) > 0) ? 1 : 0;
+                    ttlPgs += ((vm.addrExceptions.length % appProps.resultItemsPerPg) > 0) ? 1 : 0;
 
                     vm.totalPgs = ttlPgs;
 
