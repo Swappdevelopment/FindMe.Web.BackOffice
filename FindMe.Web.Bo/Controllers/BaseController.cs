@@ -170,6 +170,8 @@ namespace FindMe.Web.App
 
             int id = -1;
 
+            bool freeDsiplay = (ex is ServerException && ((ServerException)ex).FreeDisplay);
+
             if (ex is ExceptionID)
             {
                 id = (int)((ExceptionID)ex).ErrorID;
@@ -181,7 +183,7 @@ namespace FindMe.Web.App
             }
 
 
-            string message = (_env != null && _env.IsDevelopment()) ? ex.MergeMsgInnerExMsgs() : this.GetMessage("erMsg_SmthngWntWrng");
+            string message = (_env != null && _env.IsDevelopment()) ? ex.MergeMsgInnerExMsgs() : (freeDsiplay ? ex.Message : this.GetMessage("erMsg_SmthngWntWrng"));
 
 
             return BadRequestEx(message, id);
