@@ -105,6 +105,21 @@
                     </div>
 
                     <br />
+
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Desc}} EN</b></label>
+                            <textarea class="form-control three-quarter no-animate no-max-width" rows="4"
+                                      placeholder="{{vm.appProps.lbl_Desc}} EN" ng-model="vm.address.desc_en"></textarea>
+                        </div>
+                        <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <label class="control-label"><b>{{vm.appProps.lbl_Desc}} FR</b></label>
+                            <textarea class="form-control no-animate no-max-width" rows="4"
+                                      placeholder="{{vm.appProps.lbl_Desc}} FR" ng-model="vm.address.desc_fr"></textarea>
+                        </div>
+                    </div>
+
+                    <br />
                     <hr />
 
                 </form>
@@ -158,7 +173,7 @@
                                         </td>
                                         <td>
                                             <span class="check-box">
-                                                <input type="checkbox" value="None" id="addrContactActive-{{ctcRow.id}}" name="addrContactActive-{{ctcRow.id}}" ng-model="ctcRow.active" ng-change="vm.contactValueChanged(ctcRow)"/>
+                                                <input type="checkbox" value="None" id="addrContactActive-{{ctcRow.id}}" name="addrContactActive-{{ctcRow.id}}" ng-model="ctcRow.active" ng-change="vm.contactValueChanged(ctcRow)" />
                                                 <label class="lbl-chkb" for="addrContactActive-{{ctcRow.id}}"></label>
                                             </span>
                                         </td>
@@ -519,7 +534,7 @@
                                     </tr>
                                 </thead>
                                 <tbody ng-repeat="day in vm.address.openHours">
-                                    
+
                                     <tr class="findme-color-bc-lgray">
                                         <td colspan="3">
                                             <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addOpenHours(day)"><span class="fa fa-plus-square"></span></button>
@@ -733,10 +748,10 @@
                         </div>
                         <div class="row" ng-show="vm.tripadPreview">
                             <div class="prvw large col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-bind-html="vm.address.tripAdWidget.trustLargeValue()">
-                                
+
                             </div>
                             <div class="prvw small col-lg-6 col-md-6 col-sm-12 col-xs-12" ng-bind-html="vm.address.tripAdWidget.trustSmallValue()">
-                                
+
                             </div>
                         </div>
 

@@ -516,7 +516,14 @@
 
                 if (activePg && Array.isArray(activePg)) {
 
-                    activePg = activePg.length > 0 ? activePg[0] : null;
+                    if (activePg.length > 0) {
+
+                        activePg = activePg[0];
+                    }
+                    else {
+
+                        activePg = { index: 0 };
+                    }
                 }
 
                 if (activePg) {

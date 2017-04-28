@@ -163,7 +163,7 @@ namespace FindMe.Web.App
             }
         }
 
-        protected BadRequestObjectResult BadRequestEx(Exception ex)
+        protected ObjectResult BadRequestEx(Exception ex)
         {
             if (ex == null) return BadRequest(null);
 
@@ -186,17 +186,31 @@ namespace FindMe.Web.App
             string message = (_env != null && _env.IsDevelopment()) ? ex.MergeMsgInnerExMsgs() : (freeDsiplay ? ex.Message : this.GetMessage("erMsg_SmthngWntWrng"));
 
 
-            return BadRequestEx(message, id);
+            return BadRequestEx(message, id, freeDsiplay ? 500 : 400);
         }
 
-        protected BadRequestObjectResult BadRequestEx(string message, int id = -1)
+        protected ObjectResult BadRequestEx(string message, int id = -1, int statusCode = 400)
         {
-            return BadRequest(
-                        new
-                        {
-                            msg = message,
-                            id = id
-                        });
+            switch (statusCode)
+            {
+                case 400:
+                    return BadRequest(
+                                new
+                                {
+                                    msg = message,
+                                    id = id
+                                });
+
+                default:
+                    return new ObjectResult(new
+                    {
+                        msg = message,
+                        id = id
+                    })
+                    {
+                        StatusCode = statusCode
+                    };
+            }
         }
 
 

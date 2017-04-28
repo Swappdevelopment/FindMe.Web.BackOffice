@@ -373,6 +373,8 @@
                             || address.category_Id !== compAddress.category_Id
                             || address.latitude !== compAddress.latitude
                             || address.longitude !== compAddress.longitude
+                            || address.desc_en !== compAddress.desc_en
+                            || address.desc_fr !== compAddress.desc_fr
                             || address.flgRecByFbFans !== compAddress.flgRecByFbFans
                             || address.rateOverride !== compAddress.rateOverride
                             || address.rateOverrideCount !== compAddress.rateOverrideCount
@@ -485,6 +487,7 @@
                             save: vm.save,
                             deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
+                            revertAddress: revert,
                             checkFilesRecordState: checkFilesRecordState,
                             checkOpenHoursRecordState: checkOpenHoursRecordState,
                             checkContactsRecordState: checkContactsRecordState,
@@ -605,6 +608,34 @@
                             ctc.__comp = jQuery.extend(false, {}, ctc);
                         });
                     });
+                }
+
+                if (value.descs) {
+
+                    $.each(value.descs, function (i, desc) {
+
+                        if (desc && desc.lang_Code) {
+
+                            var langCode = desc.lang_Code.toLowerCase();
+
+                            if (langCode.startsWith('en')) {
+
+                                value.desc_en = desc.value;
+                            }
+                            else if (langCode.startsWith('fr')) {
+
+                                value.desc_fr = desc.value;
+                            }
+                        }
+                    });
+
+                    if (value.__comp) {
+
+                        value.__comp.desc_en = value.desc_en;
+                        value.__comp.desc_fr = value.desc_fr;
+                    }
+
+                    delete value.descs;
                 }
 
                 if (!value.tripAdWidget) {
@@ -992,7 +1023,7 @@
         };
 
 
-        vm.revert = function (address) {
+        var revert = function (address) {
 
             if (address
                 && address.__comp) {
@@ -1012,6 +1043,8 @@
                     address.category = org.category;
                     address.latitude = org.latitude;
                     address.longitude = org.longitude;
+                    address.desc_en = org.desc_en;
+                    address.desc_fr = org.desc_fr;
                     address.flgRecByFbFans = org.flgRecByFbFans;
                     address.rateOverride = org.rateOverride;
                     address.rateOverrideCount = org.rateOverrideCount;
@@ -1270,6 +1303,9 @@
                                         handleDbAddress(tempValue);
 
                                         setUpContent(value);
+
+                                        tempValue.desc_en = value.desc_en;
+                                        tempValue.desc_fr = value.desc_fr;
 
                                         if (value.ratingOverrides && tempValue.ratingOverrides) {
 
@@ -2025,9 +2061,16 @@
 
         vm.close = function () {
 
-            if (vm.address && vm.address.id <= 0) {
+            if (vm.address) {
 
-                param.deleteModal(vm.address);
+                if (vm.address.id > 0) {
+
+                    param.revertAddress(vm.address);
+                }
+                else {
+
+                    param.deleteModal(vm.address);
+                }
             }
 
             $uibModalInstance.close();

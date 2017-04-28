@@ -87,6 +87,10 @@ textarea {
     max-width: 280px;
 }
 
+    textarea.no-max-width {
+        max-width: none;
+    }
+
 .cursor-pointer {
     cursor: pointer;
 }

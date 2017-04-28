@@ -702,6 +702,8 @@ namespace FindMe.Web.App
 
             List<object> tempLst = null;
 
+            Language[] langs;
+
             Func<JObject, Address> func;
 
             try
@@ -721,12 +723,49 @@ namespace FindMe.Web.App
 
                 if (param != null)
                 {
+                    langs = await _repo.Execute<Language[]>("GetLanguages", null, SqlSearchMode.Equals);
+
+                    if (langs == null) throw new NullReferenceException(nameof(Language));
+
+
                     func = (jobj) =>
                     {
                         if (jobj == null) return null;
 
 
                         var addr = Helper.JSonCamelDeserializeObject<Address>(jobj);
+
+                        addr.LangDescs = addr.LangDescs == null ? new ObjectCollection<Address_LangDesc>() : addr.LangDescs;
+
+                        string desc = jobj.JGetPropVal<string>("desc_en");
+
+                        var lang = langs.FirstOrDefault(l => l.Code != null && l.Code.ToLower().StartsWith("en"));
+
+                        if (lang != null)
+                        {
+                            addr.LangDescs.Add(
+                                new Address_LangDesc()
+                                {
+                                    Address_Id = addr.ID,
+                                    Language_Id = lang.ID,
+                                    Value = DescData.ToBlankDescDataJson(desc)
+                                });
+                        }
+
+                        desc = jobj.JGetPropVal<string>("desc_fr");
+
+                        lang = langs.FirstOrDefault(l => l.Code != null && l.Code.ToLower().StartsWith("fr"));
+
+                        if (lang != null)
+                        {
+                            addr.LangDescs.Add(
+                                new Address_LangDesc()
+                                {
+                                    Address_Id = addr.ID,
+                                    Language_Id = lang.ID,
+                                    Value = DescData.ToBlankDescDataJson(desc)
+                                });
+                        }
 
 
                         var jFiles = new List<JObject>();

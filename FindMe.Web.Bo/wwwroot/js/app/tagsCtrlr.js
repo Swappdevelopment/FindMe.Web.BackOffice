@@ -425,6 +425,11 @@
 
                     var errorFunc = function (error) {
 
+                        $.each(validTags, function (index, value) {
+
+                            value.inEditMode = true;
+                        });
+
                         if (error.data
                             && checkRedirectForSignIn(error.data)) {
 
