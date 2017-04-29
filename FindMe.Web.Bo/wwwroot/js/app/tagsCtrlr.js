@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('tagsCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'headerConfigService', tagsCtrlrFunc]);
+           .controller('tagsCtrlr', ['$http', '$scope', '$uibModal', 'appProps', 'listItemService', 'miscToolsService', 'headerConfigService', tagsCtrlrFunc]);
 
-    function tagsCtrlrFunc($http, $scope, $uibModal, appProps, headerConfigService) {
+    function tagsCtrlrFunc($http, $scope, $uibModal, appProps, listItemService, miscToolsService, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -327,6 +327,55 @@
             }
         };
 
+        vm.initFrm = function (tag) {
+
+            if (tag) {
+
+                listItemService.setItemFormValidation(
+                        tag,
+                        [{
+                            name: 'name_en',
+                            isReq: true
+                        }, {
+                            name: 'name_fr',
+                            isReq: true
+                        }, {
+                            name: 'slug_en',
+                            isReq: true
+                        }, {
+                            name: 'slug_fr',
+                            isReq: true
+                        }]);
+            }
+        };
+
+        vm.slugify = function (tag, propName) {
+
+            if (tag && propName) {
+
+                switch (propName.toLowerCase()) {
+
+                    case 'name_en':
+                    case 'en':
+
+                        if (!tag.slug_en) {
+
+                            tag.slug_en = miscToolsService.slugify(tag.name_en);
+                        }
+                        break;
+
+                    case 'name_fr':
+                    case 'fr':
+
+                        if (!tag.slug_fr) {
+
+                            tag.slug_fr = miscToolsService.slugify(tag.name_fr);
+                        }
+                        break;
+                }
+            }
+        }
+
 
         vm.save = function (tags, finallyCallback, deleteFlags) {
 
@@ -337,132 +386,135 @@
                     tags = [tags];
                 }
 
-                if (deleteFlags && !Array.isArray(deleteFlags)) {
+                if (listItemService.isFormValArrayValid(tags)) {
 
-                    deleteFlags = [deleteFlags];
-                }
+                    if (deleteFlags && !Array.isArray(deleteFlags)) {
 
-                var validTags = [];
-                var toBeSavedTags = [];
-
-                var hasDeleteFlags = (deleteFlags && deleteFlags.length === tags.length);
-
-                for (var i = 0; i < tags.length; i++) {
-
-                    var tag = tags[i];
-
-                    if (tag
-                        && tag.__comp) {
-
-                        var toBeSaved = jQuery.extend(true, {}, tag);
-                        delete toBeSaved.__comp;
-
-                        checkRecordState(toBeSaved, tag.__comp, hasDeleteFlags ? deleteFlags[i] : false);
-                        toBeSavedTags.push(toBeSaved);
-
-                        tag.saving = true;
-                        validTags.push(tag);
+                        deleteFlags = [deleteFlags];
                     }
-                }
 
-                if (validTags.length > 0) {
+                    var validTags = [];
+                    var toBeSavedTags = [];
 
-                    var successFunc = function (resp) {
+                    var hasDeleteFlags = (deleteFlags && deleteFlags.length === tags.length);
 
-                        if (resp.data
-                            && resp.data.result
-                            && resp.data.result.length > 0) {
+                    for (var i = 0; i < tags.length; i++) {
 
-                            if (validTags.length === resp.data.result.length) {
+                        var tag = tags[i];
 
-                                $.each(resp.data.result, function (index, value) {
+                        if (tag
+                            && tag.__comp) {
 
-                                    var tempValue = validTags[index];
+                            var toBeSaved = jQuery.extend(true, {}, tag);
+                            delete toBeSaved.__comp;
 
-                                    if (value) {
+                            checkRecordState(toBeSaved, tag.__comp, hasDeleteFlags ? deleteFlags[i] : false);
+                            toBeSavedTags.push(toBeSaved);
 
-                                        tempValue.id = value.id;
-                                        tempValue.name_en = value.name_en;
-                                        tempValue.name_fr = value.name_fr;
-                                        tempValue.slug_en = value.slug_en;
-                                        tempValue.slug_fr = value.slug_fr;
-                                        tempValue.active = value.active;
+                            tag.saving = true;
+                            validTags.push(tag);
+                        }
+                    }
 
-                                        tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
+                    if (validTags.length > 0) {
 
-                                        if (toBeSavedTags[index].recordState === 10) {
+                        var successFunc = function (resp) {
 
-                                            vm.tagsCountMod += 1;
+                            if (resp.data
+                                && resp.data.result
+                                && resp.data.result.length > 0) {
 
-                                            if (!vm.totalPgs || vm.totalPgs <= 0) {
+                                if (validTags.length === resp.data.result.length) {
 
-                                                vm.totalPgs = 1;
+                                    $.each(resp.data.result, function (index, value) {
+
+                                        var tempValue = validTags[index];
+
+                                        if (value) {
+
+                                            tempValue.id = value.id;
+                                            tempValue.name_en = value.name_en;
+                                            tempValue.name_fr = value.name_fr;
+                                            tempValue.slug_en = value.slug_en;
+                                            tempValue.slug_fr = value.slug_fr;
+                                            tempValue.active = value.active;
+
+                                            tag.name = appProps.currentLang.startsWith('en') ? tag.name_en : tag.name_fr;
+
+                                            if (toBeSavedTags[index].recordState === 10) {
+
+                                                vm.tagsCountMod += 1;
+
+                                                if (!vm.totalPgs || vm.totalPgs <= 0) {
+
+                                                    vm.totalPgs = 1;
+                                                }
+                                            }
+
+                                            delete tempValue.status;
+                                            delete tempValue.recordState;
+
+                                            tempValue.__comp = value;
+                                        }
+                                        else {
+
+                                            vm.tags.remove(tempValue);
+
+                                            vm.tagsCountMod -= 1;
+
+                                            if ((vm.tagsCount + vm.tagsCountMod) <= 0) {
+
+                                                vm.totalPgs = 0;
                                             }
                                         }
 
-                                        delete tempValue.status;
-                                        delete tempValue.recordState;
-
-                                        tempValue.__comp = value;
-                                    }
-                                    else {
-
-                                        vm.tags.remove(tempValue);
-
-                                        vm.tagsCountMod -= 1;
-
-                                        if ((vm.tagsCount + vm.tagsCountMod) <= 0) {
-
-                                            vm.totalPgs = 0;
-                                        }
-                                    }
-
-                                    $scope.$apply();
-                                });
+                                        //$scope.$apply();
+                                    });
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    var errorFunc = function (error) {
+                        var errorFunc = function (error) {
 
-                        $.each(validTags, function (index, value) {
+                            $.each(validTags, function (index, value) {
 
-                            value.inEditMode = true;
-                        });
+                                value.inEditMode = true;
+                            });
 
-                        if (error.data
-                            && checkRedirectForSignIn(error.data)) {
+                            if (error.data
+                                && checkRedirectForSignIn(error.data)) {
 
-                            vm.errorstatus = error.status + ' - ' + error.statusText;
-                            vm.errormsg = error.data.msg;
-                            vm.errorid = error.data.id;
-                            vm.showError = true;
-                        }
-                    };
+                                vm.errorstatus = error.status + ' - ' + error.statusText;
+                                vm.errormsg = error.data.msg;
+                                vm.errorid = error.data.id;
+                                vm.showError = true;
+                            }
+                        };
 
-                    var finallyFunc = function () {
+                        var finallyFunc = function () {
 
-                        for (var i = 0; i < validTags.length; i++) {
+                            for (var i = 0; i < validTags.length; i++) {
 
-                            validTags[i].saving = false;
-                            validTags[i].inEditMode = false;
-                        }
+                                validTags[i].saving = false;
+                                validTags[i].inEditMode = false;
+                            }
 
-                        if (finallyCallback) {
+                            if (finallyCallback) {
 
-                            finallyCallback();
-                        }
-                    };
+                                finallyCallback();
+                            }
+                        };
 
 
-                    vm.showError = false;
-                    vm.errorstatus = '';
-                    vm.errormsg = '';
-                    vm.errorid = 0;
+                        vm.showError = false;
+                        vm.errorstatus = '';
+                        vm.errormsg = '';
+                        vm.errorid = 0;
 
-                    $http.post(appProps.urlSaveTags, { tags: toBeSavedTags })
-                         .then(successFunc, errorFunc)
-                         .finally(finallyFunc);
+                        $http.post(appProps.urlSaveTags, { tags: toBeSavedTags })
+                             .then(successFunc, errorFunc)
+                             .finally(finallyFunc);
+                    }
                 }
             }
         };

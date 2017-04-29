@@ -714,7 +714,7 @@ if (GlobalProps) {
 }
 
 
-function accentFold(value) {
+function accentFold(value, toLowerCase) {
 
     var result = '';
 
@@ -729,5 +729,10 @@ function accentFold(value) {
         }
     }
 
-    return result;
+    return toLowerCase ? result.toLowerCase() : result;
 }
+
+String.prototype.accentFold = function (toLowerCase) {
+
+    return accentFold(this, toLowerCase);
+};

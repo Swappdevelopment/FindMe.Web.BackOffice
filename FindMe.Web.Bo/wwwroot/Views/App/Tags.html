@@ -88,7 +88,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="tag in vm.tags" ng-class="tag.inEditMode ? 'inEditMode' : ''">
+                <tr ng-repeat="tag in vm.tags" ng-class="tag.inEditMode ? 'inEditMode' : ''" ng-init="vm.initFrm(tag)">
                     <td>
                         <div class="btn-toolbar">
 
@@ -101,8 +101,8 @@
                                 <span class="fa fa-trash"></span>
                             </button>
 
-                            <button type="button" class="btn btn-findme action no-animate"  
-                                    title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(tag)" ng-show="tag.inEditMode && !tag.saving">
+                            <button type="button" class="btn btn-findme action no-animate"
+                                    title="{{vm.appProps.lbl_Save}}" ng-click="vm.save(tag)" ng-show="tag.inEditMode && !tag.saving" ng-disabled="!tag.formVal.isValid()">
                                 <span class="fa fa-save"></span>
                             </button>
                             <button type="button" class="btn btn-findme hollow action no-animate"
@@ -127,20 +127,36 @@
                     <td>
                         <b>EN:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.name_en}}</span>
-                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="tag.name_en">
+                        <input type="text" class="form-control inline-element no-animate" name="name_en"
+                               ng-focus="tag.formVal.name_en.touched()" ng-blur="vm.slugify(tag, 'en')"
+                               ng-disabled="tag.saving" ng-show="tag.inEditMode"
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.name_en">
+                        <p ng-show="tag.inEditMode && !tag.formVal.name_en.isValid() && tag.formVal.name_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                         <br />
                         <b>FR:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.name_fr}}</span>
-                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="tag.name_fr">
+                        <input type="text" class="form-control inline-element no-animate" name="name_fr"
+                               ng-focus="tag.formVal.name_fr.touched()" ng-blur="vm.slugify(tag, 'fr')"
+                               ng-disabled="tag.saving" ng-show="tag.inEditMode"
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.name_fr">
+                        <p ng-show="tag.inEditMode && !tag.formVal.name_fr.isValid() && tag.formVal.name_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.slug_en}}</span>
-                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="tag.slug_en">
+                        <input type="text" class="form-control inline-element no-animate" name="name_en"
+                               ng-focus="tag.formVal.slug_en.touched()"
+                               ng-disabled="tag.saving" ng-show="tag.inEditMode"
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.slug_en">
+                        <p ng-show="tag.inEditMode && !tag.formVal.slug_en.isValid() && tag.formVal.slug_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                         <br />
                         <b>FR:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.slug_fr}}</span>
-                        <input ng-disabled="tag.saving" ng-show="tag.inEditMode" placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control inline-element no-animate" ng-model="tag.slug_fr">
+                        <input type="text" class="form-control inline-element no-animate" name="name_en"
+                               ng-focus="tag.formVal.slug_fr.touched()"
+                               ng-disabled="tag.saving" ng-show="tag.inEditMode"
+                               placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.slug_fr">
+                        <p ng-show="tag.inEditMode && !tag.formVal.slug_fr.isValid() && tag.formVal.slug_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                     </td>
                     <td class="text-center">
                         <span ng-hide="tag.inEditMode" class="fa {{tag.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
