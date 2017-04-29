@@ -8,7 +8,7 @@ namespace FindMe.Web.App
 {
     public partial class ImageManip
     {
-        private static MemoryStream Resize(Stream input)
+        private static MemoryStream Resize(Stream input, int width, int height)
         {
             MemoryStream output;
 
@@ -19,7 +19,7 @@ namespace FindMe.Web.App
                 var image = Image.Load(input)
                     .Resize(new ResizeOptions
                     {
-                        Size = new Size(260, 170),
+                        Size = new Size(width, height),
                         Mode = ResizeMode.Crop
                     });
 

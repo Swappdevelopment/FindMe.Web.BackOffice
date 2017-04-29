@@ -21,7 +21,7 @@ namespace FindMe.Web.App
             {
                 long fileSize = await ftpClient.GetFileSizeAsync(fileName);
 
-                return fileSize >= 0;
+                return fileSize > 0;
             }
             catch (FtpException ex)
             {

@@ -44,6 +44,16 @@
     background-color: #36d03e !important;
 }
 
+/* FindMe's Red Backgroundcolor */
+.findme-color-bc-red {
+    background-color: #d41919 !important;
+}
+
+/* FindMe's Light Red Backgroundcolor */
+.findme-color-bc-redlight {
+    background-color: rgba(212, 25, 25, 0.45) !important;
+}
+
 
 /* FindMe's Main forecolor */
 .findme-color-fc-white {
@@ -78,4 +88,9 @@
 /* FindMe's Green forecolor */
 .findme-color-fc-green {
     color: #36d03e !important;
+}
+
+/* FindMe's Red forecolor */
+.findme-color-fc-red {
+    color: #d41919 !important;
 }

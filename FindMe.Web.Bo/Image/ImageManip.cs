@@ -1,29 +1,53 @@
-﻿using ImageSharp;
-using System;
+﻿using System;
 using System.IO;
 
 namespace FindMe.Web.App
 {
     public partial class ImageManip
     {
-        public static void OptimizeImage(Stream input, string newImagePath, int quality)
+        public static MemoryStream OptimizeImage(Stream input, int quality, int width, int height, bool resize = true, bool compress = true)
         {
-            byte[] bArr;
+            MemoryStream result;
 
             try
             {
-                using (var resizedStream = Resize(input))
+                if (resize && compress)
                 {
-                    using (var compressStream = Compress(resizedStream))
+                    using (var resizedStream = Resize(input, width, height))
                     {
-                        using (var output = File.Exists(newImagePath) ? File.OpenWrite(newImagePath) : File.Create(newImagePath))
-                        {
-                            bArr = compressStream.ToArray();
-
-                            output.Write(bArr, 0, bArr.Length);
-                        }
+                        result = Compress(resizedStream, quality: quality);
                     }
                 }
+                else if (resize)
+                {
+                    result = Resize(input, width, height);
+                }
+                else if (compress)
+                {
+                    result = Compress(input, quality: quality);
+                }
+                else
+                {
+                    result = new MemoryStream();
+                    input.CopyTo(result);
+                }
+
+
+                return result;
+                //using (var resizedStream = Resize(input))
+                //{
+
+                //    return Compress(resizedStream);
+                //    using (var compressStream = Compress(resizedStream))
+                //    {
+                //        using (var output = File.Exists(newImagePath) ? File.OpenWrite(newImagePath) : File.Create(newImagePath))
+                //        {
+                //            bArr = compressStream.ToArray();
+
+                //            output.Write(bArr, 0, bArr.Length);
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -31,7 +55,8 @@ namespace FindMe.Web.App
             }
             finally
             {
-                bArr = null;
+                result = null;
+                //bArr = null;
             }
         }
     }

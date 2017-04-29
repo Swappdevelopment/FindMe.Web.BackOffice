@@ -668,7 +668,7 @@
 
             if (value) {
 
-                var temp, i;
+                var temp, i, val;
 
                 if (value.ratingOverrides) {
 
@@ -678,7 +678,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.ratingOverrides.push(val);
                     }
@@ -692,7 +692,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.tags.push(val);
                     }
@@ -706,7 +706,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.images.push(val);
                     }
@@ -720,7 +720,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.logos.push(val);
                     }
@@ -734,7 +734,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.documents.push(val);
                     }
@@ -748,7 +748,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.openHours.push(val);
                     }
@@ -762,7 +762,7 @@
 
                     for (i = 0; i < temp.length; i++) {
 
-                        var val = jQuery.extend(true, {}, temp[i]);
+                        val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
 
                         $.each(val.contacts, function () {

@@ -21,6 +21,8 @@
         headerConfigService.refreshBtnTltp = appProps.msg_RfrshAddrExceptions;
         headerConfigService.saveBtnTltp = appProps.msg_SaveAddrExceptions;
 
+        var MAX_THUMBNAIL_GENERATION = 5;
+
 
         var vm = this;
 
@@ -212,9 +214,11 @@
 
         var isGeneneratingThumbnail = false;
 
+        var thumbnailToGenIdCounter = 0;
+
         var pushToGenThumbnail = function (ex) {
 
-            if (ex && ex.raw && ex.raw.status === 30 && ex.data && ex.data.length > 0) {
+            if (ex && ex.raw && ex.raw.status === 30 && ex.data && ex.data.length > 0) { //&& !vm.cancelVerification) {
 
                 ex.isGeneneratingThumbnail = true;
 
@@ -226,52 +230,126 @@
 
                     thumbnailToGen.push({
                         id: af.file.id,
+                        format: af.file.format,
                         dimensions: af.th,
                         af: af,
-                        ex: ex
+                        ex: ex,
+                        uid: ++thumbnailToGenIdCounter
                     });
                 }
 
-                var genFunc = function (th) {
+                var genFunc = function () {
+
+                    var processed = [];
+                    var params = [];
 
                     var successFunc = function (resp) {
 
-                        th.ex.data.remove(th.af);
+                        var errosReturned = resp && resp.data && resp.data.errors && resp.data.errors.length > 0;
 
-                        if (th.ex.data.length === 0) {
+                        $.each(processed, function (i, th) {
 
-                            vm.addrExceptions.remove(th.ex);
-                            vm.addrExceptionsPage.remove(th.ex);
+                            var errorMsg = errosReturned ?
+                                $.grep(resp.data.errors, function (er) {
+                                    return parseInt(er.uid) === th.uid;
+                                }) : null;
 
-                            setupPages();
-                        }
+                            errorMsg = errorMsg && errorMsg.length > 0 ? errorMsg[0].error : null;
+
+                            if (errorMsg) {
+
+                                th.af.thumbnailGenerationFailed = true;
+                                th.af.isGeneneratingThumbnail = false;
+                                th.af.genErrorMsg = errorMsg;
+                            }
+                            else {
+
+                                th.af.isGeneneratingThumbnail = false;
+                                th.ex.data.remove(th.af);
+                            }
+
+                            if (th.ex.data.length === 0) {
+
+                                vm.addrExceptions.remove(th.ex);
+                                vm.addrExceptionsPage.remove(th.ex);
+
+                                setupPages();
+                            }
+                            else {
+
+                                if ($.grep(th.ex.data, function (f) {
+                                       return f.isGeneneratingThumbnail;
+                                }).length === 0) {
+
+                                    th.ex.isGeneneratingThumbnail = false;
+                                    th.ex.thumbnailGenerationFailed = true;
+                                }
+                            }
+                        });
                     };
 
                     var errorFunc = function (error) {
 
-                        th.af.thumbnailGenerationFailed = true;
+                        $.each(processed, function (i, th) {
+
+                            th.af.thumbnailGenerationFailed = true;
+                            th.af.isGeneneratingThumbnail = false;
+                        });
                     };
 
                     var finallyFunc = function () {
 
-                        th.af.isGeneneratingThumbnail = false;
+                        $.each(processed, function (i, th) {
 
-                        thumbnailToGen.remove(th);
+                            thumbnailToGen.remove(th);
+                        });
+
+                        //if (vm.cancelVerification) {
+
+                        //    $.each(thumbnailToGen, function () {
+
+                        //        this.ex.isGeneneratingThumbnail = false;
+                        //        this.ex.thumbnailGenerationFailed = false;
+
+                        //        this.af.thumbnailGenerationFailed = false;
+                        //        this.af.isGeneneratingThumbnail = false;
+                        //    });
+                        //}
+                        //else 
 
                         if (thumbnailToGen.length > 0) {
 
-                            genFunc(thumbnailToGen[0]);
+                            genFunc();
                         }
                     };
 
-                    $http.post(appProps.urlGenerateAddressFile, { addrFileID: th.id, dimensions: th.dimensions, optimizedMedia: true })
+
+                    for (var i = 0; i < MAX_THUMBNAIL_GENERATION; i++) {
+
+                        if (i < thumbnailToGen.length) {
+
+                            var th = thumbnailToGen[i];
+
+                            processed.push(th);
+
+                            params.push({
+                                addrFileID: th.id,
+                                addrFileFormat: th.format,
+                                dimensions: th.dimensions,
+                                uid: th.uid,
+                                optimizedMedia: true
+                            });
+                        }
+                    }
+
+                    $http.post(appProps.urlGenerateAddressFile, { params: params })
                          .then(successFunc, errorFunc)
                          .finally(finallyFunc);
                 };
 
                 if (!isGeneneratingThumbnail) {
 
-                    genFunc(thumbnailToGen[0]);
+                    genFunc();
                 }
             }
         };

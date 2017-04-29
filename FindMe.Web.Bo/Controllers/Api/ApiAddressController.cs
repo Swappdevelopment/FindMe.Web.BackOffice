@@ -1,5 +1,6 @@
 ﻿using CoreFtp;
 using CoreFtp.Enum;
+using CoreFtp.Infrastructure;
 using FindMe.Data;
 using FindMe.Data.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -239,64 +240,31 @@ namespace FindMe.Web.App
                     string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
                     bool ftpIgnoreCertificateErrors = true;
 
-
-                    using (var ftpClient = new FtpClient(
-                                                       new FtpClientConfiguration()
-                                                       {
-                                                           Host = ftpHost,
-                                                           Username = ftpUserName,
-                                                           Password = ftppassword,
-                                                           EncryptionType = FtpEncryption.Implicit,
-                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
-                                                       }))
-                    {
-                        await ftpClient.LoginAsync();
-
-                        foreach (var af in addr.Files)
+                    await Task.WhenAll(
+                        from f in addr.Files
+                        select Helper.GetFunc<AddressFile, Task>(async af =>
                         {
-                            string afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: false);
-
-                            if (!await ftpClient.FileExistsASync(afPath))
+                            using (var ftpClient = new FtpClient(
+                                                new FtpClientConfiguration()
+                                                {
+                                                    Host = ftpHost,
+                                                    Username = ftpUserName,
+                                                    Password = ftppassword,
+                                                    EncryptionType = FtpEncryption.Implicit,
+                                                    IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                }))
                             {
-                                addrExceptions.Add(new AddrException()
+                                await ftpClient.LoginAsync();
+
+                                string afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: false);
+
+                                if (await ftpClient.FileExistsASync(afPath))
                                 {
-                                    Status = AddressVerifiedStatus.FileMissing,
-                                    Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
-                                });
-                            }
-                            else
-                            {
-                                switch (af.Type)
-                                {
-                                    case AddressFileType.Images:
-                                    case AddressFileType.Logos:
+                                    switch (af.Type)
+                                    {
+                                        case AddressFileType.Images:
+                                        case AddressFileType.Logos:
 
-                                        ImageSharp.Image img;
-
-                                        try
-                                        {
-                                            using (var afStream = await ftpClient.OpenFileReadStreamAsync(afPath))
-                                            {
-                                                img = ImageSharp.Image.Load(afStream);
-
-                                                img = (img.Width > 0 && img.Height > 0) ? img : null;
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            img = null;
-                                        }
-
-                                        if (img == null)
-                                        {
-                                            addrExceptions.Add(new AddrException()
-                                            {
-                                                Status = AddressVerifiedStatus.InvalidFile,
-                                                Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
-                                            });
-                                        }
-                                        else
-                                        {
                                             afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
 
                                             if (!await ftpClient.FileExistsASync(afPath))
@@ -307,76 +275,34 @@ namespace FindMe.Web.App
                                                     Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
                                                 });
                                             }
-                                            else
+
+                                            foreach (var size in UrlManager.GetThumnailSizes)
                                             {
-                                                try
-                                                {
-                                                    using (var afStream = await ftpClient.OpenFileReadStreamAsync(afPath))
-                                                    {
-                                                        img = ImageSharp.Image.Load(afStream);
+                                                string thumnailPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
 
-                                                        img = (img.Width > 0 && img.Height > 0) ? img : null;
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    img = null;
-                                                }
-
-                                                if (img == null)
+                                                if (!await ftpClient.FileExistsASync(thumnailPath))
                                                 {
                                                     addrExceptions.Add(new AddrException()
                                                     {
-                                                        Status = AddressVerifiedStatus.InvalidOptzFile,
-                                                        Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
+                                                        Status = AddressVerifiedStatus.ThumbnailMissing,
+                                                        Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
                                                     });
                                                 }
-
-                                                foreach (var size in UrlManager.GetThumnailSizes)
-                                                {
-                                                    string thumnailPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
-
-                                                    if (!await ftpClient.FileExistsASync(thumnailPath))
-                                                    {
-                                                        addrExceptions.Add(new AddrException()
-                                                        {
-                                                            Status = AddressVerifiedStatus.ThumbnailMissing,
-                                                            Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
-                                                        });
-                                                    }
-                                                    else
-                                                    {
-                                                        try
-                                                        {
-                                                            using (var thStream = await ftpClient.OpenFileReadStreamAsync(thumnailPath))
-                                                            {
-                                                                img = ImageSharp.Image.Load(thStream);
-
-                                                                img = (img.Width > 0 && img.Height > 0) ? img : null;
-                                                            }
-                                                        }
-                                                        catch
-                                                        {
-                                                            img = null;
-                                                        }
-
-                                                        if (img == null)
-                                                        {
-                                                            addrExceptions.Add(new AddrException()
-                                                            {
-                                                                Status = AddressVerifiedStatus.InvalidThumbnail,
-                                                                Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
-                                                            });
-                                                        }
-                                                    }
-                                                }
                                             }
-                                        }
-                                        break;
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    addrExceptions.Add(new AddrException()
+                                    {
+                                        Status = AddressVerifiedStatus.FileMissing,
+                                        Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
+                                    });
                                 }
                             }
-                        }
-                    }
+                        })(f));
+
 
                     if (addr != null
                         && addrExceptions != null
@@ -397,6 +323,8 @@ namespace FindMe.Web.App
                         result = new object[0];
                     }
                 }
+
+                return Ok(new { exceptions = result });
             }
             catch (ExceptionID ex)
             {
@@ -414,55 +342,26 @@ namespace FindMe.Web.App
             {
                 addr = null;
 
+                result = null;
+
                 if (addrExceptions != null)
                 {
                     addrExceptions.Clear();
                     addrExceptions = null;
                 }
             }
-
-            return Ok(new { exceptions = result });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GenerateAddressFile([FromBody]JObject param)
         {
-            AddressFile addrFile;
-
-            int[] size;
+            Dictionary<string, object> errors = null;
 
             try
             {
                 if (param == null) throw new NullReferenceException(nameof(param));
 
-
-                long addrFileID = param.GetPropVal<long>("addrFileID");
-                string dimensions = param.GetPropVal<string>("dimensions");
-                bool optz = param.GetPropVal<bool>("optimizedMedia");
-
-                if (addrFileID <= 0) throw new NullReferenceException("ID");
-
-
-                addrFile = await _repo.Execute<AddressFile>("GetAddressFile", addrFileID, null, true);
-
-                if (addrFile == null) throw new NullReferenceException(nameof(addrFile));
-
-
-                string fileFtpPath;
-
-                if (string.IsNullOrEmpty(dimensions))
-                {
-                    fileFtpPath = addrFile.GetFtpSource(addrFile.Address.Client.UID, addrFile.Address.UID, optimizedMedia: optz);
-                }
-                else
-                {
-                    size = dimensions.Split('x').Select(l => int.Parse(l)).ToArray();
-
-                    if (size.Length != 2) throw new NullReferenceException("dimensions");
-
-
-                    fileFtpPath = addrFile.GetFtpThumbnailSource(addrFile.Address.Client.UID, addrFile.Address.UID, size[0], size[1]);
-                }
 
                 string currentEnv = "production";
 
@@ -481,23 +380,129 @@ namespace FindMe.Web.App
                 bool ftpIgnoreCertificateErrors = true;
 
 
-                using (var ftpClient = new FtpClient(
-                                                   new FtpClientConfiguration()
-                                                   {
-                                                       Host = ftpHost,
-                                                       Username = ftpUserName,
-                                                       Password = ftppassword,
-                                                       EncryptionType = FtpEncryption.Implicit,
-                                                       IgnoreCertificateErrors = ftpIgnoreCertificateErrors
-                                                   }))
-                {
-                    await ftpClient.LoginAsync();
+                errors = new Dictionary<string, object>();
 
-                    using (var writeStream = await ftpClient.OpenFileWriteStreamAsync(fileFtpPath))
+                await Task.WhenAll(
+                    from obj in param.JGetPropVal<JObject[]>("params")
+                                                     .Select(j => new
+                                                     {
+                                                         id = j.GetPropVal<long>("addrFileID"),
+                                                         jobj = j
+                                                     })
+                    group obj by obj.id into grp
+                    select Helper.GetFunc<long, IEnumerable<JObject>, Task>(async (afID, jobjs) =>
                     {
-                        //await readStream.CopyToAsync(writeStream);
-                    }
-                }
+                        var af = await _repo.Execute<AddressFile>("GetAddressFile", afID, null, true);
+
+                        await Task.WhenAll(jobjs.Select(j =>
+                            Helper.GetFunc<JObject, AddressFile, Task>(async (jobj, addrFile) =>
+                            {
+                                string uid = jobj.JGetPropVal<string>("uid");
+
+                                int[] size;
+                                byte[] bArr;
+
+                                try
+                                {
+                                    if (addrFile == null) throw new NullReferenceException("AddressFile");
+
+
+                                    using (var readFtpClient = new FtpClient(
+                                        new FtpClientConfiguration()
+                                        {
+                                            Host = ftpHost,
+                                            Username = ftpUserName,
+                                            Password = ftppassword,
+                                            EncryptionType = FtpEncryption.Implicit,
+                                            IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                        }))
+                                    {
+                                        await readFtpClient.LoginAsync();
+
+                                        using (var writeFtpClient = new FtpClient(
+                                                                       new FtpClientConfiguration()
+                                                                       {
+                                                                           Host = ftpHost,
+                                                                           Username = ftpUserName,
+                                                                           Password = ftppassword,
+                                                                           EncryptionType = FtpEncryption.Implicit,
+                                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                       }))
+                                        {
+                                            await writeFtpClient.LoginAsync();
+
+                                            string addrFileFormat = jobj.JGetPropVal<string>("addrFileFormat");
+                                            string dimensions = jobj.JGetPropVal<string>("dimensions");
+
+
+                                            if (string.IsNullOrEmpty(dimensions)) throw new NullReferenceException("Dimensions");
+
+
+                                            string optzFileFtpPath = addrFile.GetFtpSource(addrFile.Address.Client.UID, addrFile.Address.UID, optimizedMedia: true);
+
+                                            if (!await readFtpClient.FileExistsASync(optzFileFtpPath))
+                                            {
+                                                string filePath = addrFile.GetFtpSource(addrFile.Address.Client.UID, addrFile.Address.UID, optimizedMedia: false);
+
+                                                using (var readStream = await readFtpClient.OpenFileReadStreamAsync(filePath))
+                                                {
+                                                    using (var optzStream = ImageManip.OptimizeImage(readStream, 0, 0, 0, resize: false))
+                                                    {
+                                                        using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(optzFileFtpPath))
+                                                        {
+                                                            optzStream.CopyTo(writeStream);
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            size = dimensions.Split('x').Select(l => int.Parse(l)).ToArray();
+
+                                            if (size.Length != 2) throw new NullReferenceException("dimensions");
+
+
+                                            string thFtpPath = addrFile.GetFtpThumbnailSource(addrFile.Address.Client.UID, addrFile.Address.UID, size[0], size[1]);
+
+                                            using (var readStream = await readFtpClient.OpenFileReadStreamAsync(optzFileFtpPath))
+                                            {
+                                                using (var thStream = ImageManip.OptimizeImage(readStream, 0, size[0], size[1]))
+                                                {
+                                                    //string newImagePath = $"C:\\Users\\Damien\\Desktop\\ImgTest\\{uid}_{dimensions}.{addrFileFormat}";
+                                                    //using (var output = System.IO.File.Exists(newImagePath) ?
+                                                    //                         System.IO.File.OpenWrite(newImagePath) :
+                                                    //                         System.IO.File.Create(newImagePath))
+                                                    //{
+                                                    //    var bArr = thStream.ToArray();
+
+                                                    //    output.Write(bArr, 0, bArr.Length);
+                                                    //}
+
+                                                    using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(thFtpPath))
+                                                    {
+                                                        bArr = thStream.ToArray();
+
+                                                        await writeStream.WriteAsync(bArr, 0, bArr.Length);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (errors != null)
+                                    {
+                                        errors.Add(uid, ex.Message);
+                                    }
+                                }
+                                finally
+                                {
+                                    size = null;
+                                }
+                            })(j, af)));
+                    })(grp.Key, grp.Select(l => l.jobj)));
+
+                return Ok(new { errors = errors.Select(e => new { uid = e.Key, error = e.Value }).ToArray() });
             }
             catch (ExceptionID ex)
             {
@@ -513,11 +518,12 @@ namespace FindMe.Web.App
             }
             finally
             {
-                addrFile = null;
-                size = null;
+                if (errors != null)
+                {
+                    errors.Clear();
+                    errors = null;
+                }
             }
-
-            return Ok();
         }
 
 

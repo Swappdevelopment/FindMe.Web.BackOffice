@@ -79,7 +79,22 @@
                     </tr>
                 </thead>
                 <tbody ng-repeat="addrEx in vm.addrExceptionsPage">
-                    <tr class="findme-color-bc-lgray">
+
+                    <tr ng-if="addrEx.hasError" class="findme-color-bc-redlight">
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <b>{{addrEx.name}}</b>
+                        </td>
+                        <td>
+                            <b>{{addrEx.slug}}</b>
+                        </td>
+                        <td>
+                            <b>{{addrEx.msg}}</b>
+                        </td>
+                    </tr>
+
+                    <tr ng-if="!addrEx.hasError" class="findme-color-bc-lgray">
                         <td>
                             <button type="button" class="btn btn-findme btn-xs" ng-click="addrEx.showMsgs = !addrEx.showMsgs">
                                 <span ng-class="addrEx.showMsgs ? 'fa fa-minus' : 'fa fa-plus'"></span>
@@ -87,6 +102,8 @@
                         </td>
                         <td>
                             <span class="fa fa-refresh fa-spin findme-color-fc-green" ng-show="addrEx.isGeneneratingThumbnail"></span>
+                            <span class="fa fa-times findme-color-fc-red"
+                                  ng-show="addrEx.thumbnailGenerationFailed"></span>
                         </td>
                         <td>
                             <b>{{addrEx.name}}</b>
@@ -99,9 +116,12 @@
                         </td>
                     </tr>
 
-                    <tr ng-show="addrEx.showMsgs" ng-repeat="data in addrEx.data">
+                    <tr ng-if="!addrEx.hasError" ng-show="addrEx.showMsgs" ng-repeat="data in addrEx.data" ng-class="data.thumbnailGenerationFailed ? 'findme-color-bc-redlight' : ''">
                         <td>
                             <span class="fa fa-refresh fa-spin findme-color-fc-green" ng-show="data.isGeneneratingThumbnail"></span>
+                            <span class="fa fa-times findme-color-fc-red"
+                                  ng-show="data.thumbnailGenerationFailed"
+                                  title="{{data.genErrorMsg}}"></span>
                         </td>
                         <td colspan="4">
                             <p>
