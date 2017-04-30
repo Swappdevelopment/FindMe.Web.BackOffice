@@ -472,14 +472,21 @@
                                     });
                                 }
                             }
+
+                            for (var i = 0; i < validTags.length; i++) {
+
+                                validTags[i].saving = false;
+                                validTags[i].inEditMode = false;
+                            }
                         };
 
                         var errorFunc = function (error) {
 
-                            $.each(validTags, function (index, value) {
+                            for (var i = 0; i < validTags.length; i++) {
 
-                                value.inEditMode = true;
-                            });
+                                validTags[i].saving = false;
+                                validTags[i].inEditMode = true;
+                            }
 
                             if (error.data
                                 && checkRedirectForSignIn(error.data)) {
@@ -492,12 +499,6 @@
                         };
 
                         var finallyFunc = function () {
-
-                            for (var i = 0; i < validTags.length; i++) {
-
-                                validTags[i].saving = false;
-                                validTags[i].inEditMode = false;
-                            }
 
                             if (finallyCallback) {
 

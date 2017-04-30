@@ -16,34 +16,36 @@
 
                     strValue = strValue
                                 .accentFold(true)
-                                .replaceAll('"', "-")
-                                .replaceAll("\r", "-")
-                                .replaceAll("\n", "-")
-                                .replaceAll("\t", "-")
-                                .replaceAll("\\", "-")
-                                .replaceAll("/", "-")
-                                .replaceAll("   ", "-")
-                                .replaceAll("  ", "-")
-                                .replaceAll(" ", "-")
-                                .replaceAll("(", "-")
-                                .replaceAll(")", "-")
-                                .replaceAll("[", "-")
-                                .replaceAll("]", "-")
-                                .replaceAll("{", "-")
-                                .replaceAll("}", "-")
+                                .replace(/\s+/g, '-')           // Replace spaces with -
                                 .replaceAll("_", "-")
-                                .replaceAll("=", "-")
-                                .replaceAll("+", "-")
-                                .replaceAll("&", "-")
-                                .replaceAll(",", "-")
-                                .replaceAll(".", "-")
-                                .replaceAll("!", "")
-                                .replaceAll("?", "")
-                                .replaceAll("'", "")
-                                .replaceAll("------", "-")
-                                .replaceAll("-----", "-")
-                                .replaceAll("----", "-")
-                                .replaceAll("---", "-")
+                                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+                                .replace(/^-+/, '')             // Trim - from start of text
+                                .replace(/-+$/, '');            // Trim - from end of text
+
+                                //.replaceAll('"', "-")
+                                //.replaceAll("\r", "-")
+                                //.replaceAll("\n", "-")
+                                //.replaceAll("\t", "-")
+                                //.replaceAll("\\", "-")
+                                //.replaceAll("/", "-")
+                                //.replaceAll("   ", "-")
+                                //.replaceAll("  ", "-")
+                                //.replaceAll(" ", "-")
+                                //.replaceAll("(", "-")
+                                //.replaceAll(")", "-")
+                                //.replaceAll("[", "-")
+                                //.replaceAll("]", "-")
+                                //.replaceAll("{", "-")
+                                //.replaceAll("}", "-")
+                                //.replaceAll("=", "-")
+                                //.replaceAll("+", "-")
+                                //.replaceAll("&", "-")
+                                //.replaceAll(",", "-")
+                                //.replaceAll(".", "-")
+                                //.replaceAll("!", "")
+                                //.replaceAll("?", "")
+                                //.replaceAll("'", "");
                 }
 
                 return strValue;
