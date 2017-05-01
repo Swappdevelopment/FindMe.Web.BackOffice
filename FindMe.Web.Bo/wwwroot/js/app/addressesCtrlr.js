@@ -30,6 +30,15 @@
         vm.categorys = [];
         vm.cityDetails = [];
         vm.tags = [];
+        vm.featuredTypes = [
+        {
+            value: 10,
+            name: appProps.lbl_HmPg.encodeHtml()
+        },
+        {
+            value: 20,
+            name: appProps.lbl_MenuAndSrchLstSide.encodeHtml()
+        }];
 
         vm.pgsCollection = [];
         vm.currentPgNmbr = 0;
@@ -355,6 +364,48 @@
             }
         };
 
+        var checkFeaturedsRecordState = function (featureds) {
+
+            if (featureds) {
+
+
+                if (!Array.isArray(featureds)) {
+
+                    featureds = [featureds];
+                }
+
+                for (var i = 0; i < featureds.length; i++) {
+
+                    var ftrd = featureds[i];
+
+                    if (ftrd.__comp
+                        && (!ftrd.recordState || ftrd.recordState <= 0)) {
+
+                        if (ftrd.id > 0) {
+
+                            if (ftrd.fromDate !== ftrd.__comp.fromDate
+                                || ftrd.toDate !== ftrd.__comp.toDate
+                                || ftrd.type !== ftrd.__comp.type
+                                || ftrd.fromUtc !== ftrd.__comp.fromUtc
+                                || ftrd.toUtc !== ftrd.__comp.toUtc) {
+
+                                ftrd.recordState = 20;
+                            }
+                            else {
+
+                                ftrd.recordState = 0;
+                            }
+                        }
+                        else {
+
+                            ftrd.recordState = 10;
+                        }
+                    }
+                }
+            }
+
+        };
+
         var checkRecordState = function (address, compAddress, toBeDeleted) {
 
             if (address
@@ -399,6 +450,7 @@
                 checkOpenHoursRecordState(address.openHours);
                 checkTripAdWidgetRecordState(address.tripAdWidget);
                 checkContactsRecordState(address.contacts);
+                checkFeaturedsRecordState(address.featureds);
             }
         };
 
@@ -492,11 +544,13 @@
                             checkOpenHoursRecordState: checkOpenHoursRecordState,
                             checkContactsRecordState: checkContactsRecordState,
                             checkTripAdWidgetRecordState: checkTripAdWidgetRecordState,
+                            checkFeaturedsRecordState: checkFeaturedsRecordState,
                             clients: vm.clients,
                             parentCategorys: vm.parentCategorys,
                             categorys: vm.categorys,
                             cityDetails: vm.cityDetails,
-                            tags: vm.tags
+                            tags: vm.tags,
+                            featuredTypes: vm.featuredTypes
                         };
                     }
                 }
@@ -638,6 +692,23 @@
                     delete value.descs;
                 }
 
+                if (value.featureds) {
+
+                    $.each(value.featureds, function (i, ftrd) {
+
+                        ftrd.fromDate = new Date(ftrd.fromUtc);
+                        ftrd.toDate = ftrd.toUtc ? new Date(ftrd.toUtc) : null;
+
+                        var ftrdType = $.grep(vm.featuredTypes, function (v) {
+                            return v.value === ftrd.type;
+                        });
+
+                        ftrd.typeObj = ftrdType.length > 0 ? ftrdType[0] : null;
+
+                        ftrd.__comp = jQuery.extend(false, {}, ftrd);
+                    });
+                }
+
                 if (!value.tripAdWidget) {
 
                     value.tripAdWidget = {
@@ -771,6 +842,20 @@
                         });
 
                         value.contacts.push(val);
+                    }
+                }
+
+                if (value.featureds) {
+
+                    temp = value.featureds;
+
+                    value.featureds = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.featureds.push(val);
                     }
                 }
 
@@ -1259,6 +1344,20 @@
                             });
                         }
 
+                        if (toBeSaved.featureds) {
+
+                            $.each(toBeSaved.featureds, function (i, ftrd) {
+
+                                ftrd.fromUtc = appProps.swIsoFormat(ftrd.fromDate, true);
+                                ftrd.toUtc = appProps.swIsoFormat(ftrd.toDate, true);
+
+                                ftrd.type = ftrd.typeObj ? ftrd.typeObj.value : 0;
+
+                                delete ftrd.fromDate;
+                                delete ftrd.toDate;
+                            });
+                        }
+
                         toBeSavedAddresses.push(toBeSaved);
                         validAddresses.push(address);
                     }
@@ -1374,6 +1473,16 @@
                                             for (i = 0; i < value.contacts.length; i++) {
 
                                                 tempValue.contacts.push(value.contacts[i]);
+                                            }
+                                        }
+
+                                        if (value.featureds && tempValue.featureds) {
+
+                                            tempValue.featureds.length = 0;
+
+                                            for (i = 0; i < value.featureds.length; i++) {
+
+                                                tempValue.featureds.push(value.featureds[i]);
                                             }
                                         }
 
@@ -1579,6 +1688,7 @@
         vm.categorys = param.categorys;
         vm.cityDetails = param.cityDetails;
         vm.tags = param.tags;
+        vm.featuredTypes = param.featuredTypes;
 
         vm.checkFilesRecordState = param.checkFilesRecordState;
         vm.checkOpenHoursRecordState = param.checkOpenHoursRecordState;
@@ -2121,6 +2231,22 @@
             vm.address.ratingOverrides.insert(0, newRecord);
         };
 
+        vm.addFeatured = function () {
+
+            var newRecord = {
+                id: 0,
+                fromUtc: null,
+                fromDate: new Date(),
+                toUtc: null,
+                toDate: null,
+                status: 1,
+                recordState: 10,
+                active: true
+            };
+
+            vm.address.featureds.insert(0, newRecord);
+        };
+
         vm.addLogo = function () {
 
             var newRecord = {
@@ -2242,6 +2368,46 @@
                     rt.prevRecordState = rt.recordState; rt.recordState = 30;
                 }
             }
+        };
+
+        vm.setFeaturedToDelete = function (ftrd) {
+
+            if (ftrd) {
+
+                if (ftrd.recordState === 10) {
+
+                    vm.address.featureds.remove(ftrd);
+                }
+                else {
+
+                    ftrd.prevRecordState = ftrd.recordState;
+                    ftrd.recordState = 30;
+                }
+            }
+        };
+
+        vm.revertFeatured = function (ftrd) {
+
+            if (ftrd && ftrd.__comp) {
+
+                ftrd.fromDate = ftrd.__comp.fromDate;
+                ftrd.toDate = ftrd.__comp.toDate;
+                ftrd.type = ftrd.__comp.type;
+                ftrd.fromUtc = ftrd.__comp.fromUtc;
+                ftrd.toUtc = ftrd.__comp.toUtc;
+
+                ftrd.status = ftrd.__comp.status;
+                ftrd.active = ftrd.__comp.active;
+
+                ftrd.recordState = 0;
+            }
+
+            param.checkFeaturedsRecordState(ftrd);
+        };
+
+        vm.featuredChanged = function (ftrd) {
+
+            param.checkFeaturedsRecordState(ftrd);
         };
 
         $uibModalInstance.closed.then(function () {

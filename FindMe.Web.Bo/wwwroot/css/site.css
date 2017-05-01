@@ -211,3 +211,7 @@ input.no-maxwidth {
 .btn.round {
     border-radius: 50%;
 }
+
+.datepicker {
+    max-width: 328px
+}

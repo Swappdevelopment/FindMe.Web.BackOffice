@@ -107,6 +107,7 @@ namespace FindMe.Web.App
             return Ok(new { result = result, count = count, error = error });
         }
 
+
         [HttpPost]
         public async Task<IActionResult> SaveClients([FromBody]JObject param)
         {
@@ -152,8 +153,6 @@ namespace FindMe.Web.App
 
             return Ok(new { result = result, error = error });
         }
-
-
 
 
         [HttpGet]
@@ -518,7 +517,6 @@ namespace FindMe.Web.App
         }
 
 
-
         [HttpPost]
         public async Task<IActionResult> GetAddresses([FromBody]JObject param)
         {
@@ -806,6 +804,14 @@ namespace FindMe.Web.App
 
                         jFiles.Clear();
                         jFiles = null;
+
+                        jObjects = jobj.JGetPropVal<JObject[]>("featureds");
+
+                        if (jObjects != null)
+                        {
+                            addr.IsFeatureds = new ObjectCollection<AddressIsFeatured>(
+                                jObjects.Select(l => Helper.JSonCamelDeserializeObject<AddressIsFeatured>(l)));
+                        }
 
 
                         jObjects = jobj.JGetPropVal<JObject[]>("contacts");
@@ -1390,58 +1396,5 @@ namespace FindMe.Web.App
                 addrFiles = null;
             }
         }
-
-        //private async Task DeleteFtpFile(AddressFile file, string clientUID, string addrUID)
-        //{
-        //    try
-        //    {
-        //        if (file == null) return;
-
-
-        //        string currentEnv = "production";
-
-        //        if (_env.IsDevelopment())
-        //        {
-        //            currentEnv = "development";
-        //        }
-        //        else if (_config.IsPublishEnvStaging())
-        //        {
-        //            currentEnv = "staging";
-        //        }
-
-        //        UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
-
-
-        //        string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
-        //        string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
-        //        string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
-        //        bool ftpIgnoreCertificateErrors = true;
-
-        //        using (var ftpClient = new FtpClient(
-        //                                    new FtpClientConfiguration()
-        //                                    {
-        //                                        Host = ftpHost,
-        //                                        Username = ftpUserName,
-        //                                        Password = ftppassword,
-        //                                        EncryptionType = FtpEncryption.Implicit,
-        //                                        IgnoreCertificateErrors = ftpIgnoreCertificateErrors
-        //                                    }))
-        //        {
-        //            await ftpClient.LoginAsync();
-
-        //            string ftpPath = file.GetFtpSource(clientUID, addrUID);
-
-        //            try
-        //            {
-        //                await ftpClient.DeleteFileAsync(ftpPath);
-        //            }
-        //            catch { }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
     }
 }

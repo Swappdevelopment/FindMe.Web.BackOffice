@@ -516,6 +516,81 @@
 
                     <div class="row">
                         <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div>
+                                <span class="bold-text bigger findme-color-fc-pink">
+                                    {{vm.appProps.lbl_Ftrds}}
+                                </span>
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addFeatured()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover" ng-show="vm.address.featureds && vm.address.featureds.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_From}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_To}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Type}}</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="ftrd in vm.address.featureds" ng-class="ftrd.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <button ng-disabled="ftrd.recordState === 30" ng-click="vm.setFeaturedToDelete(ftrd)" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                            <button ng-click="vm.revertFeatured(ftrd)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!ftrd.recordState || ftrd.recordState === 0 || ftrd.recordState === 10">
+                                                <span class="fa fa-undo"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <p class="input-group datepicker">
+                                                <input type="text" class="form-control no-animate"
+                                                       ng-change="vm.featuredChanged(ftrd)"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="ftrd.fromDate" ng-disabled="ftrd.recordState === 30"
+                                                       is-open="ftrd.isFromDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="ftrd.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p class="input-group datepicker">
+                                                <input type="text" class="form-control no-animate"
+                                                       ng-change="vm.featuredChanged(ftrd)"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="ftrd.toDate" ng-disabled="ftrd.recordState === 30"
+                                                       is-open="ftrd.isToDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="ftrd.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <select class="form-control"
+                                                    ng-model="ftrd.typeObj" ng-change="vm.featuredChanged(ftrd)"
+                                                    ng-options="ftrdType.name for ftrdType in vm.featuredTypes">
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
                             <div>
                                 <span class="bold-text bigger findme-color-fc-pink">{{vm.appProps.lbl_OpenHrs}}</span>
@@ -636,7 +711,7 @@
                                             </button>
                                         </td>
                                         <td>
-                                            <p class="input-group">
+                                            <p class="input-group datepicker">
                                                 <input type="text" class="form-control no-animate"
                                                        uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.fromDate" ng-disabled="rt.recordState === 30"
                                                        is-open="rt.isFromDateOpened" />
@@ -646,7 +721,7 @@
                                             </p>
                                         </td>
                                         <td>
-                                            <p class="input-group">
+                                            <p class="input-group datepicker">
                                                 <input type="text" class="form-control no-animate"
                                                        uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="rt.toDate" ng-disabled="rt.recordState === 30"
                                                        is-open="rt.isToDateOpened" />
