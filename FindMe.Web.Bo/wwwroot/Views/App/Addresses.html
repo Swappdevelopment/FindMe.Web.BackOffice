@@ -47,11 +47,12 @@
                     <div class="row">
                         <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <label class="control-label"><b>{{vm.appProps.lbl_Name}}</b></label>
-                            <input placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control no-animate" ng-model="vm.address.name">
+                            <input type="text" class="form-control no-animate"
+                                   placeholder="{{vm.appProps.lbl_Name}}" ng-blur="vm.slugify()" ng-model="vm.address.name" />
                         </div>
                         <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
                             <label class="control-label"><b>{{vm.appProps.lbl_Slug}}</b></label>
-                            <input placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="vm.address.slug">
+                            <input placeholder="{{vm.appProps.lbl_Slug}}" type="text" class="form-control no-animate" ng-model="vm.address.slug" />
                         </div>
                     </div>
 

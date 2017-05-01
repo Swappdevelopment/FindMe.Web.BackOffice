@@ -141,11 +141,15 @@
                     <td>
                         <b>EN:&nbsp;</b>
                         <span ng-hide="category.inEditMode" class="no-animate">{{category.name_en}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="category.name_en">
+                        <input type="text" class="form-control inline-element no-animate"
+                               ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}"
+                               ng-model="category.name_en" ng-blur="vm.slugify(category, 'en')">
                         <br />
                         <b>FR:&nbsp;</b>
                         <span ng-hide="category.inEditMode" class="no-animate">{{category.name_fr}}</span>
-                        <input ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}" type="text" class="form-control inline-element no-animate" ng-model="category.name_fr">
+                        <input type="text" class="form-control inline-element no-animate"
+                               ng-disabled="category.saving" ng-show="category.inEditMode" placeholder="{{vm.appProps.lbl_Name}}"
+                               ng-model="category.name_fr" ng-blur="vm.slugify(category, 'fr')">
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>

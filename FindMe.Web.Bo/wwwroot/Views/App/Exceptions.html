@@ -18,10 +18,17 @@
     <div class="header" ng-init="vm.getAllAddressIDs()">
 
         <div class="button-container">
-            <button type="button" class="btn btn-findme btn-lg" ng-click="vm.verifyAddresses()">
-                <span class="fa fa-xing-square"></span>
-                {{vm.appProps.lbl_GetExptns}}
-            </button>
+            <div class="wrapper">
+                <button type="button" class="btn btn-findme btn-lg" ng-click="vm.verifyAddresses()" ng-disabled="vm.gettingAddressesCount || vm.verifyingAddresses">
+                    <span class="fa fa-xing-square"></span>
+                    {{vm.appProps.lbl_GetExptns}}
+                </button>
+
+                <span class="check-box" title="Start verification from End of Addresses' Dataset">
+                    <input type="checkbox" value="None" id="chkReverseVerfy" name="chkReverseVerfy" ng-model="vm.reverseVerify" />
+                    <label class="lbl-chkb" for="chkReverseVerfy"></label>
+                </span>
+            </div>
         </div>
 
         <p ng-show="vm.gettingAddressesCount && !vm.verifyingAddresses"><span class="fa fa-circle-o-notch fa-spin"></span></p>

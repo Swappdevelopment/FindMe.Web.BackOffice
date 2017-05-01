@@ -1563,9 +1563,9 @@
 
 
     angular.module('app-mainmenu')
-        .controller('addressEditorInstanceCtrlr', ['$http', '$scope', '$sce', '$uibModalInstance', 'appProps', 'param', addressEditorInstanceCtrlrFunc]);
+        .controller('addressEditorInstanceCtrlr', ['$http', '$scope', '$sce', '$uibModalInstance', 'appProps', 'miscToolsService', 'param', addressEditorInstanceCtrlrFunc]);
 
-    function addressEditorInstanceCtrlrFunc($http, $scope, $sce, $uibModalInstance, appProps, param) {
+    function addressEditorInstanceCtrlrFunc($http, $scope, $sce, $uibModalInstance, appProps, miscToolsService, param) {
 
         var vm = this;
         vm.appProps = appProps;
@@ -1603,6 +1603,17 @@
         }
 
         vm.tagFilter = '';
+
+        vm.slugify = function () {
+
+            if (vm.address) {
+
+                if (!vm.address.slug) {
+
+                    vm.address.slug = miscToolsService.slugify(vm.address.name);
+                }
+            }
+        }
 
         $scope.$watch('vm.tagFilter', function (newValue, oldValue) {
 
@@ -1833,8 +1844,24 @@
 
                 if (file.waitingUpload) {
 
-                    file.name = file.__comp.name;
-                    file.format = file.__comp.format;
+                    if (file.__comp) {
+
+                        file.name = file.__comp.name;
+                        file.format = file.__comp.format;
+                    }
+                    else {
+
+                        file.name = '';
+                        file.format = '';
+
+                        var $localImg = $($event.currentTarget).parents('tr').find('img.local').first();
+
+                        if ($localImg && $localImg.length > 0) {
+
+                            $localImg.attr('src', '');
+                        }
+                    }
+
                     file.waitingUpload = false;
 
                     if (file.recordStateBeforeUpload) {

@@ -269,7 +269,7 @@ namespace FindMe.Web.App
 
                                             if (!await ftpClient.FileExistsASync(afPath))
                                             {
-                                                addrExceptions.Add(new AddrException()
+                                                addrExceptions?.Add(new AddrException()
                                                 {
                                                     Status = AddressVerifiedStatus.OptzFileMissing,
                                                     Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
@@ -282,7 +282,7 @@ namespace FindMe.Web.App
 
                                                 if (!await ftpClient.FileExistsASync(thumnailPath))
                                                 {
-                                                    addrExceptions.Add(new AddrException()
+                                                    addrExceptions?.Add(new AddrException()
                                                     {
                                                         Status = AddressVerifiedStatus.ThumbnailMissing,
                                                         Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
@@ -294,7 +294,7 @@ namespace FindMe.Web.App
                                 }
                                 else
                                 {
-                                    addrExceptions.Add(new AddrException()
+                                    addrExceptions?.Add(new AddrException()
                                     {
                                         Status = AddressVerifiedStatus.FileMissing,
                                         Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
@@ -382,6 +382,8 @@ namespace FindMe.Web.App
 
                 errors = new Dictionary<string, object>();
 
+                await _repo.VerifyLoginToken();
+
                 await Task.WhenAll(
                     from obj in param.JGetPropVal<JObject[]>("params")
                                                      .Select(j => new
@@ -429,14 +431,13 @@ namespace FindMe.Web.App
                                                                            IgnoreCertificateErrors = ftpIgnoreCertificateErrors
                                                                        }))
                                         {
-                                            await writeFtpClient.LoginAsync();
-
                                             string addrFileFormat = jobj.JGetPropVal<string>("addrFileFormat");
                                             string dimensions = jobj.JGetPropVal<string>("dimensions");
 
-
                                             if (string.IsNullOrEmpty(dimensions)) throw new NullReferenceException("Dimensions");
 
+
+                                            await writeFtpClient.LoginAsync();
 
                                             string optzFileFtpPath = addrFile.GetFtpSource(addrFile.Address.Client.UID, addrFile.Address.UID, optimizedMedia: true);
 
@@ -467,16 +468,6 @@ namespace FindMe.Web.App
                                             {
                                                 using (var thStream = ImageManip.OptimizeImage(readStream, 0, size[0], size[1]))
                                                 {
-                                                    //string newImagePath = $"C:\\Users\\Damien\\Desktop\\ImgTest\\{uid}_{dimensions}.{addrFileFormat}";
-                                                    //using (var output = System.IO.File.Exists(newImagePath) ?
-                                                    //                         System.IO.File.OpenWrite(newImagePath) :
-                                                    //                         System.IO.File.Create(newImagePath))
-                                                    //{
-                                                    //    var bArr = thStream.ToArray();
-
-                                                    //    output.Write(bArr, 0, bArr.Length);
-                                                    //}
-
                                                     using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(thFtpPath))
                                                     {
                                                         bArr = thStream.ToArray();
@@ -712,6 +703,8 @@ namespace FindMe.Web.App
 
             Func<JObject, Address> func;
 
+            Func<AddressFile, string, string, AddressFile> funcSetUIDs;
+
             try
             {
                 if (_env.IsDevelopment())
@@ -886,6 +879,21 @@ namespace FindMe.Web.App
 
                         tempLst = new List<object>();
 
+                        funcSetUIDs = (af, clientUID, addrUID) =>
+                        {
+                            if (af != null)
+                            {
+                                af.Address = af.Address ?? new Address();
+                                af.Address.UID = addrUID;
+
+                                af.Address.Client = af.Address.Client ?? new Client();
+                                af.Address.Client.UID = clientUID;
+                            }
+
+
+                            return af;
+                        };
+
                         foreach (var addr in addresses.OfType<Address>())
                         {
                             object temp = await _repo.Execute("ManageAddressGetFullContent", addr);
@@ -893,13 +901,19 @@ namespace FindMe.Web.App
                             tempLst.Add(temp);
                             temp = null;
 
-                            if (addr.Files != null
-                                && addr.Files.Count > 0)
+                            if (addr.RecordState == RecordState.Deleted)
                             {
-                                foreach (var af in addr.Files.Where(l => l.RecordState == RecordState.Deleted))
-                                {
-                                    await DeleteFtpFile(af, addr.ClientUID, addr.UID);
-                                }
+                                await DeleteAddrFiles(addr.ID, null);
+                            }
+                            else if (addr.Files != null
+                               && addr.Files.Count > 0)
+                            {
+                                await DeleteAddrFiles(
+                                            0,
+                                            addr.Files
+                                                .Where(l => l.RecordState == RecordState.Deleted)
+                                                .Select(l => funcSetUIDs(l, addr.ClientUID, addr.UID))
+                                                .ToArray());
                             }
                         }
 
@@ -1001,7 +1015,14 @@ namespace FindMe.Web.App
 
                         if (filesToSave.Length > 0)
                         {
-                            using (var ftpClient = new FtpClient(
+                            await Task.WhenAll(
+                                from fs in filesToSave
+                                select Helper.GetFunc<AddressFile, Task>(
+                                    async af =>
+                                    {
+                                        try
+                                        {
+                                            using (var writeFtpClient = new FtpClient(
                                                     new FtpClientConfiguration()
                                                     {
                                                         Host = ftpHost,
@@ -1010,44 +1031,148 @@ namespace FindMe.Web.App
                                                         EncryptionType = FtpEncryption.Implicit,
                                                         IgnoreCertificateErrors = ftpIgnoreCertificateErrors
                                                     }))
-                            {
-                                await ftpClient.LoginAsync();
-
-                                foreach (var af in filesToSave)
-                                {
-                                    formFile = af.GetFile<IFormFile>();
-
-                                    if (formFile != null)
-                                    {
-                                        using (var readStream = formFile.OpenReadStream())
-                                        {
-                                            string ftpPath = af.GetFtpSource(addr.ClientUID, addr.UID);
-
-                                            using (var writeStream = await ftpClient.OpenFileWriteStreamAsync(ftpPath))
                                             {
-                                                await readStream.CopyToAsync(writeStream);
-                                            }
-                                        }
+                                                await writeFtpClient.LoginAsync();
 
-                                        switch (af.Type)
-                                        {
-                                            case AddressFileType.Images:
-                                            case AddressFileType.Logos:
 
-                                                using (var readStream = await DownloadOptzAddressFileASync(af, addr.ClientUID, addr.UID))
+
+
+                                                formFile = af.GetFile<IFormFile>();
+
+                                                if (formFile != null)
                                                 {
-                                                    string ftpPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
+                                                    string ftpFilePath;
 
-                                                    using (var writeStream = await ftpClient.OpenFileWriteStreamAsync(ftpPath))
+                                                    using (var fileStream = formFile.OpenReadStream())
                                                     {
-                                                        await readStream.CopyToAsync(writeStream);
+                                                        ftpFilePath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: false);
+
+                                                        using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(ftpFilePath))
+                                                        {
+                                                            await fileStream.CopyToAsync(writeStream);
+                                                        }
+                                                    }
+
+                                                    switch (af.Type)
+                                                    {
+                                                        case AddressFileType.Images:
+                                                        case AddressFileType.Logos:
+
+                                                            using (var readFtpClient = new FtpClient(
+                                                                                            new FtpClientConfiguration()
+                                                                                            {
+                                                                                                Host = ftpHost,
+                                                                                                Username = ftpUserName,
+                                                                                                Password = ftppassword,
+                                                                                                EncryptionType = FtpEncryption.Implicit,
+                                                                                                IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                                            }))
+                                                            {
+                                                                await readFtpClient.LoginAsync();
+
+
+                                                                string optzFtpPath;
+
+                                                                using (var fileFtpReadStream = await writeFtpClient.OpenFileReadStreamAsync(ftpFilePath))
+                                                                {
+                                                                    using (var optzStream = ImageManip.OptimizeImage(fileFtpReadStream, 75, 0, 0, resize: false, compress: true))
+                                                                    {
+                                                                        optzFtpPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
+
+                                                                        using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(optzFtpPath))
+                                                                        {
+                                                                            var bArr = optzStream.ToArray();
+                                                                            await writeStream.WriteAsync(bArr, 0, bArr.Length);
+                                                                            bArr = null;
+
+                                                                        }
+
+                                                                        long fileSize = await readFtpClient.GetFileSizeAsync(ftpFilePath);
+                                                                        long optzFileSize = await readFtpClient.GetFileSizeAsync(optzFtpPath);
+
+                                                                        if (optzFileSize > fileSize)
+                                                                        {
+                                                                            await writeFtpClient.DeleteFileAsync(optzFtpPath);
+
+                                                                            using (var fileStream = formFile.OpenReadStream())
+                                                                            {
+                                                                                using (var writeStream = await writeFtpClient.OpenFileWriteStreamAsync(optzFtpPath))
+                                                                                {
+                                                                                    await fileStream.CopyToAsync(writeStream);
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
+
+                                                                await Task.WhenAll(
+                                                                            from sz in UrlManager.GetThumnailSizes
+                                                                            select Helper.GetFunc<SwpSize, string, Task>(
+                                                                                async (size, optzPath) =>
+                                                                                {
+                                                                                    try
+                                                                                    {
+                                                                                        using (var thWriteFtpClient = new FtpClient(
+                                                                                                                       new FtpClientConfiguration()
+                                                                                                                       {
+                                                                                                                           Host = ftpHost,
+                                                                                                                           Username = ftpUserName,
+                                                                                                                           Password = ftppassword,
+                                                                                                                           EncryptionType = FtpEncryption.Implicit,
+                                                                                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                                                                       }))
+                                                                                        {
+                                                                                            await thWriteFtpClient.LoginAsync();
+
+                                                                                            string rszFtpPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
+
+                                                                                            using (var thReadFtpClient = new FtpClient(
+                                                                                                                       new FtpClientConfiguration()
+                                                                                                                       {
+                                                                                                                           Host = ftpHost,
+                                                                                                                           Username = ftpUserName,
+                                                                                                                           Password = ftppassword,
+                                                                                                                           EncryptionType = FtpEncryption.Implicit,
+                                                                                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                                                                       }))
+                                                                                            {
+                                                                                                await thReadFtpClient.LoginAsync();
+
+                                                                                                using (var readOptzStream = await thWriteFtpClient.OpenFileReadStreamAsync(optzPath))
+                                                                                                {
+                                                                                                    using (var rszStream = ImageManip.OptimizeImage(
+                                                                                                                                    readOptzStream, 0, sz.Width, sz.Height,
+                                                                                                                                    resize: true, compress: false))
+                                                                                                    {
+                                                                                                        using (var writeStream = await thWriteFtpClient.OpenFileWriteStreamAsync(rszFtpPath))
+                                                                                                        {
+                                                                                                            var bArr = rszStream.ToArray();
+                                                                                                            await writeStream.WriteAsync(bArr, 0, bArr.Length);
+                                                                                                            bArr = null;
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    catch (Exception ex)
+                                                                                    {
+                                                                                        throw ex;
+                                                                                    }
+                                                                                })(sz, optzFtpPath));
+
+                                                                break;
+                                                            }
                                                     }
                                                 }
-                                                break;
+                                            }
                                         }
-                                    }
-                                }
-                            }
+                                        catch (Exception ex)
+                                        {
+                                            throw ex;
+                                        }
+                                    })(fs));
                         }
                     }
 
@@ -1133,57 +1258,190 @@ namespace FindMe.Web.App
             }
         }
 
-        private async Task DeleteFtpFile(AddressFile file, string clientUID, string addrUID)
+
+        private async Task DeleteAddrFiles(long addrID, AddressFile[] addrFiles)
         {
             try
             {
-                if (file == null) return;
-
-
-                string currentEnv = "production";
-
-                if (_env.IsDevelopment())
+                if (addrID > 0)
                 {
-                    currentEnv = "development";
-                }
-                else if (_config.IsPublishEnvStaging())
-                {
-                    currentEnv = "staging";
-                }
-
-                UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
-
-
-                string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
-                string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
-                string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
-                bool ftpIgnoreCertificateErrors = true;
-
-                using (var ftpClient = new FtpClient(
-                                            new FtpClientConfiguration()
-                                            {
-                                                Host = ftpHost,
-                                                Username = ftpUserName,
-                                                Password = ftppassword,
-                                                EncryptionType = FtpEncryption.Implicit,
-                                                IgnoreCertificateErrors = ftpIgnoreCertificateErrors
-                                            }))
-                {
-                    await ftpClient.LoginAsync();
-
-                    string ftpPath = file.GetFtpSource(clientUID, addrUID);
-
-                    try
+                    if (addrID > 0)
                     {
-                        await ftpClient.DeleteFileAsync(ftpPath);
+                        addrFiles = await _repo.Execute<AddressFile[]>("GetAddressFiles", 0, null, addrID, null, 0, null, true, 0, 0);
                     }
-                    catch { }
+
+                    if (addrFiles != null
+                        && addrFiles.Length > 0)
+                    {
+                        string currentEnv = "production";
+
+                        if (_env.IsDevelopment())
+                        {
+                            currentEnv = "development";
+                        }
+                        else if (_config.IsPublishEnvStaging())
+                        {
+                            currentEnv = "staging";
+                        }
+
+                        string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
+                        string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
+                        string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
+                        bool ftpIgnoreCertificateErrors = true;
+
+
+                        await Task.WhenAll(
+                            from f in addrFiles
+                            select Helper.GetFunc<AddressFile, Task>(
+                                async af =>
+                                {
+                                    if (af != null)
+                                    {
+                                        using (var readFtpClient = new FtpClient(
+                                                                        new FtpClientConfiguration()
+                                                                        {
+                                                                            Host = ftpHost,
+                                                                            Username = ftpUserName,
+                                                                            Password = ftppassword,
+                                                                            EncryptionType = FtpEncryption.Implicit,
+                                                                            IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                        }))
+                                        {
+                                            await readFtpClient.LoginAsync();
+
+                                            using (var writeFtpClient = new FtpClient(
+                                                                           new FtpClientConfiguration()
+                                                                           {
+                                                                               Host = ftpHost,
+                                                                               Username = ftpUserName,
+                                                                               Password = ftppassword,
+                                                                               EncryptionType = FtpEncryption.Implicit,
+                                                                               IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                           }))
+                                            {
+                                                await writeFtpClient.LoginAsync();
+
+                                                string path = af.GetFtpSource(af.Address.Client.UID, af.Address.UID, optimizedMedia: false);
+
+                                                if (await readFtpClient.FileExistsASync(path))
+                                                {
+                                                    await writeFtpClient.DeleteFileAsync(path);
+                                                }
+
+                                                path = af.GetFtpSource(af.Address.Client.UID, af.Address.UID, optimizedMedia: true);
+
+                                                if (await readFtpClient.FileExistsASync(path))
+                                                {
+                                                    await writeFtpClient.DeleteFileAsync(path);
+                                                }
+                                            }
+                                        }
+
+                                        await Task.WhenAll(
+                                            from sz in UrlManager.GetThumnailSizes
+                                            select Helper.GetFunc<AddressFile, SwpSize, Task>(
+                                                async (addrFile, size) =>
+                                                {
+                                                    using (var readFtpClient = new FtpClient(
+                                                                        new FtpClientConfiguration()
+                                                                        {
+                                                                            Host = ftpHost,
+                                                                            Username = ftpUserName,
+                                                                            Password = ftppassword,
+                                                                            EncryptionType = FtpEncryption.Implicit,
+                                                                            IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                        }))
+                                                    {
+                                                        await readFtpClient.LoginAsync();
+
+                                                        using (var writeFtpClient = new FtpClient(
+                                                                                       new FtpClientConfiguration()
+                                                                                       {
+                                                                                           Host = ftpHost,
+                                                                                           Username = ftpUserName,
+                                                                                           Password = ftppassword,
+                                                                                           EncryptionType = FtpEncryption.Implicit,
+                                                                                           IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                                       }))
+                                                        {
+                                                            await writeFtpClient.LoginAsync();
+
+                                                            string thFtpPath = addrFile.GetFtpThumbnailSource(addrFile.Address.Client.UID, addrFile.Address.UID, size.Width, size.Height);
+
+                                                            if (await readFtpClient.FileExistsASync(thFtpPath))
+                                                            {
+                                                                await writeFtpClient.DeleteFileAsync(thFtpPath);
+                                                            }
+                                                        }
+                                                    }
+
+                                                })(af, sz));
+                                    }
+                                })(f));
+                    }
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            finally
+            {
+                addrFiles = null;
+            }
         }
+
+        //private async Task DeleteFtpFile(AddressFile file, string clientUID, string addrUID)
+        //{
+        //    try
+        //    {
+        //        if (file == null) return;
+
+
+        //        string currentEnv = "production";
+
+        //        if (_env.IsDevelopment())
+        //        {
+        //            currentEnv = "development";
+        //        }
+        //        else if (_config.IsPublishEnvStaging())
+        //        {
+        //            currentEnv = "staging";
+        //        }
+
+        //        UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
+
+
+        //        string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
+        //        string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
+        //        string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
+        //        bool ftpIgnoreCertificateErrors = true;
+
+        //        using (var ftpClient = new FtpClient(
+        //                                    new FtpClientConfiguration()
+        //                                    {
+        //                                        Host = ftpHost,
+        //                                        Username = ftpUserName,
+        //                                        Password = ftppassword,
+        //                                        EncryptionType = FtpEncryption.Implicit,
+        //                                        IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+        //                                    }))
+        //        {
+        //            await ftpClient.LoginAsync();
+
+        //            string ftpPath = file.GetFtpSource(clientUID, addrUID);
+
+        //            try
+        //            {
+        //                await ftpClient.DeleteFileAsync(ftpPath);
+        //            }
+        //            catch { }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
     }
 }

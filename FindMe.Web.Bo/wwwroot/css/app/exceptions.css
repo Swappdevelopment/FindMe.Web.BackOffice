@@ -10,12 +10,16 @@
         height: 90px;
     }
 
-        #exceptionsVw .header .button-container button {
+        #exceptionsVw .header .button-container .wrapper {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
         }
+
+            #exceptionsVw .header .button-container .wrapper .check-box {
+                margin-left: 25px;
+            }
 
     #exceptionsVw .header p {
         color: #e50150;

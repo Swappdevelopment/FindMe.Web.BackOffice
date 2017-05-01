@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('categoriesCtrlr', ['$http', '$scope', '$sce', '$uibModal', 'appProps', 'headerConfigService', categoriesCtrlrFunc]);
+           .controller('categoriesCtrlr', ['$http', '$scope', '$sce', '$uibModal', 'appProps', 'miscToolsService', 'headerConfigService', categoriesCtrlrFunc]);
 
-    function categoriesCtrlrFunc($http, $scope, $sce, $uibModal, appProps, headerConfigService) {
+    function categoriesCtrlrFunc($http, $scope, $sce, $uibModal, appProps, miscToolsService, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -339,6 +339,33 @@
                  .then(successFunc, errorFunc)
                  .finally(finallyFunc);
         };
+
+        vm.slugify = function (catg, propName) {
+
+            if (catg && propName) {
+
+                switch (propName.toLowerCase()) {
+
+                    case 'name_en':
+                    case 'en':
+
+                        if (!catg.slug_en) {
+
+                            catg.slug_en = miscToolsService.slugify(catg.name_en);
+                        }
+                        break;
+
+                    case 'name_fr':
+                    case 'fr':
+
+                        if (!catg.slug_fr) {
+
+                            catg.slug_fr = miscToolsService.slugify(catg.name_fr);
+                        }
+                        break;
+                }
+            }
+        }
 
 
         vm.revert = function (category) {

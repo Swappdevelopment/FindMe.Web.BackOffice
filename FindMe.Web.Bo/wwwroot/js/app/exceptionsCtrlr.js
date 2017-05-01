@@ -32,6 +32,8 @@
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
+        vm.reverseVerify = false;
+
         vm.gotoPage = function (pg, scrollToTop) {
 
             if (pg && !pg.isActive && !pg.disabled) {
@@ -45,7 +47,11 @@
                 if (setPage(pg.index)) {
 
                     vm.currentPgNmbr = pg.index;
-                    pg.isActive = true;
+
+                    $.each(vm.pgsCollection, function () {
+
+                        this.isActive = pg === this;
+                    });
                 }
             }
         };
@@ -450,10 +456,11 @@
 
             if (!addrIDIndex) {
 
-                addrIDIndex = 0;
+                addrIDIndex = vm.reverseVerify ? (addrIDs.length - 1) : 0;
             }
 
-            if (addrIDIndex === 0) {
+            if ((vm.reverseVerify && addrIDIndex === addrIDs.length - 1)
+                || (!vm.reverseVerify && addrIDIndex === 0)) {
 
                 vm.verifiedAddrs = 0;
 
@@ -524,7 +531,7 @@
 
                     vm.totalPgs = ttlPgs;
 
-                    vm.verifyAddresses(addrIDIndex + 1);
+                    vm.verifyAddresses(vm.reverseVerify ? (addrIDIndex - 1) : (addrIDIndex + 1));
 
                     setupPages();
                 };
