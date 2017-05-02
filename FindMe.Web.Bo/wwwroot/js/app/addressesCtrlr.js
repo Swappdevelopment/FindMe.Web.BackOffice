@@ -2414,6 +2414,51 @@
 
             $('body').attr('style', '');
         })
+
+        addressEditorHandleFormValidations(vm);
+    }
+
+    function addressEditorHandleFormValidations(vm) {
+
+        if (vm) {
+
+            vm.initFrmDetails = function () {
+
+                if (vm.address) {
+
+                    listItemService.setItemFormValidation(
+                            vm.address,
+                            [{
+                                name: 'name',
+                                isReq: true
+                            },
+                            {
+                                name: 'slug',
+                                isReq: true
+                            },
+                            {
+                                name: 'client',
+                                isReq: true
+                            },
+                            {
+                                name: 'cityDetail',
+                                isReq: true
+                            },
+                            {
+                                name: 'category',
+                                isReq: true
+                            },
+                            {
+                                name: 'latitude',
+                                isReq: true
+                            },
+                            {
+                                name: 'longitude',
+                                isReq: true
+                            }]);
+                }
+            };
+        }
     }
 
 

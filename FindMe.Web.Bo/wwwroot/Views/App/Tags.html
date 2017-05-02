@@ -131,7 +131,7 @@
                                ng-focus="tag.formVal.name_en.touched()" ng-blur="vm.slugify(tag, 'en')"
                                ng-disabled="tag.saving" ng-show="tag.inEditMode"
                                placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.name_en">
-                        <p ng-show="tag.inEditMode && !tag.formVal.name_en.isValid() && tag.formVal.name_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                        <p ng-show="tag.inEditMode && !tag.formVal.name_en.isReqValid() && tag.formVal.name_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                         <br />
                         <b>FR:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.name_fr}}</span>
@@ -139,7 +139,7 @@
                                ng-focus="tag.formVal.name_fr.touched()" ng-blur="vm.slugify(tag, 'fr')"
                                ng-disabled="tag.saving" ng-show="tag.inEditMode"
                                placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.name_fr">
-                        <p ng-show="tag.inEditMode && !tag.formVal.name_fr.isValid() && tag.formVal.name_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                        <p ng-show="tag.inEditMode && !tag.formVal.name_fr.isReqValid() && tag.formVal.name_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                     </td>
                     <td>
                         <b>EN:&nbsp;</b>
@@ -148,7 +148,7 @@
                                ng-focus="tag.formVal.slug_en.touched()"
                                ng-disabled="tag.saving" ng-show="tag.inEditMode"
                                placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.slug_en">
-                        <p ng-show="tag.inEditMode && !tag.formVal.slug_en.isValid() && tag.formVal.slug_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                        <p ng-show="tag.inEditMode && !tag.formVal.slug_en.isReqValid() && tag.formVal.slug_en.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                         <br />
                         <b>FR:&nbsp;</b>
                         <span ng-hide="tag.inEditMode" class="no-animate">{{tag.slug_fr}}</span>
@@ -156,7 +156,7 @@
                                ng-focus="tag.formVal.slug_fr.touched()"
                                ng-disabled="tag.saving" ng-show="tag.inEditMode"
                                placeholder="{{vm.appProps.lbl_Name}}" ng-model="tag.slug_fr">
-                        <p ng-show="tag.inEditMode && !tag.formVal.slug_fr.isValid() && tag.formVal.slug_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                        <p ng-show="tag.inEditMode && !tag.formVal.slug_fr.isReqValid() && tag.formVal.slug_fr.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
                     </td>
                     <td class="text-center">
                         <span ng-hide="tag.inEditMode" class="fa {{tag.active ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>

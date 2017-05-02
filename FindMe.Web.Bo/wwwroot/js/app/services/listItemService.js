@@ -45,6 +45,7 @@
                                     this.isTouched = true;
                                 };
 
+
                                 if (item.isReq) {
 
                                     formVal[item.name].isReq = true;
@@ -54,7 +55,8 @@
                                     delete formVal[item.name].isReq;
                                 }
 
-                                formVal[item.name].isValid = function () {
+
+                                formVal[item.name].isReqValid = function () {
 
                                     if (this.isReq) {
 
@@ -65,6 +67,51 @@
                                         return true;
                                     }
                                 };
+
+
+                                formVal[item.name].isValid = function () {
+
+                                    if (this.isReq) {
+
+                                        return this.isReqValid();
+                                    }
+                                    else {
+
+                                        return true;
+                                    }
+                                };
+
+                                //formVal[item.name].isValid = function () {
+
+                                //    var isValidResult = true;
+
+                                //    if (isValidResult && this.isReq) {
+
+                                //        isValidResult = element[this.name];
+                                //    }
+
+                                //    if (isValidResult && this.isNumGrZero) {
+
+                                //        isValidResult = element[this.name] > 0;
+                                //    }
+
+                                //    if (isValidResult && this.isNumLtZero) {
+
+                                //        isValidResult = element[this.name] < 0;
+                                //    }
+
+                                //    if (isValidResult && this.isNumEqZero) {
+
+                                //        isValidResult = element[this.name] === 0;
+                                //    }
+
+                                //    if (isValidResult && this.isNumNotEqZero) {
+
+                                //        isValidResult = element[this.name] !== 0;
+                                //    }
+
+                                //    return isValidResult;
+                                //};
                             }
                         }
 
