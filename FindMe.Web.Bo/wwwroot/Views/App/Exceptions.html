@@ -25,7 +25,7 @@
                 </button>
 
                 <span class="check-box" title="Start verification from End of Addresses' Dataset">
-                    <input type="checkbox" value="None" id="chkReverseVerfy" name="chkReverseVerfy" ng-model="vm.reverseVerify" />
+                    <input type="checkbox" value="None" id="chkReverseVerfy" name="chkReverseVerfy" ng-model="vm.reverseVerify" ng-disabled="vm.gettingAddressesCount || vm.verifyingAddresses"/>
                     <label class="lbl-chkb" for="chkReverseVerfy"></label>
                 </span>
             </div>
@@ -119,7 +119,11 @@
                             <b>{{addrEx.slug}}</b>
                         </td>
                         <td>
-                            <b>{{addrEx.status}}</b>
+                            <b ng-if="addrEx.raw.status !== 10 && addrEx.raw.status !== 50">{{addrEx.status}}</b>
+                            <a href="" target="_blank"
+                               class="btn btn-danger"
+                               ng-href="#!/addresses/{{addrEx.raw.status === 10 ? addrEx.raw.id : addrEx.slug}}/{{addrEx.raw.status === 10 ? 'id/edit' : 'slug'}}"
+                               ng-if="addrEx.raw.status === 10 || addrEx.raw.status === 50"><b>{{addrEx.status}}</b></a>
                         </td>
                     </tr>
 

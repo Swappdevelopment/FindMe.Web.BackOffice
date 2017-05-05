@@ -5,9 +5,9 @@
 
 
     angular.module('app-mainmenu')
-           .controller('addressesCtrlr', ['$http', '$scope', '$sce', '$uibModal', 'appProps', 'headerConfigService', addressesCtrlrFunc]);
+           .controller('addressesCtrlr', ['$http', '$scope', '$routeParams', '$sce', '$uibModal', 'appProps', 'headerConfigService', addressesCtrlrFunc]);
 
-    function addressesCtrlrFunc($http, $scope, $sce, $uibModal, appProps, headerConfigService) {
+    function addressesCtrlrFunc($http, $scope, $routeParams, $sce, $uibModal, appProps, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
 
@@ -22,6 +22,8 @@
         headerConfigService.saveBtnTltp = appProps.msg_SaveAddrs;
 
         var vm = this;
+
+        var firstPopulateDone = false;
 
         vm.appProps = appProps;
 
@@ -64,7 +66,7 @@
 
                 vm.currentPgNmbr = pg.index;
 
-                vm.populateAddresses(appProps.resultItemsPerPg, offset);
+                vm.populateAddresses(null, appProps.resultItemsPerPg, offset);
             }
         };
 
@@ -960,9 +962,15 @@
 
 
         var prevNames = '';
-        vm.populateAddresses = function (limit, offset, names) {
+        vm.populateAddresses = function (names, limit, offset) {
 
             var forceGetCount = false;
+
+            if (!firstPopulateDone) {
+
+                names = $routeParams.searchValue;
+            }
+
 
             if (names || prevNames) {
 
@@ -1087,6 +1095,24 @@
 
             var finallyFunc = function () {
 
+                if (!firstPopulateDone) {
+
+                    firstPopulateDone = true;
+
+                    if ($routeParams.searchValue) {
+
+                        setSearchBarValue($routeParams.searchValue);
+                    }
+
+                    if ($routeParams.action === 'edit') {
+
+                        if (vm.addresses.length > 0) {
+
+                            vm.goInEditMode(vm.addresses[0])
+                        }
+                    }
+                }
+
                 toggleGlblWaitVisibility(false);
             };
 
@@ -1097,6 +1123,7 @@
                     {
                         limit: limit,
                         offset: offset,
+                        type: firstPopulateDone || !$routeParams.searchType ? null : $routeParams.searchType,
                         getTotalAddresses: (vm.addressesCount <= 0 || forceGetCount),
                         name: (names ? names : null),
                         getRefClients: (vm.clients.length === 0),
@@ -1604,7 +1631,7 @@
 
                     $scope.$apply(function () {
 
-                        vm.populateAddresses(appProps.resultItemsPerPg, offset);
+                        vm.populateAddresses(null, appProps.resultItemsPerPg, offset);
                     });
                 }
             }
@@ -1656,7 +1683,7 @@
                 $scope.$apply(function () {
 
                     vm.searchValue = arg.searchValue;
-                    vm.populateAddresses(appProps.resultItemsPerPg, 0, arg.searchValue);
+                    vm.populateAddresses(arg.searchValue, appProps.resultItemsPerPg, 0);
                 });
             }
         });
@@ -1665,7 +1692,7 @@
             $scope.$apply(function () {
 
                 vm.searchValue = '';
-                vm.populateAddresses(appProps.resultItemsPerPg, 0);
+                vm.populateAddresses(null, appProps.resultItemsPerPg, 0);
             });
         });
     }

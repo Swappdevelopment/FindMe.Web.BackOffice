@@ -211,7 +211,7 @@ namespace FindMe.Web.App
                 long addrID = param.GetPropVal<long>("addrID");
                 string addrUID = param.GetPropVal<string>("addrUID");
 
-                addr = await _repo.Execute<Address>("GetAddress", addrID, addrUID, null, 0, 0, 0, true);
+                addr = await _repo.Execute<Address>("GetAddress", addrID, addrUID, null, null, 0, 0, 0, true);
 
                 if (addr == null) throw new NullReferenceException(nameof(addr));
 
@@ -311,6 +311,7 @@ namespace FindMe.Web.App
                                   group ex by ex.Status into grp
                                   select new
                                   {
+                                      ID = addr.ID,
                                       Name = addr.Name,
                                       Slug = addr.Slug,
                                       Status = grp.Key,
@@ -544,6 +545,8 @@ namespace FindMe.Web.App
                 bool getRefCities = false;
 
                 string name = null;
+                string slug = null;
+                string type = null;
 
                 bool getTotalAddresses = false;
 
@@ -552,6 +555,7 @@ namespace FindMe.Web.App
                     limit = param.GetPropVal<int>("limit");
                     offset = param.GetPropVal<int>("offset");
                     name = param.GetPropVal<string>("name");
+                    type = param.GetPropVal<string>("type");
 
                     addressId = param.GetPropVal<long>("addressId");
                     categoryId = param.GetPropVal<long>("categoryId");
@@ -562,13 +566,29 @@ namespace FindMe.Web.App
                     getRefCities = param.GetPropVal<bool>("getRefCities");
 
                     getTotalAddresses = param.GetPropVal<bool>("getTotalAddresses");
+
+                    switch (type ?? "")
+                    {
+                        case "slug":
+
+                            slug = name;
+                            name = null;
+                            break;
+                        case "id":
+
+                            if (long.TryParse(name, out addressId))
+                            {
+                                name = null;
+                            }
+                            break;
+                    }
                 }
 
                 taskArr = new List<Func<Task>>()
                 {
                     async () =>
                     {
-                        result = (await _repo.Execute<Address[]>("GetAddresses", 0, "", name, addressId, categoryId, cityId, false, false, false, false, limit, offset))
+                        result = (await _repo.Execute<Address[]>("GetAddresses", addressId, "", name, slug, 0, categoryId, cityId, false, false, false, false, limit, offset))
                                                 .Select(l => l.Simplify(withCollections: false)).ToArray();
                     }
                 };
@@ -577,7 +597,7 @@ namespace FindMe.Web.App
                 {
                     taskArr.Add(async () =>
                                  {
-                                     count = await _repo.Execute<int>("GetAddressesCount", 0, "", name, addressId, categoryId, cityId);
+                                     count = await _repo.Execute<int>("GetAddressesCount", addressId, "", name, slug, 0, categoryId, cityId);
                                  });
                 }
 

@@ -55,7 +55,7 @@
                 templateUrl: '/Views/App/tags.html',
             });
 
-            $routeProvider.when('/addresses', {
+            $routeProvider.when('/addresses/:searchValue?/:searchType?/:action?', {
                 controller: 'addressesCtrlr',
                 controllerAs: 'vm',
                 templateUrl: '/Views/App/Addresses.html',
