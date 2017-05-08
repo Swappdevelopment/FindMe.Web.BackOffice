@@ -32,6 +32,8 @@
         vm.currentPgNmbr = 0;
         vm.totalPgs = 0;
 
+        vm.skipFilesVerification = false;
+
         vm.reverseVerify = false;
 
         vm.gotoPage = function (pg, scrollToTop) {
@@ -459,6 +461,10 @@
                 addrIDIndex = vm.reverseVerify ? (addrIDs.length - 1) : 0;
             }
 
+
+            var addrSendCount = vm.skipFilesVerification ? 10 : 1;
+
+
             if ((vm.reverseVerify && addrIDIndex === addrIDs.length - 1)
                 || (!vm.reverseVerify && addrIDIndex === 0)) {
 
@@ -485,7 +491,7 @@
 
                 var successFunc = function (resp) {
 
-                    vm.verifiedAddrs += 1;
+                    vm.verifiedAddrs += addrSendCount;
 
                     if (resp.data && resp.data.exceptions) {
 
@@ -507,7 +513,7 @@
 
                 var errorFunc = function (error) {
 
-                    vm.verifiedAddrs += 1;
+                    vm.verifiedAddrs += addrSendCount;
 
                     if (error.data
                         && checkRedirectForSignIn(error.data)) {
@@ -531,7 +537,7 @@
 
                     vm.totalPgs = ttlPgs;
 
-                    vm.verifyAddresses(vm.reverseVerify ? (addrIDIndex - 1) : (addrIDIndex + 1));
+                    vm.verifyAddresses(vm.reverseVerify ? (addrIDIndex - addrSendCount) : (addrIDIndex + addrSendCount));
 
                     setupPages();
                 };
@@ -539,7 +545,23 @@
 
                 vm.verifyingAddresses = true;
 
-                $http.post(appProps.urlVerifyAddress, { addrID: addrIDs[addrIDIndex], addrUID: null })
+
+                var addrs = [];
+
+                for (var i = 0; i < addrSendCount; i++) {
+
+                    var index = vm.reverseVerify ? (addrIDIndex - i) : (i + addrIDIndex);
+
+                    if (index >= 0 && index < addrIDs.length) {
+
+                        addrs.push({
+                            addrID: addrIDs[index],
+                            addrUID: null
+                        });
+                    }
+                }
+
+                $http.post(appProps.urlVerifyAddress, { addresses: addrs, skipFilesVerification: vm.skipFilesVerification })
                      .then(successFunc, errorFunc)
                      .finally(finallyFunc);
             }

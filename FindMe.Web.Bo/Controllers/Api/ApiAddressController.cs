@@ -185,14 +185,25 @@ namespace FindMe.Web.App
         {
             List<AddrException> addrExceptions = null;
 
-            Address addr;
+            object[] result = null;
 
-            object result = null;
+            JObject[] jobjs;
+
+            object lockObj;
 
             try
             {
                 if (param == null) throw new NullReferenceException(nameof(param));
 
+
+                bool skipFilesVerification = param.GetPropVal<bool>("skipFilesVerification");
+                jobjs = param.JGetPropVal<JObject[]>("addresses");
+
+                if (jobjs == null
+                    || jobjs.Length == 0)
+                {
+                    jobjs = new JObject[] { param };
+                }
 
                 string currentEnv = "production";
 
@@ -208,121 +219,134 @@ namespace FindMe.Web.App
                 UrlManager.SetupApplicationHost(_config[$"UrlConfigs:{currentEnv}:webSite"]);
 
 
-                long addrID = param.GetPropVal<long>("addrID");
-                string addrUID = param.GetPropVal<string>("addrUID");
+                result = new object[0];
 
-                addr = await _repo.Execute<Address>("GetAddress", addrID, addrUID, null, null, 0, 0, 0, true);
-
-                if (addr == null) throw new NullReferenceException(nameof(addr));
+                lockObj = new object();
 
 
-                addrExceptions = new List<AddrException>();
+                string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
+                string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
+                string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
+                bool ftpIgnoreCertificateErrors = true;
 
 
-                int slugCount = await _repo.Execute<int>("GetAddressCountFromSlug", addr.Slug);
-
-                if (slugCount > 1)
-                {
-                    addrExceptions.Add(new AddrException()
-                    {
-                        Status = AddressVerifiedStatus.MultipleSlug,
-                        Data = new { AddSlugsCount = (slugCount - 1) }
-                    });
-                }
-
-
-                if (addr.Files != null
-                    && addr.Files.Count > 0)
-                {
-                    string ftpHost = _config[$"FtpAccess:{currentEnv}:host"];
-                    string ftpUserName = _config[$"FtpAccess:{currentEnv}:user"];
-                    string ftppassword = _config[$"FtpAccess:{currentEnv}:password"];
-                    bool ftpIgnoreCertificateErrors = true;
-
-                    await Task.WhenAll(
-                        from f in addr.Files
-                        select Helper.GetFunc<AddressFile, Task>(async af =>
-                        {
-                            using (var ftpClient = new FtpClient(
-                                                new FtpClientConfiguration()
-                                                {
-                                                    Host = ftpHost,
-                                                    Username = ftpUserName,
-                                                    Password = ftppassword,
-                                                    EncryptionType = FtpEncryption.Implicit,
-                                                    IgnoreCertificateErrors = ftpIgnoreCertificateErrors
-                                                }))
-                            {
-                                await ftpClient.LoginAsync();
-
-                                string afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: false);
-
-                                if (await ftpClient.FileExistsASync(afPath))
+                await Task.WhenAll(
+                            from j in jobjs
+                            select Helper.GetFunc<JObject, Task>(
+                                async (jobj) =>
                                 {
-                                    switch (af.Type)
+                                    long addrID = jobj.GetPropVal<long>("addrID");
+                                    string addrUID = jobj.GetPropVal<string>("addrUID");
+
+                                    Address addr = await _repo.Execute<Address>("GetAddress", addrID, addrUID, null, null, 0, 0, 0, true);
+
+                                    if (addr == null) throw new NullReferenceException(nameof(addr));
+
+
+                                    addrExceptions = new List<AddrException>();
+
+
+                                    int slugCount = await _repo.Execute<int>("GetAddressCountFromSlug", addr.Slug);
+
+                                    if (slugCount > 1)
                                     {
-                                        case AddressFileType.Images:
-                                        case AddressFileType.Logos:
-
-                                            afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
-
-                                            if (!await ftpClient.FileExistsASync(afPath))
-                                            {
-                                                addrExceptions?.Add(new AddrException()
-                                                {
-                                                    Status = AddressVerifiedStatus.OptzFileMissing,
-                                                    Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
-                                                });
-                                            }
-
-                                            foreach (var size in UrlManager.GetThumnailSizes)
-                                            {
-                                                string thumnailPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
-
-                                                if (!await ftpClient.FileExistsASync(thumnailPath))
-                                                {
-                                                    addrExceptions?.Add(new AddrException()
-                                                    {
-                                                        Status = AddressVerifiedStatus.ThumbnailMissing,
-                                                        Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
-                                                    });
-                                                }
-                                            }
-                                            break;
+                                        addrExceptions.Add(new AddrException()
+                                        {
+                                            Status = AddressVerifiedStatus.MultipleSlug,
+                                            Data = new { AddSlugsCount = (slugCount - 1) }
+                                        });
                                     }
-                                }
-                                else
-                                {
-                                    addrExceptions?.Add(new AddrException()
+
+
+                                    if (!skipFilesVerification
+                                        && addr.Files != null
+                                        && addr.Files.Count > 0)
                                     {
-                                        Status = AddressVerifiedStatus.FileMissing,
-                                        Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
-                                    });
-                                }
-                            }
-                        })(f));
+                                        await Task.WhenAll(
+                                            from f in addr.Files
+                                            select Helper.GetFunc<AddressFile, Task>(async af =>
+                                            {
+                                                using (var ftpClient = new FtpClient(
+                                                                    new FtpClientConfiguration()
+                                                                    {
+                                                                        Host = ftpHost,
+                                                                        Username = ftpUserName,
+                                                                        Password = ftppassword,
+                                                                        EncryptionType = FtpEncryption.Implicit,
+                                                                        IgnoreCertificateErrors = ftpIgnoreCertificateErrors
+                                                                    }))
+                                                {
+                                                    await ftpClient.LoginAsync();
+
+                                                    string afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: false);
+
+                                                    if (await ftpClient.FileExistsASync(afPath))
+                                                    {
+                                                        switch (af.Type)
+                                                        {
+                                                            case AddressFileType.Images:
+                                                            case AddressFileType.Logos:
+
+                                                                afPath = af.GetFtpSource(addr.ClientUID, addr.UID, optimizedMedia: true);
+
+                                                                if (!await ftpClient.FileExistsASync(afPath))
+                                                                {
+                                                                    addrExceptions?.Add(new AddrException()
+                                                                    {
+                                                                        Status = AddressVerifiedStatus.OptzFileMissing,
+                                                                        Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
+                                                                    });
+                                                                }
+
+                                                                foreach (var size in UrlManager.GetThumnailSizes)
+                                                                {
+                                                                    string thumnailPath = af.GetFtpThumbnailSource(addr.ClientUID, addr.UID, size.Width, size.Height);
+
+                                                                    if (!await ftpClient.FileExistsASync(thumnailPath))
+                                                                    {
+                                                                        addrExceptions?.Add(new AddrException()
+                                                                        {
+                                                                            Status = AddressVerifiedStatus.ThumbnailMissing,
+                                                                            Data = new { type = af.Type.ToString(), file = af.Simplify(false), th = size.ToString() }
+                                                                        });
+                                                                    }
+                                                                }
+                                                                break;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        addrExceptions?.Add(new AddrException()
+                                                        {
+                                                            Status = AddressVerifiedStatus.FileMissing,
+                                                            Data = new { type = af.Type.ToString(), File = af.Simplify(false) }
+                                                        });
+                                                    }
+                                                }
+                                            })(f));
+                                    }
 
 
-                    if (addr != null
-                        && addrExceptions != null
-                        && addrExceptions.Count > 0)
-                    {
-                        result = (from ex in addrExceptions
-                                  group ex by ex.Status into grp
-                                  select new
-                                  {
-                                      ID = addr.ID,
-                                      Name = addr.Name,
-                                      Slug = addr.Slug,
-                                      Status = grp.Key,
-                                      Data = grp.Select(l => l.Data).ToArray()
-                                  }).ToArray();
-                    }
-                    else
-                    {
-                        result = new object[0];
-                    }
-                }
+                                    if (addr != null
+                                        && addrExceptions != null
+                                        && addrExceptions.Count > 0)
+                                    {
+                                        lock (lockObj)
+                                        {
+                                            result = result.Concat(from ex in addrExceptions
+                                                                   group ex by ex.Status into grp
+                                                                   select new
+                                                                   {
+                                                                       ID = addr.ID,
+                                                                       Name = addr.Name,
+                                                                       Slug = addr.Slug,
+                                                                       Status = grp.Key,
+                                                                       Data = grp.Select(l => l.Data).ToArray()
+                                                                   }).ToArray();
+                                        }
+                                    }
+                                })(j));
+
 
                 return Ok(new { exceptions = result });
             }
@@ -340,7 +364,7 @@ namespace FindMe.Web.App
             }
             finally
             {
-                addr = null;
+                lockObj = null;
 
                 result = null;
 
