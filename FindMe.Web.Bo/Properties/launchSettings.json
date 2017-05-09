@@ -12,8 +12,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "Migration__On": "false",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "Migration__On": "true",
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
     "FindMe.Web.App": {

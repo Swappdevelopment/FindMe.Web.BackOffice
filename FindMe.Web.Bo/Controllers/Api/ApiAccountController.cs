@@ -204,13 +204,24 @@ namespace FindMe.Web.App
 
             try
             {
-                string newPassword = param.JGetPropVal<string>("newPassword");
                 string oldPassword = param.JGetPropVal<string>("oldPassword");
+                string newPassword = param.JGetPropVal<string>("newPassword");
 
-                result = await _repo.Execute<User>("ChangeUserPassword", newPassword, oldPassword);
+                result = await _repo.Execute<User>("ChangeUserPassword", oldPassword, newPassword);
 
 
                 return Ok(new { result = result });
+            }
+            catch (ExceptionID ex)
+            {
+                switch (ex.ErrorID)
+                {
+                    case MessageIdentifier.SIGNIN_FAILED:
+                        return Ok(new { error = this.GetMessage("msg_SgnInFld") });
+
+                    default:
+                        return BadRequestEx(ex);
+                }
             }
             catch (Exception ex)
             {

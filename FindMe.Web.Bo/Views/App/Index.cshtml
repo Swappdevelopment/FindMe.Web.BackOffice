@@ -95,6 +95,7 @@
 
             urlMngProfile: '@Url.Action("ManageProfile", "ApiAccount")',
             urlCheckEmailToken: '@Url.Action("IsEmailValidationTokenConfirmed", "ApiAccount")',
+            urlChangePassword: '@Url.Action("ChangePassword", "ApiAccount")',
             urlGetClients: '@Url.Action("GetClients", "ApiAddress")',
             urlSaveClients: '@Url.Action("SaveClients", "ApiAddress")',
             urlGetCatgs: '@Url.Action("GetCatgs", "ApiCatg")',
@@ -228,6 +229,11 @@
             lbl_VwAll: ('@Html.GetLabel("lbl_VwAll")').encodeHtml(),
             lbl_Check: ('@Html.GetLabel("lbl_Check")').encodeHtml(),
             lbl_Clear: ('@Html.GetLabel("lbl_Clear")').encodeHtml(),
+            lbl_OldPasswrd: ('@Html.GetLabel("lbl_OldPasswrd")').encodeHtml(),
+            lbl_NewPasswrd: ('@Html.GetLabel("lbl_NewPasswrd")').encodeHtml(),
+            lbl_CnfrmPasswrd: ('@Html.GetLabel("lbl_CnfrmPasswrd")').encodeHtml(),
+            lbl_ChngPasswrd: ('@Html.GetLabel("lbl_ChngPasswrd")').encodeHtml(),
+            lbl_SavePasswrd: ('@Html.GetLabel("lbl_SavePasswrd")').encodeHtml(),
 
             lbl_Monday: ('@Html.GetLabel("lbl_Monday")').encodeHtml(),
             lbl_Tuesday: ('@Html.GetLabel("lbl_Tuesday")').encodeHtml(),
@@ -240,6 +246,7 @@
             lbl_Value: ('@Html.GetLabel("lbl_Value")').encodeHtml(),
 
             erMsg_InvldEmail: ('@Html.GetMessage("erMsg_InvldEmail")').encodeHtml(),
+            erMsg_CnfrmPsswrd: ('@Html.GetMessage("erMsg_CnfrmPsswrd")').encodeHtml(),
 
             msg_RfrshPrfl: ('@Html.GetMessage("msg_RfrshPrfl")').encodeHtml(),
             msg_SavePrfl: ('@Html.GetMessage("msg_SavePrfl")').encodeHtml(),
