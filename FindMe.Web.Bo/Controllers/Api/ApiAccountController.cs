@@ -1,4 +1,5 @@
 ﻿using FindMe.Data;
+using FindMe.Data.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -113,12 +114,15 @@ namespace FindMe.Web.App
                         link += (link.EndsWith("/") ? "" : "/") + tokenValue;
 
 
+                        string fromEmail = _env.IsDevelopment() ? DevSecrets.GetSecretValue("swappAccount:email") : _config["MandrillEmailManagement:noReplyEmail"];
+                        string toEmail = profile.emailToVal.ToString();
+
                         string message = this.GetMessage("msg_ValEmail") + link;
 
 
                         await Task.WhenAll(
                                     _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sending),
-                                    _mailService.SendEmailAsync(profile.emailToVal.ToString(), this.GetLabel("lbl_FndMeBoValEmail"), message));
+                                    _mailService.SendEmailAsync(this.GetLabel("lbl_FndMeBoValEmail"), message, toEmail: toEmail, fromEmail: fromEmail));
 
                         await _repo.Execute("SetEmailValidationTokenStatus", tokenValue, EmailSatus.Sent);
 
@@ -190,6 +194,32 @@ namespace FindMe.Web.App
             }
 
             return Ok(new { result = result });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromBody]JObject param = null)
+        {
+            User result;
+
+            try
+            {
+                string newPassword = param.JGetPropVal<string>("newPassword");
+                string oldPassword = param.JGetPropVal<string>("oldPassword");
+
+                result = await _repo.Execute<User>("ChangeUserPassword", newPassword, oldPassword);
+
+
+                return Ok(new { result = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequestEx(ex);
+            }
+            finally
+            {
+                result = null;
+            }
         }
 
 

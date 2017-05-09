@@ -35,7 +35,8 @@
     "FindMe.Data.Db.MySql": "1.0.0-*",
     "CoreFtp": "1.3.4",
     "ImageSharp": "1.0.0-alpha7-00006",
-    "CoreCompat.System.Drawing": "1.0.0-beta006"
+    "CoreCompat.System.Drawing": "1.0.0-beta006",
+    "Mandrill.net": "4.0.0"
   },
 
   "tools": {
