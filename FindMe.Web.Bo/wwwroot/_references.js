@@ -14,7 +14,6 @@
 /// <reference path="js/app/homeCtrlr.js" />
 /// <reference path="js/app/index.js" />
 /// <reference path="js/app/mainCtrlr.js" />
-/// <reference path="js/app/services/citiesctrlr.js" />
 /// <reference path="js/app/services/listitemservice.min.js" />
 /// <reference path="js/app/services/misctoolsservice.min.js" />
 /// <reference path="js/app/tagsctrlr.js" />
