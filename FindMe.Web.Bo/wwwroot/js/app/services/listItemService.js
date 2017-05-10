@@ -68,50 +68,50 @@
                                     }
                                 };
 
+                                if (item.moreValidations) {
+
+                                    if (!Array.isArray(item.moreValidations)) {
+
+                                        item.moreValidations = [item.moreValidations];
+                                    }
+
+                                    formVal[item.name].moreValidations = item.moreValidations;
+
+                                    if (item.moreValidations.length > 0) {
+
+                                        $.each(item.moreValidations, function () {
+
+                                            formVal[item.name][this.name] = this.func;
+                                        });
+                                    }
+                                }
+
 
                                 formVal[item.name].isValid = function () {
 
-                                    if (this.isReq) {
+                                    var result = true;
 
-                                        return this.isReqValid();
-                                    }
-                                    else {
+                                    if (this.moreValidations && this.moreValidations.length > 0) {
 
-                                        return true;
+                                        $.each(this.moreValidations, function () {
+
+                                            if (result) {
+
+                                                result = this.func();
+                                            }
+                                        });
                                     }
+
+                                    if (result) {
+
+                                        if (this.isReq) {
+
+                                            result = this.isReqValid();
+                                        }
+                                    }
+
+                                    return result;
                                 };
-
-                                //formVal[item.name].isValid = function () {
-
-                                //    var isValidResult = true;
-
-                                //    if (isValidResult && this.isReq) {
-
-                                //        isValidResult = element[this.name];
-                                //    }
-
-                                //    if (isValidResult && this.isNumGrZero) {
-
-                                //        isValidResult = element[this.name] > 0;
-                                //    }
-
-                                //    if (isValidResult && this.isNumLtZero) {
-
-                                //        isValidResult = element[this.name] < 0;
-                                //    }
-
-                                //    if (isValidResult && this.isNumEqZero) {
-
-                                //        isValidResult = element[this.name] === 0;
-                                //    }
-
-                                //    if (isValidResult && this.isNumNotEqZero) {
-
-                                //        isValidResult = element[this.name] !== 0;
-                                //    }
-
-                                //    return isValidResult;
-                                //};
                             }
                         }
 

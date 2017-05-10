@@ -5,13 +5,12 @@
 
 
     angular.module('app-mainmenu')
-           .controller('profileCtrlr', ['$http', '$interval', 'appProps', 'headerConfigService', profileCtrlrFunc]);
+           .controller('profileCtrlr', ['$http', '$scope', '$interval', 'appProps', 'listItemService', 'headerConfigService', profileCtrlrFunc]);
 
 
-    function profileCtrlrFunc($http, $interval, appProps, headerConfigService) {
+    function profileCtrlrFunc($http, $scope, $interval, appProps, listItemService, headerConfigService) {
 
         $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
-
 
         headerConfigService.reset();
         headerConfigService.title = appProps.lbl_Prfl;
@@ -20,10 +19,12 @@
         headerConfigService.refreshBtnTltp = appProps.msg_RfrshPrfl;
         headerConfigService.saveBtnTltp = appProps.msg_SavePrfl;
 
+
         var vm = this;
 
-
         vm.appProps = appProps;
+
+        vm.hidePassword = true;
 
         vm.errorstatus = '';
         vm.errormsg = '';
@@ -49,7 +50,11 @@
         vm.cancelingEmail = false;
         vm.resendingEmail = false;
 
-
+        vm.password = {
+            oldPassword: null,
+            newPassword: null,
+            cnfrmPassword: null
+        };
 
 
         var successFunc = function (resp) {
@@ -104,6 +109,105 @@
         var finallyFunc = function () {
 
             toggleGlblWaitVisibility(false);
+        };
+
+
+
+        vm.initPasswordFrm = function (psswrd) {
+
+            if (psswrd) {
+
+                listItemService.setItemFormValidation(
+                        psswrd,
+                        [{
+                            name: 'oldPassword',
+                            isReq: true
+                        },
+                        {
+                            name: 'newPassword',
+                            isReq: true
+                        },
+                        {
+                            name: 'cnfrmPassword',
+                            moreValidations: {
+                                name: 'isEqualToNewPassword',
+                                func: function () {
+
+                                    return psswrd.newPassword === psswrd.cnfrmPassword;
+                                }
+                            }
+                        }]);
+            }
+        };
+
+
+
+        vm.changePasswordClick = function (psswrd) {
+
+            vm.errorstatus = '';
+            vm.errormsg = '';
+            vm.errorid = 0;
+
+            if (vm.hidePassword) {
+
+                vm.hidePassword = !vm.hidePassword;
+            }
+            else {
+
+                var param = {
+                    oldPassword: vm.password.oldPassword,
+                    newPassword: vm.password.newPassword
+                };
+
+                vm.password.formVal.oldPassword.isTouched = false;
+                vm.password.formVal.newPassword.isTouched = false;
+                vm.password.formVal.cnfrmPassword.isTouched = false;
+
+                vm.password.oldPassword = null;
+                vm.password.newPassword = null;
+                vm.password.cnfrmPassword = null;
+
+                var changePasswordSuccessFunc = function (resp) {
+
+                    if (resp && resp.data && resp.data.error) {
+
+                        vm.errorstatus = '';
+                        vm.errormsg = resp.data.error;
+                        vm.errorid = 0;
+                    }
+                    else {
+
+                        vm.hidePassword = true;
+                    }
+                };
+
+                toggleGlblWaitVisibility(true);
+
+                $http.post(appProps.urlChangePassword, param)
+                     .then(changePasswordSuccessFunc, errorFunc)
+                     .finally(finallyFunc);
+            }
+        };
+
+        vm.changePasswordKeypressed = function ($event, psswrd) {
+
+            if ($event && $event.keyCode === 13) {
+
+                if (vm.password.formVal && vm.password.formVal.isValid()) {
+
+                    vm.changePasswordClick(psswrd);
+                }
+            }
+        };
+
+        vm.passwordReady = function () {
+
+            var $oldPswrd = $('div[uib-collapse]').find('input[name="oldPassword"]');
+
+            if ($oldPswrd && $oldPswrd.length > 0) {
+
+                $oldPswrd.focus();
+            }
         };
 
 
@@ -211,13 +315,12 @@
             }
             else if ($btn.hasClass('save')) {
 
-                $('form[name="userProfileForm"]').submit();
+                vm.manageProfile(vm.profile);
+                //$('form[name="userProfileForm"]').submit();
             }
         };
 
         $('#searchBar .btn.btn-tb').on('click', buttonClick);
-
-        vm.manageProfile();
     }
 
 })();

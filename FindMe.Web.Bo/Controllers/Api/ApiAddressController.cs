@@ -1269,44 +1269,44 @@ namespace FindMe.Web.App
         }
 
 
-        private async Task<Stream> DownloadOptzAddressFileASync(AddressFile af, string clientUID, string addrUID)
-        {
-            Stream result = null;
-            string url;
+        //private async Task<Stream> DownloadOptzAddressFileASync(AddressFile af, string clientUID, string addrUID)
+        //{
+        //    Stream result = null;
+        //    string url;
 
-            try
-            {
-                if (af == null) throw new NullReferenceException();
-
-
-                url = UrlManager.GetToBeOptimizedUrl(clientUID, addrUID, af.UID, af.Format, af.Type);
-
-                if (string.IsNullOrEmpty(url)) throw new NullReferenceException();
+        //    try
+        //    {
+        //        if (af == null) throw new NullReferenceException();
 
 
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Accept.Clear();
-                    httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/html"));
-                    httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
-                    httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
-                    httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
+        //        url = UrlManager.GetToBeOptimizedUrl(clientUID, addrUID, af.UID, af.Format, af.Type);
 
-                    result = await httpClient.GetStreamAsync(new Uri(url, UriKind.Absolute));
+        //        if (string.IsNullOrEmpty(url)) throw new NullReferenceException();
 
 
-                    return result;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                result = null;
-            }
-        }
+        //        using (var httpClient = new HttpClient())
+        //        {
+        //            httpClient.DefaultRequestHeaders.Accept.Clear();
+        //            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/html"));
+        //            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xhtml+xml"));
+        //            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
+        //            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
+
+        //            result = await httpClient.GetStreamAsync(new Uri(url, UriKind.Absolute));
+
+
+        //            return result;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    finally
+        //    {
+        //        result = null;
+        //    }
+        //}
 
 
         private async Task DeleteAddrFiles(long addrID, AddressFile[] addrFiles)

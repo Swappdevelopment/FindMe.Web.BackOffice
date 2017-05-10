@@ -1,6 +1,6 @@
 ﻿
 
-<div class="row container-fluid">
+<div id="vwUserProfile" class="row container-fluid">
 
     <div class="alert alert-warning" ng-show="vm.errormsg">
         <h4 ng-show="vm.errorstatus">{{ vm.errorstatus }}</h4>
@@ -11,7 +11,7 @@
 
         <input type="submit" class="hidden" />
 
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-6 col-sm-12" ng-init="vm.manageProfile()">
 
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="email">{{vm.appProps.lbl_Email}}</label>
@@ -40,6 +40,40 @@
             <div class="form-group">
                 <label class="findme-color-fc-dark" for="userName">{{vm.appProps.lbl_Usrnm}}</label>
                 <input type="text" class="form-control" name="userName" ng-model="vm.profile.userName" />
+            </div>
+
+            <br />
+
+            <div class="form-group" ng-init="vm.initPasswordFrm(vm.password)">
+                <div uib-collapse="vm.hidePassword" expanded="vm.passwordReady($event)">
+                    <div class="form-group">
+                        <label class="findme-color-fc-dark" for="oldPassword">{{vm.appProps.lbl_OldPasswrd}}</label>
+                        <input type="password" class="form-control" name="oldPassword"
+                               ng-model="vm.password.oldPassword" ng-focus="vm.password.formVal.oldPassword.touched()"
+                               ng-keypress="vm.changePasswordKeypressed($event, vm.password)"/>
+                        <p ng-show="!vm.password.formVal.oldPassword.isReqValid() && vm.password.formVal.oldPassword.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="findme-color-fc-dark" for="newPassword">{{vm.appProps.lbl_NewPasswrd}}</label>
+                        <input type="password" class="form-control" name="newPassword"
+                               ng-model="vm.password.newPassword" ng-focus="vm.password.formVal.newPassword.touched()"
+                               ng-keypress="vm.changePasswordKeypressed($event, vm.password)"/>
+                        <p ng-show="!vm.password.formVal.newPassword.isReqValid() && vm.password.formVal.newPassword.isTouched" class="help-block">{{vm.appProps.msg_FldReq}}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="findme-color-fc-dark" for="cnfrmPassword">{{vm.appProps.lbl_CnfrmPasswrd}}</label>
+                        <input type="password" class="form-control" name="cnfrmPassword"
+                               ng-model="vm.password.cnfrmPassword" ng-focus="vm.password.formVal.cnfrmPassword.touched()"
+                               ng-keypress="vm.changePasswordKeypressed($event, vm.password)"/>
+                        <p ng-show="!vm.password.formVal.cnfrmPassword.isEqualToNewPassword()" class="help-block">
+                            {{vm.appProps.erMsg_CnfrmPsswrd.replace('{0}', vm.appProps.lbl_NewPasswrd)}}
+                        </p>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-findme" ng-click="vm.changePasswordClick(vm.password)" ng-disabled="!vm.hidePassword && !vm.password.formVal.isValid()">
+                    {{vm.hidePassword ? vm.appProps.lbl_ChngPasswrd : vm.appProps.lbl_SavePasswrd}}
+                </button>
             </div>
 
         </div>
