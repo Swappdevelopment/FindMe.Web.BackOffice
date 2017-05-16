@@ -13,7 +13,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "Migration__On": "true",
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "FindMe.Web.App": {

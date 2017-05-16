@@ -616,25 +616,25 @@
 
                         switch (day.day) {
 
-                            case 10:
+                            case 20:
                                 day.name = appProps.lbl_Monday;
                                 break;
-                            case 20:
+                            case 30:
                                 day.name = appProps.lbl_Tuesday;
                                 break;
-                            case 30:
+                            case 40:
                                 day.name = appProps.lbl_Wednesday;
                                 break;
-                            case 40:
+                            case 50:
                                 day.name = appProps.lbl_Thursday;
                                 break;
-                            case 50:
+                            case 60:
                                 day.name = appProps.lbl_Friday;
                                 break;
-                            case 60:
+                            case 70:
                                 day.name = appProps.lbl_Saturday;
                                 break;
-                            case 70:
+                            case 10:
                                 day.name = appProps.lbl_Sunday;
                                 break;
                             case 80:
