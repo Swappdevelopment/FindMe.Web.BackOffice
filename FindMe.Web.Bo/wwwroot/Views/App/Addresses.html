@@ -348,7 +348,7 @@
                                                 <button ng-click="vm.markRowForDeletion(img, vm.address.images)" title="{{vm.appProps.msg_MrkForDltn}}" type="button" class="btn btn-findme btn-xs no-animate">
                                                     <span class="fa" ng-class="img.recordState === 30 ? 'fa-ban' : 'fa-trash'"></span>
                                                 </button>
-                                                <button ng-click="vm.revertFile(img)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!img.recordState || img.recordState === 0 || img.recordState === 10">
+                                                <button ng-click="vm.revertFile(img, vm.address.images)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!img.recordState || img.recordState === 0 || img.recordState === 10">
                                                     <span class="fa fa-undo"></span>
                                                 </button>
                                             </div>
@@ -402,7 +402,8 @@
                                             <!--<span class="fa fa-2x no-animate" ng-hide="img.inEditMode" ng-class="img.active ? 'fa-check text-success' : 'fa-times text-danger'"></span>-->
 
                                             <span class="check-box">
-                                                <input type="checkbox" value="None" id="addrImgActive-{{$index}}" name="addrImgActive-{{$index}}" ng-change="vm.checkFilesRecordState(img)" ng-model="img.active" ng-disabled="img.recordState === 30" />
+                                                <input type="checkbox" value="None" id="addrImgActive-{{$index}}" name="addrImgActive-{{$index}}"
+                                                       ng-change="vm.fileSetActive(img, vm.address.images)" ng-model="img.active" ng-disabled="img.recordState === 30" />
                                                 <label class="lbl-chkb" for="addrImgActive-{{$index}}"></label>
                                             </span>
                                         </td>

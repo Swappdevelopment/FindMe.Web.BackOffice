@@ -1957,16 +1957,48 @@
             }
         };
 
-        vm.revertFile = function (file) {
+        vm.revertFile = function (file, fileCollection) {
 
             if (file && file.__comp) {
 
                 file.name = file.__comp.name;
-                file.isDefault = file.__comp.isDefault;
                 file.format = file.__comp.format;
                 file.alt = file.__comp.alt;
                 file.desc = file.__comp.desc;
                 file.active = file.__comp.active;
+
+                if (file.isDefault !== file.__comp.isDefault) {
+
+                    file.isDefault = file.__comp.isDefault;
+
+                    if (fileCollection
+                        && fileCollection.length > 0) {
+
+                        if (file.isDefault) {
+
+                            $.each($.grep(fileCollection, function (f) { return f !== file && f.isDefault === true; }), function () {
+
+                                this.isDefault = false;
+                                vm.checkFilesRecordState(this);
+                            });
+                        }
+                        else {
+
+                            var index = fileCollection.indexOf(file);
+
+                            if (index >= 0) {
+
+                                index += 1;
+
+                                index = (index >= fileCollection.length) ? 0 : index;
+
+                                fileCollection[index].isDefault = true;
+                                vm.checkFilesRecordState(fileCollection[index]);
+                            }
+                        }
+                    }
+
+                }
 
                 file.recordState = 0;
 
@@ -2102,14 +2134,66 @@
 
             if (file && fileCollection && fileCollection.length > 0) {
 
-                $.each($.grep(fileCollection, function (v) { return v.isDefault === true; }), function (index, value) {
+                if (file.active) {
 
-                    value.isDefault = false;
-                });
+                    $.each($.grep(fileCollection, function (f) { return f.isDefault === true; }), function () {
 
-                file.isDefault = true;
+                        this.isDefault = false;
+                        vm.checkFilesRecordState(this);
+                    });
+
+                    file.isDefault = true;
+                }
+                else {
+
+                    file.isDefault = false;
+                }
             }
 
+            vm.checkFilesRecordState(file);
+        };
+        vm.fileSetActive = function (file, fileCollection) {
+
+            if (file && fileCollection && fileCollection.length > 0) {
+
+
+                if (file.active) {
+
+                    var count = $.grep(fileCollection, function (f) { return f.isDefault === true; }).length;
+
+                    if (count === 0) {
+
+                        file.isDefault = true;
+                    }
+                }
+                else {
+
+
+                    if (file.isDefault) {
+
+                        file.isDefault = false;
+
+                        var tempArr = $.grep(fileCollection, function (f) { return f === file || f.active === true; })
+
+                        if (tempArr.length > 1) {
+
+                            var index = tempArr.indexOf(file);
+
+                            if (index >= 0) {
+
+                                index += 1;
+
+                                index = (index >= tempArr.length) ? 0 : index;
+
+                                tempArr[index].isDefault = true;
+                                vm.checkFilesRecordState(tempArr[index]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            file.status = file.active ? 1 : 0;
             vm.checkFilesRecordState(file)
         };
 
