@@ -2168,7 +2168,6 @@
                 }
                 else {
 
-
                     if (file.isDefault) {
 
                         file.isDefault = false;
