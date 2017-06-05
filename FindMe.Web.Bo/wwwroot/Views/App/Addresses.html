@@ -1030,16 +1030,18 @@
                     <td>
                         <span class="no-animate">{{address.slug}}</span>
                     </td>
-                    <td>
+                    <td ng-class="address.client.status === 0 ? 'findme-color-bc-lgray' : ''">
                         <span class="no-animate">{{address.client.name}}</span>
                     </td>
-                    <td>
+                    <td ng-class="address.parentCategory.status === 0 ? 'findme-color-bc-lgray' : ''">
+                        {{address.parentCategory.status}}
                         <span class="no-animate">{{address.parentCategory.name}}</span>
                     </td>
-                    <td>
+                    <td ng-class="address.category.status === 0 ? 'findme-color-bc-lgray' : ''">
+                        {{address.category.status}}
                         <span class="no-animate">{{address.category.name}}</span>
                     </td>
-                    <td>
+                    <td ng-class="address.cityDetail.status === 0 ? 'findme-color-bc-lgray' : ''">
                         <span class="no-animate">{{address.cityDetail.name}}</span>
                     </td>
                     <td class="text-center">
