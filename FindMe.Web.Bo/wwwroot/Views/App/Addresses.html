@@ -573,8 +573,89 @@
                                         <td>
                                             <select class="form-control"
                                                     ng-model="ftrd.typeObj" ng-change="vm.featuredChanged(ftrd)"
-                                                    ng-options="ftrdType.name for ftrdType in vm.featuredTypes">
-                                            </select>
+                                                    ng-options="ftrdType.name for ftrdType in vm.featuredTypes"></select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <br />
+                    <hr />
+                </div>
+
+                <div ng-show="vm.address.id > 0">
+
+                    <div class="row">
+                        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div>
+                                <span class="bold-text bigger findme-color-fc-pink">
+                                    {{vm.appProps.lbl_YtLnks}}
+                                </span>
+                                <button type="button" class="btn btn-findme btn-xs no-outline" ng-click="vm.addYoutubeLink()"><span class="fa fa-plus-square"></span></button>
+                            </div>
+
+                            <table class="table data table-striped table-hover" ng-show="vm.address.youtubeLinks && vm.address.youtubeLinks.length > 0">
+                                <thead>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_From}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_To}}</b>
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Link}}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{vm.appProps.lbl_Name}} ({{vm.appProps.lbl_Optnl}})</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="ytLnk in vm.address.youtubeLinks" ng-class="ytLnk.recordState === 30 ? 'inDeleteMode' : ''">
+                                        <td>
+                                            <button ng-disabled="ytLnk.recordState === 30" ng-click="vm.setYoutubeLinkToDelete(ytLnk)" type="button" class="btn btn-findme btn-xs no-animate">
+                                                <span class="fa fa-trash"></span>
+                                            </button>
+                                            <button ng-click="vm.revertYoutubeLink(ytLnk)" type="button" class="btn btn-findme btn-xs no-animate" title="{{vm.appProps.lbl_Revert}}" ng-disabled="!ytLnk.recordState || ytLnk.recordState === 0 || ytLnk.recordState === 10">
+                                                <span class="fa fa-undo"></span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <p class="input-group datepicker">
+                                                <input type="text" class="form-control no-animate"
+                                                       ng-change="vm.youtubeLinkChanged(ytLnk)"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="ytLnk.fromDate" ng-disabled="ytLnk.recordState === 30"
+                                                       is-open="ytLnk.isFromDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="ytLnk.isFromDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p class="input-group datepicker">
+                                                <input type="text" class="form-control no-animate"
+                                                       ng-change="vm.youtubeLinkChanged(ytLnk)"
+                                                       uib-datepicker-popup="{{vm.appProps.defaultDateFormat}}" ng-model="ytLnk.toDate" ng-disabled="ytLnk.recordState === 30"
+                                                       is-open="ytLnk.isToDateOpened" />
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="ytLnk.isToDateOpened = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <a target="_blank" href="" ng-href="{{ytLnk.webUrl}}" class="btn btn-findme" ng-disabled="!ytLnk.webUrl.isValidUrl()" title="{{vm.appProps.msg_VwYtVideo}}"><span class="fa fa-youtube-play fa-2x"></span></a>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="ytLnk.recordState === 30" ng-model="ytLnk.webUrl" ng-change="vm.youtubeLinkChanged(ytLnk)" />
+                                        </td>
+                                        <td>
+                                            <input class="form-control" ng-disabled="ytLnk.recordState === 30" ng-model="ytLnk.name" ng-change="vm.youtubeLinkChanged(ytLnk)" />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1070,9 +1151,6 @@
 
                     <td class="text-center">
                         <span class="fa {{address.flgRecByFbFans ? 'fa-check text-success' : 'fa-times text-danger'}} fa-2x no-animate"></span>
-
-
-
                         <!--<span class="check-box no-animate">
                             <input ng-disabled="address.saving" type="checkbox" value="None" id="addressFbFans-{{address.id}}" name="addressFbFans-{{address.id}}" ng-model="address.flgRecByFbFans" />
                             <label class="lbl-chkb" for="addressFbFans-{{address.id}}"></label>

@@ -858,6 +858,24 @@ namespace FindMe.Web.App
                         }
 
 
+                        jObjects = jobj.JGetPropVal<JObject[]>("youtubeLinks");
+
+                        if (jObjects != null)
+                        {
+                            addr.Links = new ObjectCollection<AddressLink>();
+
+                            foreach (var item in jObjects)
+                            {
+                                var lnk = Helper.JSonCamelDeserializeObject<AddressLink>(item);
+                                lnk.Url = YoutubeParser.GetYoutubeID(item.JGetPropVal<string>("webUrl"));
+
+                                addr.Links.Add(lnk);
+
+                                lnk = null;
+                            }
+                        }
+
+
                         jObjects = jobj.JGetPropVal<JObject[]>("contacts");
 
                         if (jObjects != null)

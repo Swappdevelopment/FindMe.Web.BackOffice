@@ -408,6 +408,47 @@
 
         };
 
+        var checkYoutubeLinksRecordState = function (youtubeLinks) {
+
+            if (youtubeLinks) {
+
+                if (!Array.isArray(youtubeLinks)) {
+
+                    youtubeLinks = [youtubeLinks];
+                }
+
+                for (var i = 0; i < youtubeLinks.length; i++) {
+
+                    var ytLnk = youtubeLinks[i];
+
+                    if (ytLnk.__comp
+                        && (!ytLnk.recordState || ytLnk.recordState <= 0)) {
+
+                        if (ytLnk.id > 0) {
+
+                            if (ytLnk.fromDate !== ytLnk.__comp.fromDate
+                                || ytLnk.toDate !== ytLnk.__comp.toDate
+                                || ytLnk.fromUtc !== ytLnk.__comp.fromUtc
+                                || ytLnk.toUtc !== ytLnk.__comp.toUtc
+                                || ytLnk.webUrl !== ytLnk.__comp.webUrl
+                                || ytLnk.name !== ytLnk.__comp.name) {
+
+                                ytLnk.recordState = 20;
+                            }
+                            else {
+
+                                ytLnk.recordState = 0;
+                            }
+                        }
+                        else {
+
+                            ytLnk.recordState = 10;
+                        }
+                    }
+                }
+            }
+        };
+
         var checkRecordState = function (address, compAddress, toBeDeleted) {
 
             if (address
@@ -453,6 +494,7 @@
                 checkTripAdWidgetRecordState(address.tripAdWidget);
                 checkContactsRecordState(address.contacts);
                 checkFeaturedsRecordState(address.featureds);
+                checkYoutubeLinksRecordState(address.featureds);
             }
         };
 
@@ -547,6 +589,7 @@
                             checkContactsRecordState: checkContactsRecordState,
                             checkTripAdWidgetRecordState: checkTripAdWidgetRecordState,
                             checkFeaturedsRecordState: checkFeaturedsRecordState,
+                            checkYoutubeLinksRecordState: checkYoutubeLinksRecordState,
                             clients: vm.clients,
                             parentCategorys: vm.parentCategorys,
                             categorys: vm.categorys,
@@ -711,6 +754,19 @@
                     });
                 }
 
+                if (value.youtubeLinks) {
+
+                    $.each(value.youtubeLinks, function (i, ytLnk) {
+
+                        ytLnk.fromDate = new Date(ytLnk.fromUtc);
+                        ytLnk.toDate = ytLnk.toUtc ? new Date(ytLnk.toUtc) : null;
+
+                        ytLnk.active = ytLnk.status === 1;
+
+                        ytLnk.__comp = jQuery.extend(false, {}, ytLnk);
+                    });
+                }
+
                 if (!value.tripAdWidget) {
 
                     value.tripAdWidget = {
@@ -858,6 +914,20 @@
                         val = jQuery.extend(true, {}, temp[i]);
                         delete val.__comp;
                         value.featureds.push(val);
+                    }
+                }
+
+                if (value.youtubeLinks) {
+
+                    temp = value.youtubeLinks;
+
+                    value.youtubeLinks = [];
+
+                    for (i = 0; i < temp.length; i++) {
+
+                        val = jQuery.extend(true, {}, temp[i]);
+                        delete val.__comp;
+                        value.youtubeLinks.push(val);
                     }
                 }
 
@@ -1385,6 +1455,18 @@
                             });
                         }
 
+                        if (toBeSaved.youtubeLinks) {
+
+                            $.each(toBeSaved.youtubeLinks, function (i, ftrd) {
+
+                                ftrd.fromUtc = appProps.swIsoFormat(ftrd.fromDate, true);
+                                ftrd.toUtc = appProps.swIsoFormat(ftrd.toDate, true);
+
+                                delete ftrd.fromDate;
+                                delete ftrd.toDate;
+                            });
+                        }
+
                         toBeSavedAddresses.push(toBeSaved);
                         validAddresses.push(address);
                     }
@@ -1510,6 +1592,16 @@
                                             for (i = 0; i < value.featureds.length; i++) {
 
                                                 tempValue.featureds.push(value.featureds[i]);
+                                            }
+                                        }
+
+                                        if (value.youtubeLinks && tempValue.youtubeLinks) {
+
+                                            tempValue.youtubeLinks.length = 0;
+
+                                            for (i = 0; i < value.youtubeLinks.length; i++) {
+
+                                                tempValue.youtubeLinks.push(value.youtubeLinks[i]);
                                             }
                                         }
 
@@ -2357,6 +2449,25 @@
             vm.address.featureds.insert(0, newRecord);
         };
 
+        vm.addYoutubeLink = function () {
+
+            var newRecord = {
+                id: 0,
+                fromUtc: null,
+                fromDate: new Date(),
+                name: '',
+                url: '',
+                type: 10,
+                toUtc: null,
+                toDate: null,
+                status: 1,
+                recordState: 10,
+                active: true
+            };
+
+            vm.address.youtubeLinks.insert(0, newRecord);
+        };
+
         vm.addLogo = function () {
 
             var newRecord = {
@@ -2496,6 +2607,22 @@
             }
         };
 
+        vm.setYoutubeLinkToDelete = function (ytLnk) {
+
+            if (ytLnk) {
+
+                if (ytLnk.recordState === 10) {
+
+                    vm.address.youtubeLinks.remove(ytLnk);
+                }
+                else {
+
+                    ytLnk.prevRecordState = ytLnk.recordState;
+                    ytLnk.recordState = 30;
+                }
+            }
+        };
+
         vm.revertFeatured = function (ftrd) {
 
             if (ftrd && ftrd.__comp) {
@@ -2515,9 +2642,36 @@
             param.checkFeaturedsRecordState(ftrd);
         };
 
+        vm.revertYoutubeLink = function (ytLnk) {
+
+            if (ytLnk && ytLnk.__comp) {
+
+                ytLnk.fromDate = ytLnk.__comp.fromDate;
+                ytLnk.toDate = ytLnk.__comp.toDate;
+                ytLnk.fromUtc = ytLnk.__comp.fromUtc;
+                ytLnk.toUtc = ytLnk.__comp.toUtc;
+
+                ytLnk.name = ytLnk.__comp.name;
+                ytLnk.webUrl = ytLnk.__comp.webUrl;
+                ytLnk.url = ytLnk.__comp.url;
+
+                ytLnk.status = ytLnk.__comp.status;
+                ytLnk.active = ytLnk.__comp.active;
+
+                ytLnk.recordState = 0;
+            }
+
+            param.checkYoutubeLinksRecordState(ytLnk);
+        };
+
         vm.featuredChanged = function (ftrd) {
 
             param.checkFeaturedsRecordState(ftrd);
+        };
+
+        vm.youtubeLinkChanged = function (ytLnk) {
+
+            param.checkYoutubeLinksRecordState(ytLnk);
         };
 
         $uibModalInstance.closed.then(function () {
