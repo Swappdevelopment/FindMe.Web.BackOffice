@@ -130,6 +130,46 @@
             }
         };
 
+        var checkAddressRecordState = function (addr) {
+
+            if (addr) {
+
+                addr.status = addr.active ? 1 : 0;
+
+                if (addr.__comp
+                    && (!addr.recordState || addr.recordState <= 0)) {
+
+                    if (addr.id > 0) {
+
+                        if (addr.name !== addr.__comp.name
+                            || addr.slug !== addr.__comp.slug
+                            || addr.client_Id !== addr.__comp.client_Id
+                            || addr.cityDetail_Id !== addr.__comp.cityDetail_Id
+                            || addr.category_Id !== addr.__comp.category_Id
+                            || addr.latitude !== addr.__comp.latitude
+                            || addr.longitude !== addr.__comp.longitude
+                            || addr.desc_en !== addr.__comp.desc_en
+                            || addr.desc_fr !== addr.__comp.desc_fr
+                            || addr.flgRecByFbFans !== addr.__comp.flgRecByFbFans
+                            || addr.rateOverride !== addr.__comp.rateOverride
+                            || addr.rateOverrideCount !== addr.__comp.rateOverrideCount
+                            || addr.active !== addr.__comp.active) {
+
+                            addr.recordState = 20;
+                        }
+                        else {
+
+                            addr.recordState = 0;
+                        }
+                    }
+                    else {
+
+                        addr.recordState = 10;
+                    }
+                }
+            }
+        };
+
 
         var checkRatinOvrdsRecordState = function (ratingOvrds) {
 
@@ -454,37 +494,7 @@
             if (address
                 && compAddress) {
 
-                if (address.id > 0) {
-
-                    if (toBeDeleted) {
-
-                        address.recordState = 30;
-                    }
-                    else if (address.name !== compAddress.name
-                            || address.slug !== compAddress.slug
-                            || address.client_Id !== compAddress.client_Id
-                            || address.cityDetail_Id !== compAddress.cityDetail_Id
-                            || address.category_Id !== compAddress.category_Id
-                            || address.latitude !== compAddress.latitude
-                            || address.longitude !== compAddress.longitude
-                            || address.desc_en !== compAddress.desc_en
-                            || address.desc_fr !== compAddress.desc_fr
-                            || address.flgRecByFbFans !== compAddress.flgRecByFbFans
-                            || address.rateOverride !== compAddress.rateOverride
-                            || address.rateOverrideCount !== compAddress.rateOverrideCount
-                            || address.active !== compAddress.active) {
-
-                        address.recordState = 20;
-                    }
-                    else {
-
-                        address.recordState = 0;
-                    }
-                }
-                else {
-
-                    address.recordState = 10;
-                }
+                checkAddressRecordState(address);
 
                 checkRatinOvrdsRecordState(address.ratingOverrides);
                 checkFilesRecordState(address.images);
@@ -583,6 +593,7 @@
                             save: vm.save,
                             deleteModal: vm.deleteModal,
                             checkRecordState: checkRecordState,
+                            checkAddressRecordState: checkAddressRecordState,
                             revertAddress: revert,
                             checkFilesRecordState: checkFilesRecordState,
                             checkOpenHoursRecordState: checkOpenHoursRecordState,
@@ -1640,7 +1651,7 @@
                                         delete tempValue.status;
                                         delete tempValue.recordState;
 
-                                        tempValue.__comp = value;
+                                        tempValue.__comp = value.address;
                                     }
                                     else {
 
@@ -1809,6 +1820,7 @@
         vm.tags = param.tags;
         vm.featuredTypes = param.featuredTypes;
 
+        vm.checkAddressRecordState = param.checkAddressRecordState;
         vm.checkFilesRecordState = param.checkFilesRecordState;
         vm.checkOpenHoursRecordState = param.checkOpenHoursRecordState;
         vm.checkContactsRecordState = param.checkContactsRecordState;
@@ -2402,11 +2414,11 @@
 
             if (vm.address) {
 
-                if (vm.address.id > 0) {
+                if (vm.address.id > 0 && vm.address.recordState && vm.address.recordState !== 0) {
 
                     param.revertAddress(vm.address);
                 }
-                else {
+                else if (vm.address.id <= 0) {
 
                     param.deleteModal(vm.address);
                 }
