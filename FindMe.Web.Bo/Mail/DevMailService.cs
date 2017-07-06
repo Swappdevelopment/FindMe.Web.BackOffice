@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Swapp.Data;
+﻿using Swapp.Data;
 using System.Threading.Tasks;
 
 namespace FindMe.Web.App
 {
     public class DevMailService : BaseMailService
     {
-        private IHostingEnvironment _env;
-
         public DevMailService()
             : base()
         {
